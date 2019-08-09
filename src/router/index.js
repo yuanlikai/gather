@@ -35,6 +35,11 @@ export default new Router({
           name: 'menuList',
           component: resolve => require(['@/components/authority/menuList'], resolve),
         },
+        {
+          path: '/roleList',
+          name: 'roleList',
+          component: resolve => require(['@/components/authority/roleList'], resolve),
+        },
       ]
     }
   ]

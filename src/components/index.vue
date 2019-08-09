@@ -9,10 +9,12 @@
       <div class="ivu-login">
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
           <FormItem prop="user" style="width: 100%">
-            <Input style="width: 100%;height: 36px;" prefix="ios-contact-outline" v-model="formInline.user" placeholder="Username" />
+            <Input style="width: 100%;height: 36px;" prefix="ios-contact-outline" v-model="formInline.user"
+                   placeholder="Username"/>
           </FormItem>
           <FormItem prop="password" style="width: 100%">
-            <Input style="width: 100%;height: 36px;" prefix="ios-lock-outline" v-model="formInline.password" placeholder="Password" />
+            <Input height="36px" style="width: 100%;height: 36px;" prefix="ios-lock-outline"
+                   v-model="formInline.password" placeholder="Password"/>
           </FormItem>
           <FormItem style="width: 100%">
             <Button style="width: 100%;height: 36px;" type="primary" @click="handleSubmit('formInline')">登录</Button>
@@ -82,4 +84,7 @@
 
 <style lang="less">
 
+  .ivu-input {
+    height: 36px;
+  }
 </style>

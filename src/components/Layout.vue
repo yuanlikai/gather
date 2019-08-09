@@ -6,7 +6,7 @@
              v-model="isCollapsed"
              style="overflow-x: auto;height: 100vh;">
 
-        <Menu :theme="'dark'" active-name="1" width="256px" >
+        <Menu @on-select="selectMenu" :theme="'dark'" :active-name="menu" width="256px" >
           <div class="i-layout-sider-logo i-layout-sider-logo-dark">
             <a href="/" target="_self" class="i-link i-link-color">
               <img src="https://file.iviewui.com/admin-pro-dist/img/logo-dark.11bf8723.png">
@@ -33,7 +33,7 @@
               <Icon type="md-heart" />
               用户管理
             </MenuItem>
-            <MenuItem name="6">
+            <MenuItem to="roleList" name="6">
               <Icon type="md-leaf" />
               角色管理
             </MenuItem>
@@ -109,6 +109,7 @@
   export default {
     data() {
       return {
+        menu:sessionStorage.getItem('menu'),
         isCollapsed: false,
       }
     },
@@ -127,6 +128,10 @@
       }
     },
     methods: {
+      selectMenu(name){
+        sessionStorage.setItem('menu',name);
+        console.log(name)
+      },
       collapsedSider() {
         this.$refs.side1.toggleCollapse();
       },
