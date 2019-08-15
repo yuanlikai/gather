@@ -19,7 +19,7 @@ export default new Router({
       path: '/Layout',
       name: 'Layout',
       component: resolve => require(['@/components/Layout'], resolve),
-      children:[
+      children: [
         {
           path: '/table',
           name: 'table',
@@ -32,13 +32,19 @@ export default new Router({
         },
         {
           path: '/menuList',
-          name: 'menuList',
+          name: '菜单列表',
           component: resolve => require(['@/components/authority/menuList'], resolve),
         },
         {
           path: '/roleList',
-          name: 'roleList',
+          name: '角色列表',
           component: resolve => require(['@/components/authority/roleList'], resolve),
+        },
+        {
+          path: '/userList',
+          name: '用户列表',
+          params: {userId: '123'},
+          component: resolve => require(['@/components/authority/userList'], resolve),
         },
       ]
     }

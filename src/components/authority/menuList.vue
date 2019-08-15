@@ -200,6 +200,17 @@
       }
     },
     methods: {
+      // 子组件点击编辑事件
+      getChild(i) {
+        this.status = '修改';
+        this.addAccount = true;
+        this.id = i.id;
+        this.formValidate.numb = i.numb;
+        this.formValidate.menuUrl = i.menuUrl;
+        this.formValidate.menuName = i.menuName;
+        this.module = '《' + i.menuName + '》';
+      },
+
       // 添加菜单
       handleSubmit(name) {
         const _this = this;

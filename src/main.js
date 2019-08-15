@@ -22,14 +22,7 @@ import 'iview/dist/styles/iview.css';
 
 Vue.use(iView);
 
-//页面加载进度条
-router.beforeEach((to, from, next) => {
-  iView.LoadingBar.start();
-  next();
-});
-router.afterEach(route => {
-  iView.LoadingBar.finish();
-});
+
 
 // 添加响应拦截器
 axios.interceptors.response.use(function (response) {
@@ -37,6 +30,9 @@ axios.interceptors.response.use(function (response) {
 }, function (error) {
   //无权限，重定向到登录页面
   if (error.response.status === 401) {
+    router.push('/');
+    vm.$Message.warning('登录信息已过期，请重新登录！')
+  }else if(error.response.status === 403) {
     router.push('/');
     vm.$Message.warning('权限不足，请重新登录！')
   }

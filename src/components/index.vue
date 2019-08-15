@@ -14,7 +14,7 @@
           </FormItem>
           <FormItem prop="password" style="width: 100%">
             <Input height="36px" style="width: 100%;height: 36px;" prefix="ios-lock-outline"
-                   v-model="formInline.password" placeholder="Password"/>
+                   v-model="formInline.password" type="password" placeholder="Password"/>
           </FormItem>
           <FormItem style="width: 100%">
             <Button style="width: 100%;height: 36px;" type="primary" @click="handleSubmit('formInline')">登录</Button>
@@ -31,7 +31,7 @@
     <footer class="ivu-global-footer i-copyright" style="position: fixed">
       <div class="ivu-global-footer-links">
         <a href="http://www.e6best.com/" target="_blank" title="官网">官网</a>
-        <a href="http://www.e6best.com/" target="_blank" title="社区">社区</a></div>
+        <a href="https://weibo.com/u/6596595059" target="_blank" title="微博">微博</a></div>
       <div class="ivu-global-footer-copyright">Copyright © 2019 上海怡乐畅购智能技术有限公司</div>
     </footer>
   </div>
@@ -66,6 +66,7 @@
               password: _this.formInline.password
             })).then(res => {
               if (res.data.code === 0) {
+                sessionStorage.setItem('user',_this.formInline.user)
                 _this.$router.push('/table')
               } else {
                 _this.$Message.error(res.data.message);
@@ -82,7 +83,7 @@
   }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 
   .ivu-input {
     height: 36px;

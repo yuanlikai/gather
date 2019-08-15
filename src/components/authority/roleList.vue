@@ -1,6 +1,5 @@
 <template>
   <div class="content">
-
     <Card style="border:none;margin-bottom: 16px;">
       <div class="ivu-page-header-title">角色管理</div>
       <div class="ivu-page-header-content">标准的列表，包含增删改查等基础操作。</div>
@@ -154,7 +153,7 @@
         id: '',
         addAccount: false,
         total: 0,
-        loading: false,
+        loading: true,
         modal_loading: false,
         columns: [
           {
@@ -374,13 +373,6 @@
         this.cheTree = this.$refs.tree.getCheckedAndIndeterminateNodes();
       },
 
-      // 获取菜单树形结构
-      getTree() {
-        const _this = this;
-        _this.Axios.get('/Manage/Menu/tree').then(res => {
-          _this.roleTree = res.data.data;
-        })
-      }
     },
     mounted() {
       this.getTreeList()
