@@ -29,6 +29,10 @@ export default new Router({
           path: '/details',
           name: 'details',
           component: resolve => require(['@/components/product/details'], resolve),
+        },        {
+          path: '/orderList',
+          name: '订单列表',
+          component: resolve => require(['@/components/order/orderList'], resolve),
         },
         {
           path: '/menuList',

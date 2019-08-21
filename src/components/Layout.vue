@@ -18,7 +18,7 @@
           <MenuGroup v-for="(item,index) in menuList" :key="index" :title="item.name">
             <MenuItem v-for="(items,indexs) in item.children" :key="indexs" :to="items.to" :name="items.numb">
               <Icon type="ios-analytics"/>
-              {{items.name}}{{menu}}
+              {{items.name}}
             </MenuItem>
           </MenuGroup>
 
