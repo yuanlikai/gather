@@ -22,6 +22,7 @@
             </MenuItem>
           </MenuGroup>
 
+
           <!--<MenuGroup title="报表管理">-->
           <!--<MenuItem name="3">-->
           <!--<Icon type="ios-analytics" />-->
@@ -53,11 +54,11 @@
           <Icon @click.native="collapsedSider" :class="rotateIcon" :style="{margin: '0 24px','line-height':'64px'}"
                 type="md-menu"
                 size="24"></Icon>
-          <Breadcrumb class="status">
-            <BreadcrumbItem>首页</BreadcrumbItem>
-            <BreadcrumbItem>异常页面</BreadcrumbItem>
-            <BreadcrumbItem>404</BreadcrumbItem>
-          </Breadcrumb>
+          <!--<Breadcrumb class="status">-->
+          <!--<BreadcrumbItem>首页</BreadcrumbItem>-->
+          <!--<BreadcrumbItem>异常页面</BreadcrumbItem>-->
+          <!--<BreadcrumbItem>404</BreadcrumbItem>-->
+          <!--</Breadcrumb>-->
           <Menu mode="horizontal" type="light" style="margin-left: auto;margin-right: 20px;">
             <div class="layout-logo"></div>
             <div class="layout-nav">
@@ -104,7 +105,7 @@
   export default {
     data() {
       return {
-        user:sessionStorage.getItem('user'),
+        user: sessionStorage.getItem('user'),
         tabList: [],
         tab: '',
         menuList: [],
@@ -138,10 +139,10 @@
       },
 
       //退出登录
-      out(){
+      out() {
         const _this = this;
-        _this.Axios.post('/logout').then(function(){
-        }).catch(err=>{
+        _this.Axios.post('/logout').then(function () {
+        }).catch(err => {
           _this.$router.push('/');
           _this.$Message.success('退出登录')
         });
@@ -170,9 +171,6 @@
     mounted() {
 
 
-
-
-
       this.getmenu();
       var mySwiper = new Swiper('.swiper-container', {
         slidesPerView: 'auto',
@@ -180,12 +178,11 @@
         freeMode: true,
       });
       this.$router.beforeEach((to, from, next) => {
-        console.log(to)
         this.$Loading.start();
         if (JSON.stringify(this.tabList).indexOf(to.name) === -1) {
           this.tabList.push({
             name: to.name,
-            path: to.path
+            path: to.fullPath
           });
         }
         this.tab = to.name;

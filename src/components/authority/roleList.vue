@@ -195,7 +195,6 @@
             title: '操作',
             align: 'center',
             minWidth: 100,
-
             maxWidth: 180,
             render: (h, params) => {
               return h('div', [
