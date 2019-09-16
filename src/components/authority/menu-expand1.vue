@@ -39,10 +39,8 @@
   </div>
 </template>
 <script>
-  import expandRow from './menu-expand1.vue';
   export default {
-    components: {expandRow},
-    props: ['row', 'getMenu', 'getChild','getMenuList'],
+    props: ['row', 'getMenu','getMenuList'],
     data() {
       return {
         id:'',
@@ -68,18 +66,9 @@
         },
         columns1: [
           {
-            type: 'expand',
+            type: 'index',
+            align: 'center',
             width: 50,
-            render: (h, params) => {
-              return h(expandRow, {
-                props: {
-                  row: params.row.children,
-                  getMenu: this.getMenu,
-                  getChild: this.getChild,
-                  getMenuList: this.getMenuList,
-                }
-              })
-            }
           },
           {
             title: '菜单名称',
@@ -97,6 +86,12 @@
             }
           },
           {
+            title: '菜单路径',
+            key: 'menuUrl',
+            align: 'center',
+            minWidth: 88,
+          },
+          {
             title: '唯一标识',
             key: 'numb',
             align: 'center',
@@ -108,23 +103,6 @@
             align: 'center',
             render: (h, params) => {
               return h('div', [
-                h('a', {
-                  style: {
-                    height: '12px',
-                    marginRight: '5px',
-                    paddingRight: '5px',
-                    borderRight: '1px solid #e8eaec'
-                  },
-                  on: {
-                    click: () => {
-                      this.status = '添加';
-                      this.handleReset('formValidate');
-                      this.addAccount = true;
-                      this.id = params.row.id;
-                      this.module = '《' + params.row.menuName + '》';
-                    }
-                  }
-                }, '添加'),
                 h('a', {
                   props: {
                     type: 'ios-create',
@@ -190,6 +168,17 @@
       }
     },
     methods: {
+      // 子组件点击编辑事件
+      getChild(i) {
+        this.status = '修改';
+        this.addAccount = true;
+        this.id = i.id;
+        this.formValidate.numb = i.numb;
+        this.formValidate.menuUrl = i.menuUrl;
+        this.formValidate.menuName = i.menuName;
+        this.module = '《' + i.menuName + '》';
+      },
+
       // 添加菜单
       handleSubmit(name) {
         const _this = this;
@@ -204,6 +193,7 @@
                 numb: _this.formValidate.numb,  //前端用
               })).then(res => {
                 if (res.data.code === 0) {
+                  _this.getMenuList();
                   _this.addAccount = false;
                 } else {
                   _this.$Message.error(res.data.message)

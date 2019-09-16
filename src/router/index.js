@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
@@ -29,7 +29,8 @@ export default new Router({
           path: '/details',
           name: 'details',
           component: resolve => require(['@/components/product/details'], resolve),
-        }, {
+        },
+        {
           path: '/orderList',
           name: '订单列表',
           component: resolve => require(['@/components/order/orderList'], resolve),
@@ -52,8 +53,17 @@ export default new Router({
         {
           path: '/userList',
           name: '用户列表',
-          params: {userId: '123'},
           component: resolve => require(['@/components/authority/userList'], resolve),
+        },
+        {
+          path: '/log',
+          name: '日志列表',
+          component: resolve => require(['@/components/authority/log'], resolve),
+        },
+        {
+          path: '/classify',
+          name: '分类管理',
+          component: resolve => require(['@/components/class/classify'], resolve),
         },
       ]
     }

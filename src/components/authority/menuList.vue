@@ -1,36 +1,13 @@
 <template>
   <div class="content">
-    <Card style="border:none;margin-bottom: 16px;">
+    <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">菜单管理</div>
-      <div class="ivu-page-header-content">标准的列表，包含增删改查等基础操作。</div>
     </Card>
-    <div style="padding: 0 20px 16px 20px">
-      <Card>
-        <Row style="text-align: center;">
-          <Col style="padding: 16px 0;" :xs="24" :md="8">
-            进行中的任务
-            <p style="font-size: 24px">10 个任务</p>
-          </Col>
-          <Col style="padding: 16px 0;" :xs="24" :md="8">
-            剩余任务
-            <p style="font-size: 24px">3 个任务</p>
-          </Col>
-          <Col style="padding: 16px 0;" :xs="24" :md="8">
-            任务总耗时
-            <p style="font-size: 24px">120 个小时</p>
-          </Col>
-        </Row>
-      </Card>
-    </div>
     <Card :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto'}">
       <Spin fix v-if="loading"></Spin>
       <p slot="title">
         基础列表
       </p>
-      <a href="#" slot="extra" @click.prevent="changeLimit">
-        <Icon type="ios-loop-strong"></Icon>
-        Change
-      </a>
       <Button @click="addMenu" type="dashed" style="width: 100%;margin-bottom: 16px;">添加</Button>
       <Table :show-header="true" :columns="columns" :data="data"></Table>
       <div style="width: 100%;height: 2px;background: #ffffff;margin-top: -1px;z-index: 3;position: relative"></div>
@@ -45,9 +22,9 @@
           <FormItem label="菜单名称" prop="menuName">
             <Input :maxlength="10" v-model="formValidate.menuName" placeholder="请输入菜单名称"></Input>
           </FormItem>
-          <FormItem v-if="formValidate.menuUrl===''?(id!==''&&status!=='修改'):true" label="菜单路径" prop="menuUrl">
-            <Input :maxlength="30" v-model="formValidate.menuUrl" placeholder="请输入菜单路径"></Input>
-          </FormItem>
+          <!--<FormItem v-if="formValidate.menuUrl===''?(id!==''&&status!=='修改'):true" label="菜单路径" prop="menuUrl">-->
+            <!--<Input :maxlength="30" v-model="formValidate.menuUrl" placeholder="请输入菜单路径"></Input>-->
+          <!--</FormItem>-->
           <FormItem label="唯一标识" prop="numb">
             <Input :maxlength="10" :loading="modal_loading" v-model="formValidate.numb" placeholder="请输入唯一标识"></Input>
           </FormItem>
@@ -83,6 +60,7 @@
                   row: params.row.children,
                   getMenu: this.getMenu,
                   getChild: this.getChild,
+                  getMenuList:this.getMenuList
                 }
               })
             }
@@ -221,7 +199,7 @@
               _this.Axios.post('/Manage/Menu/updateMenu', _this.Qs.stringify({
                 id: _this.id,  //上级id 如果为模块级 不需要传入
                 menuName: _this.formValidate.menuName,  //菜单名称,
-                menuUrl:_this.formValidate.menuUrl,
+                // menuUrl:_this.formValidate.menuUrl,
                 numb: _this.formValidate.numb,  //前端用
               })).then(res => {
                 if (res.data.code === 0) {
@@ -282,7 +260,7 @@
       }
     },
     mounted() {
-      this.getMenuList()
+      this.getMenuList();
     }
   }
 </script>

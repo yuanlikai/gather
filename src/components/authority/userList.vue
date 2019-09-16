@@ -1,8 +1,7 @@
 <template>
   <div class="content">
-    <Card style="border:none;margin-bottom: 16px;">
+    <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">用户管理</div>
-      <div class="ivu-page-header-content">包含用户信息的列表，带有常规操作。</div>
     </Card>
     <Card :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
@@ -37,7 +36,7 @@ margin-right: 16px">
         <Col span="24">姓名：{{item.name}}</Col>
         <Col span="24" v-if="item.supplierName">供应商：{{item.supplierName}}</Col>
         <Col span="24" style="margin-top: 8px">
-          <Tag color="geekblue" >{{item.roleNames}}</Tag>
+          <Tag color="geekblue">{{item.roleNames}}</Tag>
           <Button @click="Handle(item.id)" size="small" icon="md-list" style="margin-left: 16px;">展开操作</Button>
         </Col>
         <Col span="24" style="margin-top: 16px" v-if="handleId===item.id">
@@ -72,6 +71,11 @@ margin-right: 16px">
           </FormItem>
           <FormItem v-if="id===''" label="确认密码" prop="affirmPassword">
             <Input :maxlength="25" type="password" v-model="formValidate.affirmPassword" placeholder="请确认密码"></Input>
+          </FormItem>
+          <FormItem v-if="id===''" label="供应商" prop="supplierId">
+            <Select v-model="formValidate.supplierId" style="width:200px">
+              <Option v-for="item in supplierList" :value="String(item.ID)" :key="item.ID">{{ item.Name }}</Option>
+            </Select>
           </FormItem>
           <FormItem v-if="userInfoType!=='SUPPLIER'" label="角色绑定" prop="roleIds">
             <Select :disabled="userInfoType!=='SUPPLIER'?false:true" v-model="formValidate.roleIds" multiple>
@@ -166,15 +170,15 @@ margin-right: 16px">
           password: '',       //密码
           affirmPassword: '',
           name: '',            //用户姓名
-          supplierId: this.$route.query.id,    //供应商id
+          supplierId: '',    //供应商id
         },
-
+        supplierList: '',
         ruleValidate: {
           username: [
             {validator: ctionUser, required: true, trigger: 'change'}
           ],
           password: [
-            {required: true, message: '请输入密码', trigger: 'blur'}
+            {required: true, message: '请输入', trigger: 'blur'}
           ],
           affirmPassword: [
             {validator: affirm, required: true, trigger: 'blur'}
@@ -183,7 +187,10 @@ margin-right: 16px">
             {validator: juese, required: true, trigger: 'change'}
           ],
           name: [
-            {required: true, message: '请输入姓名', trigger: 'change'}
+            {required: true, message: '请输入', trigger: 'change'}
+          ],
+          supplierId: [
+            {required: true, message: '请输入', trigger: 'change'}
           ],
         },
         data: []
@@ -195,6 +202,18 @@ margin-right: 16px">
         const _this = this;
         this.like = this.value13;
         this.getUser()
+      },
+
+      //获取供应商下拉
+      getSupplier() {
+        const _this = this;
+        _this.Axios.get('/Manage/Supplier/list').then(res => {
+          if (res.data.error === 0) {
+            _this.supplierList = res.data.data
+          } else {
+            _this.$Message.error(res.data.message)
+          }
+        })
       },
 
       //删除用户
@@ -292,7 +311,7 @@ margin-right: 16px">
             _this.$Message.error(res.data.message)
           }
           _this.loading = false;
-          _this.total = res.data.data.totalElements;
+          _this.total = Number(res.data.data.totalElements);
         })
       },
 
@@ -310,6 +329,7 @@ margin-right: 16px">
                 password: _this.formValidate.affirmPassword,  //密码
                 name: _this.formValidate.name,   //用户姓名
                 roleIdSet: _this.formValidate.roleIds,  //角色id素组
+                supplierId: _this.formValidate.supplierId
               }, {indices: false})).then(res => {
                 if (res.data.code === 0) {
                   _this.addAccount = false;
@@ -328,6 +348,7 @@ margin-right: 16px">
                 username: _this.formValidate.username,  //账号
                 name: _this.formValidate.name,   //用户姓名
                 roleIdSet: _this.formValidate.roleIds,  //角色id素组
+                supplierId: _this.formValidate.supplierId
               }, {indices: false})).then(res => {
                 if (res.data.code === 0) {
                   _this.addAccount = false;
@@ -352,6 +373,7 @@ margin-right: 16px">
       this.getUser();
       this.cityRole();
       this.getRole();
+      this.getSupplier();
     }
   }
 </script>

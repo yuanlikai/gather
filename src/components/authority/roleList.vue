@@ -1,37 +1,32 @@
 <template>
   <div class="content">
-    <Card style="border:none;margin-bottom: 16px;">
+    <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">角色管理</div>
-      <div class="ivu-page-header-content">标准的列表，包含增删改查等基础操作。</div>
     </Card>
-    <div style="padding: 0 20px 16px 20px">
-      <Card>
-        <Row style="text-align: center;">
-          <Col style="padding: 16px 0;" :xs="24" :md="8">
-            已添加的角色
-            <p style="font-size: 24px">10 个角色</p>
-          </Col>
-          <Col style="padding: 16px 0;" :xs="24" :md="8">
-            剩余任务
-            <p style="font-size: 24px">3 个任务</p>
-          </Col>
-          <Col style="padding: 16px 0;" :xs="24" :md="8">
-            任务总耗时
-            <p style="font-size: 24px">120 个小时</p>
-          </Col>
-        </Row>
-      </Card>
-    </div>
+    <!--<div style="padding: 0 20px 16px 20px">-->
+      <!--<Card>-->
+        <!--<Row style="text-align: center;">-->
+          <!--<Col style="padding: 16px 0;" :xs="24" :md="8">-->
+            <!--已添加的角色-->
+            <!--<p style="font-size: 24px">10 个角色</p>-->
+          <!--</Col>-->
+          <!--<Col style="padding: 16px 0;" :xs="24" :md="8">-->
+            <!--剩余任务-->
+            <!--<p style="font-size: 24px">3 个任务</p>-->
+          <!--</Col>-->
+          <!--<Col style="padding: 16px 0;" :xs="24" :md="8">-->
+            <!--任务总耗时-->
+            <!--<p style="font-size: 24px">120 个小时</p>-->
+          <!--</Col>-->
+        <!--</Row>-->
+      <!--</Card>-->
+    <!--</div>-->
 
     <Card :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto'}">
       <Spin fix v-if="loading"></Spin>
       <p slot="title">
         基础列表
       </p>
-      <a href="#" slot="extra" @click.prevent="changeLimit">
-        <Icon type="ios-loop-strong"></Icon>
-        Change
-      </a>
       <Button @click="addRole() "type="dashed" style="width: 100%;margin-bottom: 16px;">添加</Button>
       <Table :show-header="true" :columns="columns" :data="data"></Table>
       <div style="width: 100%;height: 2px;background: #ffffff;margin-top: -1px;z-index: 3;position: relative"></div>
@@ -374,7 +369,7 @@
 
     },
     mounted() {
-      this.getTreeList()
+      this.getTreeList();
     }
   }
 </script>

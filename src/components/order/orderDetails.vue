@@ -5,8 +5,12 @@
 </style>
 <template>
   <div class="content">
-    <Card style="border:none;margin-bottom: 16px;">
-      <div class="ivu-page-header-title">订单详情页</div>
+    <Card style="border:none;margin: 16px 0;">
+      <div class="ivu-page-header-title">当前订单状态：<span style="color: red;">{{data.StateStr}}</span></div>
+      <ButtonGroup style="float: right;">
+        <Button type="dashed">申请关闭订单</Button>
+        <Button type="dashed">转为异常订单</Button>
+      </ButtonGroup>
     </Card>
     <Content :style="{position:'relative',margin: '0 20px 20px 20px', background: '#fff',padding: '16px',height:'auto'}">
       <Spin fix v-if="loading"></Spin>
@@ -15,7 +19,7 @@
           <p class="colClass" style="font-weight: 500;">基本信息</p>
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
-          ERP单号：{{data.ErpOrderNumber}}
+          OMS单号：{{data.ErpOrderNumber}}
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           平台单号：{{data.OrderNumber}}
@@ -26,14 +30,14 @@
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           用户名：{{data.UserName}}
         </Col>
-        <!--<Col class="colClass" :xs="24" :md="12" :lg="8">-->
-        <!--供应商：-->
-        <!--</Col>-->
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           下单时间：{{data.AddTime}}
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           支付方式：{{data.PayTypeStr}}
+        </Col>
+        <Col class="colClass" :xs="24" :md="12" :lg="8">
+          供应商：{{data.Supplier}}
         </Col>
       </Row>
       <Divider/>
@@ -71,9 +75,31 @@
           运费：{{data.Freight}}
         </Col>
         <Col style="margin-top: 16px;text-align: right" :xs="13" :lg="{ span: 11, pull: 0 }">
-          合计：{{data.Total}} (不含运费)
+          合计：<span style="color: red;font-weight: 700;">{{data.Total}}</span> (不含运费)
         </Col>
       </Row>
+      <Divider/>
+      <Row :gutter="30">
+        <Col span="24">
+          <p class="colClass" style="font-weight: 500;">备注信息</p>
+        </Col>
+        <Col class="colClass" span="24">
+          用户留言：{{data.Remarks}}
+        </Col>
+        <Col class="colClass" span="24">
+          客服备注：{{data.RemarksHt}}
+        </Col>
+      </Row>
+      <Divider/>
+      <Row :gutter="30">
+        <Col span="24">
+          <p class="colClass" style="font-weight: 500;">操作信息</p>
+        </Col>
+        <Col class="colClass" span="24">
+          <Table :show-header="true" :columns="columns1" :data="[]"></Table>
+        </Col>
+      </Row>
+      <!--<Divider/>-->
     </Content>
   </div>
 </template>
@@ -82,6 +108,38 @@
     data() {
       return {
         loading: true,
+        columns1:[
+          {
+            title: '操作者',
+            tooltip: true,
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '操作时间',
+            tooltip: true,
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '操作状态',
+            tooltip: true,
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '操作后状态',
+            tooltip: true,
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '备注',
+            tooltip: true,
+            minWidth: 88,
+            align: "center",
+          }
+        ],
         columns: [
           {
             title: '商品名称',
@@ -143,7 +201,7 @@
       }
     },
     mounted() {
-      this.getDetails()
+      this.getDetails();
     }
   }
 </script>

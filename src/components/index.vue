@@ -2,18 +2,18 @@
   <div class="login">
     <div class="page-account-container">
       <div class="page-account-top">
-        <div class="page-account-top-logo"><img src="https://file.iviewui.com/admin-pro-dist/img/logo.6871ef17.png"
+        <div class="page-account-top-logo"><img src="../assets/img/logo.png"
                                                 alt="logo"></div>
         <div class="page-account-top-desc">iView Admin Pro 企业级中台前端/设计解决方案</div>
       </div>
       <div class="ivu-login">
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
           <FormItem prop="user" style="width: 100%">
-            <Input style="width: 100%;height: 36px;" prefix="ios-contact-outline" v-model="formInline.user"
+            <Input @on-enter="handleSubmit('formInline')" style="width: 100%;height: 36px;" prefix="ios-contact-outline" v-model="formInline.user"
                    placeholder="Username"/>
           </FormItem>
           <FormItem prop="password" style="width: 100%">
-            <Input height="36px" style="width: 100%;height: 36px;" prefix="ios-lock-outline"
+            <Input @on-enter="handleSubmit('formInline')" height="36px" style="width: 100%;height: 36px;" prefix="ios-lock-outline"
                    v-model="formInline.password" type="password" placeholder="Password"/>
           </FormItem>
           <FormItem style="width: 100%">
@@ -21,12 +21,12 @@
           </FormItem>
         </Form>
       </div>
-      <div class="page-account-other"><span>其它登录方式</span>
-        <img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-wechat.c69ec08c.svg" alt="wechat">
-        <img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-qq.2cf4276d.svg" alt="qq">
-        <img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-weibo.cbf658a0.svg" alt="weibo">
-        <a href="/register" class="page-account-register">注册账户</a>
-      </div>
+      <!--<div class="page-account-other"><span>其它登录方式</span>-->
+        <!--<img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-wechat.c69ec08c.svg" alt="wechat">-->
+        <!--<img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-qq.2cf4276d.svg" alt="qq">-->
+        <!--<img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-weibo.cbf658a0.svg" alt="weibo">-->
+        <!--<a href="/register" class="page-account-register">注册账户</a>-->
+      <!--</div>-->
     </div>
     <footer class="ivu-global-footer i-copyright" style="position: fixed">
       <div class="ivu-global-footer-links">
@@ -66,8 +66,11 @@
               password: _this.formInline.password
             })).then(res => {
               if (res.data.code === 0) {
-                sessionStorage.setItem('user',_this.formInline.user)
-                _this.$router.push('/table')
+                localStorage.setItem('menuList',JSON.stringify(res.data.data.reverse()));
+                localStorage.setItem('menu1',res.data.data[0].numb);
+                localStorage.setItem('menu',res.data.data[0].children[0].children[0].numb);
+                localStorage.setItem('user',_this.formInline.user);
+                _this.$router.push(res.data.data[0].children[0].children[0].to)
               } else {
                 _this.$Message.error(res.data.message);
               }

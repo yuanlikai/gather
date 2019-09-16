@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <Card style="border:none;margin-bottom: 16px;">
-      <div class="ivu-page-header-title">基础详情页</div>
+      <div class="ivu-page-header-title">当前订单状态：待审核</div>
     </Card>
     <Content :style="{margin: '0 20px 20px 20px', background: '#fff',padding: '16px',height:'auto'}">
       <Row class="ivu-kp">

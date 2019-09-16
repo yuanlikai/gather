@@ -33,8 +33,7 @@ axios.interceptors.response.use(function (response) {
     router.push('/');
     vm.$Message.warning('登录信息已过期，请重新登录！')
   }else if(error.response.status === 403) {
-    router.push('/');
-    vm.$Message.warning('权限不足，请重新登录！')
+    vm.$Message.warning('你的权限不足')
   }
   return Promise.reject(error);
 });
