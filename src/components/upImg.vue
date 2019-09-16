@@ -47,11 +47,14 @@
 </template>
 <script>
   import uuidv1 from 'uuid/v1';
+
   export default {
     data() {
       return {
         policyData: {},
-        defaultList: [],
+        defaultList: [{
+          "filename": "http://ylmanager.oss-cn-shanghai.aliyuncs.com/Image/20190916/5e0fe2c0-d830-11e9-a215-714f93aad73b"
+        }],
         imgName: '',
         visible: false,
         uploadList: []
@@ -84,7 +87,7 @@
         });
       },
       handleBeforeUpload() {
-        const check = this.uploadList.length < 5;
+        const check = this.uploadList.length < 1;
         if (!check) {
           this.$Notice.warning({
             title: 'Up to five pictures can be uploaded.'
@@ -103,7 +106,7 @@
         const _this = this;
         _this.Axios.get('/aliyun/oss/policy').then(res => {
           _this.policyData = res.data.data;
-          _this.policyData.key=_this.policyData.dir+`/${uuidv1()}`
+          _this.policyData.key = _this.policyData.dir + `/${uuidv1()}`
           console.log(_this.policyData)
         })
       }

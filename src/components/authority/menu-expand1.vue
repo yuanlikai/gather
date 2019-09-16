@@ -22,7 +22,7 @@
           <FormItem label="菜单名称" prop="menuName">
             <Input :maxlength="10" v-model="formValidate.menuName" placeholder="请输入菜单名称"></Input>
           </FormItem>
-          <FormItem v-if="formValidate.menuUrl===''?(id!==''&&status!=='修改'):true" label="菜单路径" prop="menuUrl">
+          <FormItem label="菜单路径" prop="menuUrl">
             <Input :maxlength="30" v-model="formValidate.menuUrl" placeholder="请输入菜单路径"></Input>
           </FormItem>
           <FormItem label="唯一标识" prop="numb">

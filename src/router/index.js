@@ -63,8 +63,13 @@ export default new Router({
         {
           path: '/classify',
           name: '分类管理',
-          component: resolve => require(['@/components/class/classify'], resolve),
+          component: resolve => require(['@/components/article/classify'], resolve),
         },
+        {
+          path: '/brand',
+          name: '品牌管理',
+          component: resolve => require(['@/components/article/brand'], resolve),
+        }
       ]
     }
   ]

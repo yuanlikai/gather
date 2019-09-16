@@ -21,11 +21,11 @@
           </FormItem>
         </Form>
       </div>
-      <!--<div class="page-account-other"><span>其它登录方式</span>-->
+      <!--<div article="page-account-other"><span>其它登录方式</span>-->
         <!--<img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-wechat.c69ec08c.svg" alt="wechat">-->
         <!--<img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-qq.2cf4276d.svg" alt="qq">-->
         <!--<img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-weibo.cbf658a0.svg" alt="weibo">-->
-        <!--<a href="/register" class="page-account-register">注册账户</a>-->
+        <!--<a href="/register" article="page-account-register">注册账户</a>-->
       <!--</div>-->
     </div>
     <footer class="ivu-global-footer i-copyright" style="position: fixed">

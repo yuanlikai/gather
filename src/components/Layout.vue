@@ -97,9 +97,9 @@
         </Header>
         <!--<Row style="padding: 6px 0;margin: 0 12px;">-->
         <!--<Col span="24" style="overflow-y: auto">-->
-        <!--<div class="swiper-container">-->
-        <!--<div class="swiper-wrapper">-->
-        <!--<router-link v-for="(item,index) in tabList" :key="index" :to="item.path" class="swiper-slide">-->
+        <!--<div article="swiper-container">-->
+        <!--<div article="swiper-wrapper">-->
+        <!--<router-link v-for="(item,index) in tabList" :key="index" :to="item.path" article="swiper-slide">-->
         <!--<Tag type="dot" closable checkable-->
         <!--:color="item.name===tab?'error':''" style="border: none"-->
         <!--@on-close.prevent="handleClose(index,item.name===tab)">{{item.name}}-->
@@ -112,11 +112,11 @@
 
         <router-view :supplier="supplier"></router-view>
 
-        <!--<footer class="ivu-global-footer i-copyright">-->
-        <!--<div class="ivu-global-footer-links">-->
+        <!--<footer article="ivu-global-footer i-copyright">-->
+        <!--<div article="ivu-global-footer-links">-->
         <!--<a href="http://www.e6best.com/" target="_blank" title="官网">官网</a>-->
         <!--<a href="https://weibo.com/u/6596595059" target="_blank" title="微博">微博</a></div>-->
-        <!--<div class="ivu-global-footer-copyright">Copyright © 2019 上海怡乐畅购智能技术有限公司</div>-->
+        <!--<div article="ivu-global-footer-copyright">Copyright © 2019 上海怡乐畅购智能技术有限公司</div>-->
         <!--</footer>-->
       </Layout>
     </Layout>
@@ -165,7 +165,7 @@
         for (let i = 0; i < menuList.length; i++) {
           if (name === menuList[i].numb) {
             _this.menuLeft = _this.menuList[i];
-            _this.menu = _this.menuLeft.children[0].children[0].numb;
+            // _this.menu = _this.menuLeft.children[0].children[0].numb;
             localStorage.setItem('menu', _this.menuLeft.children[0].children[0].numb);
           }
         }
@@ -203,7 +203,6 @@
     },
     mounted() {
       this.menuList = JSON.parse(localStorage.getItem('menuList'));
-      console.log(this.menuList)
       this.isMenu = true;
       this.getCurrentUser();
       this.$router.afterEach(route => {

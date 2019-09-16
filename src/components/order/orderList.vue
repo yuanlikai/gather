@@ -5,6 +5,9 @@
 </style>
 <template>
   <div class="content">
+    <Card style="border:none;margin: 16px 0;">
+      <div class="ivu-page-header-title">订单列表</div>
+    </Card>
     <RadioGroup :style="{margin: '16px 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
                 v-model="formValidate.state" @on-change="start=1,getOrder()">
       <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
