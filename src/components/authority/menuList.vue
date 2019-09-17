@@ -251,7 +251,9 @@
         _this.loading = true;
         _this.Axios.get('/Manage/Menu/tree').then(res => {
           if (res.data.code === 0) {
-            _this.data = res.data.data;
+            _this.data = res.data.data.sort(function(a,b){
+              return Number(a.numb)-Number(b.numb)
+            });
           } else {
             _this.$Message.error(res.data.message)
           }

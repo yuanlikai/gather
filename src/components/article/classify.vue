@@ -1,8 +1,4 @@
 <style lang="less">
-  .ivu-tree li ul {
-    padding: 0 0 0 60px;
-  }
-
   .ivu-radio {
     line-height: normal;
   }
@@ -16,11 +12,19 @@
       <p slot="title">
         数据列表
       </p>
-      <Button type="dashed" style="width: 100%;margin-bottom: 16px;">添加</Button>
-      <Table :loading="loading1" :show-header="true" :columns="columns" :data="data"></Table>
+      <router-link target="_blank" :to="{
+        path:'/addClassify',
+        query:{
+        parentId:$route.query.parentId,
+        name:$route.query.name
+        }
+      }">
+        <Button type="dashed" style="width:100%;margin-bottom: 16px;">添加</Button>
+      </router-link>
+      <Table @on-sort-change="sorts" :loading="loading1" :show-header="true" :columns="columns" :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
       <div style="width: 100%;text-align: center;margin-top: 15px">
-        <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
+        <Page @on-change="paging" :total="Number(total)" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
 
@@ -35,8 +39,9 @@
     },
     data() {
       return {
-        loading1:true,
-        total:0,
+        loading1: true,
+        total: 0,
+        start: 1,
         columns: [
           {
             type: 'index',
@@ -69,7 +74,8 @@
             tooltip: true,
             key: 'sortsNum',
             minWidth: 120,
-            align: "center"
+            align: "center",
+            sortable: true
           },
           {
             title: '设置',
@@ -80,6 +86,7 @@
               return h('div', [
                 h('a', {
                   style: {
+                    display:params.row.treeLevel === 3?'none':'',
                     height: '12px',
                     marginRight: '5px',
                     paddingRight: '5px',
@@ -87,11 +94,21 @@
                   },
                   on: {
                     click: () => {
+                      let href = this.$router.resolve({
+                        path: '/addClassify',
+                        query: {
+                          parentId: params.row.id,
+                          name: params.row.name
+                        }
+                      });
+                      window.open(href.href, '_blank')
+
                     }
                   }
                 }, '新增下级'),
                 h('a', {
                   style: {
+                    display:params.row.treeLevel === 3?'none':'',
                     height: '12px',
                     marginRight: '5px',
                     paddingRight: '5px',
@@ -99,6 +116,15 @@
                   },
                   on: {
                     click: () => {
+                      let href = this.$router.resolve({
+                        path: '/classify',
+                        query: {
+                          treeLevel: params.row.treeLevel + 1,   //层级
+                          parentId: params.row.id,    //上级分类id
+                          name: params.row.name,    //上级分类id
+                        }
+                      });
+                      window.open(href.href, '_blank')
                     }
                   }
                 }, '查看下级'),
@@ -129,34 +155,33 @@
                   },
                   on: {
                     click: () => {
-                      this.status = '修改';
-                      this.addAccount = true;
-                      this.id = params.row.id;
-                      this.formValidate.menuUrl = '';
-                      this.formValidate.numb = params.row.numb;
-                      this.formValidate.menuName = params.row.menuName;
-                      this.module = '《' + params.row.menuName + '》';
+                      let href = this.$router.resolve({
+                        path:'/addClassify',
+                        query:{
+                          id:params.row.id
+                        }
+                      });
+                      window.open(href.href,'_blank')
                     }
                   }
                 }, '编辑'),
-
                 h('Poptip', {
                   props: {
                     confirm: true,
                     transfer: true,
-                    title: '确定删除该品牌？',
+                    title: '确定删除该分类？',
                   },
                   on: {
                     'on-ok': () => {
                       const _this = this;
-                      _this.Axios.post('/Manage/Menu/deleteMenus', _this.Qs.stringify({
+                      _this.Axios.post('/Manage/Category/deleteCategory', _this.Qs.stringify({
                         id: params.row.id
                       }, {indices: false})).then(res => {
                         if (res.data.code === 0) {
-                          _this.getMenuList();
+                          _this.getClassify();
                           _this.$Message.success('删除成功')
                         } else {
-                          _this.$Message.error(res.data.message)
+                          _this.$Message.warning(res.data.message)
                         }
                       })
                     }
@@ -169,31 +194,49 @@
           },
         ],
         data: [],
+        sortsNum:'normal',
       }
     },
     methods: {
-
       //获取分类列表
       getClassify() {
         const _this = this;
+        _this.loading1=true;
         _this.Axios.get('/Manage/Category/pageList', {
           params: {
-            treeLevel: '1',   //层级
-            parentId: '',    //上级分类id
+            start:_this.start - 1,
+            size: 10,
+            treeLevel: _this.$route.query.treeLevel ? _this.$route.query.treeLevel : '1',   //层级
+            parentId: _this.$route.query.parentId ? _this.$route.query.parentId : '',    //上级分类id
+            sortsNumAsc: _this.sortsNum==='normal'?'':(_this.sortsNum==='asc'?true:false),     //true 升序  false 降序
           }
         }).then(res => {
-          _this.data = res.data.data.content
-          console.log(res.data.data.content)
+          if(res.data.code===0){
+            _this.data = res.data.data.content;
+            _this.total = res.data.data.totalElements
+          }else {
+            _this.$Message.warning(res.data.message)
+          }
           _this.loading1 = false;
-          _this.total = Number(res.data.data.totalElements)
         })
       },
 
       // 分页
       paging(i) {
         this.start = i;
+        this.getClassify()
       },
 
+      //排序
+      sorts(i){
+        const _this = this;
+        switch (i.key) {
+          case "sortsNum":
+            _this.sortsNum=i.order;
+          break;
+        }
+        _this.getClassify();
+      }
     },
     mounted() {
       this.getClassify()

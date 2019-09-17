@@ -28,12 +28,12 @@
         <!--<a href="/register" article="page-account-register">注册账户</a>-->
       <!--</div>-->
     </div>
-    <footer class="ivu-global-footer i-copyright" style="position: fixed">
-      <div class="ivu-global-footer-links">
-        <a href="http://www.e6best.com/" target="_blank" title="官网">官网</a>
-        <a href="https://weibo.com/u/6596595059" target="_blank" title="微博">微博</a></div>
-      <div class="ivu-global-footer-copyright">Copyright © 2019 上海怡乐畅购智能技术有限公司</div>
-    </footer>
+    <!--<footer class="ivu-global-footer i-copyright" style="position: fixed">-->
+      <!--<div class="ivu-global-footer-links">-->
+        <!--<a href="http://www.e6best.com/" target="_blank" title="官网">官网</a>-->
+        <!--<a href="https://weibo.com/u/6596595059" target="_blank" title="微博">微博</a></div>-->
+      <!--<div class="ivu-global-footer-copyright">Copyright © 2019 上海怡乐畅购智能技术有限公司</div>-->
+    <!--</footer>-->
   </div>
 </template>
 
@@ -66,7 +66,11 @@
               password: _this.formInline.password
             })).then(res => {
               if (res.data.code === 0) {
-                localStorage.setItem('menuList',JSON.stringify(res.data.data.reverse()));
+                console.log(res.data.data.sort(function(a,b){
+                }));
+                localStorage.setItem('menuList',JSON.stringify(res.data.data.sort(function(a,b){
+                  return Number(a.numb)-Number(b.numb)
+                })));
                 localStorage.setItem('menu1',res.data.data[0].numb);
                 localStorage.setItem('menu',res.data.data[0].children[0].children[0].numb);
                 localStorage.setItem('user',_this.formInline.user);

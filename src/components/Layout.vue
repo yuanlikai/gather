@@ -11,10 +11,6 @@
               <img src="../assets/img/logo-wat.png">
             </a>
           </div>
-          <!--<MenuItem name="1">-->
-          <!--<Icon type="md-home"/>-->
-          <!--首页-->
-          <!--</MenuItem>-->
           <div v-for="(item,index) in menuList" :key="index" v-show="item.numb===menu1">
             <MenuGroup v-for="(itema,indexa) in item.children" :key="indexa" :title="itema.name">
               <MenuItem v-for="(itemb,indexb) in itema.children" :key="indexb" :to="itemb.to" :name="itemb.numb">
@@ -23,42 +19,6 @@
               </MenuItem>
             </MenuGroup>
           </div>
-          <!--<MenuGroup v-for="(item,index) in menuList" :key="index" :title="item.children[0].name">-->
-            <!--<MenuItem v-for="(items,indexs) in item.children[0].children" :key="indexs" :to="items.to" :name="items.numb">-->
-              <!--<Icon type="ios-analytics"/>-->
-              <!--{{items.name}}-->
-            <!--</MenuItem>-->
-          <!--</MenuGroup>-->
-          <!--<MenuGroup title="分类管理">-->
-          <!--<MenuItem to="orderList" name="2">-->
-          <!--<Icon type="ios-analytics"/>-->
-          <!--分类列表-->
-          <!--</MenuItem>-->
-          <!--</MenuGroup>-->
-          <!--<MenuGroup title="报表管理">-->
-          <!--<MenuItem to="orderList" name="3">-->
-          <!--<Icon type="ios-analytics"/>-->
-          <!--订单报表-->
-          <!--</MenuItem>-->
-          <!--<MenuItem to="orderList" name="4">-->
-          <!--<Icon type="ios-analytics"/>-->
-          <!--商品报表-->
-          <!--</MenuItem>-->
-          <!--</MenuGroup>-->
-          <!--<MenuGroup title="权限管理">-->
-          <!--<MenuItem to="userList" name="5">-->
-          <!--<Icon type="ios-analytics"/>-->
-          <!--用户管理-->
-          <!--</MenuItem>-->
-          <!--<MenuItem to="roleList" name="6">-->
-          <!--<Icon type="ios-analytics"/>-->
-          <!--角色管理-->
-          <!--</MenuItem>-->
-          <!--<MenuItem to="menuList" name="7">-->
-          <!--<Icon type="ios-analytics"/>-->
-          <!--菜单管理-->
-          <!--</MenuItem>-->
-          <!--</MenuGroup>-->
         </Menu>
       </Sider>
       <Layout :class="isCollapsed?'menucls':'menucla'">
@@ -68,9 +28,6 @@
                 size="24"></Icon>
 
           <Menu v-if="isMenu" @on-select="selectMenu1" mode="horizontal" :active-name="menu1">
-            <MenuItem name="11000">
-              首页
-            </MenuItem>
             <MenuItem v-for="(item,index) in menuList" :key="index" :name="item.numb">
               {{item.name}}
             </MenuItem>
@@ -95,29 +52,7 @@
             </div>
           </Menu>
         </Header>
-        <!--<Row style="padding: 6px 0;margin: 0 12px;">-->
-        <!--<Col span="24" style="overflow-y: auto">-->
-        <!--<div article="swiper-container">-->
-        <!--<div article="swiper-wrapper">-->
-        <!--<router-link v-for="(item,index) in tabList" :key="index" :to="item.path" article="swiper-slide">-->
-        <!--<Tag type="dot" closable checkable-->
-        <!--:color="item.name===tab?'error':''" style="border: none"-->
-        <!--@on-close.prevent="handleClose(index,item.name===tab)">{{item.name}}-->
-        <!--</Tag>-->
-        <!--</router-link>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</Col>-->
-        <!--</Row>-->
-
-        <router-view :supplier="supplier"></router-view>
-
-        <!--<footer article="ivu-global-footer i-copyright">-->
-        <!--<div article="ivu-global-footer-links">-->
-        <!--<a href="http://www.e6best.com/" target="_blank" title="官网">官网</a>-->
-        <!--<a href="https://weibo.com/u/6596595059" target="_blank" title="微博">微博</a></div>-->
-        <!--<div article="ivu-global-footer-copyright">Copyright © 2019 上海怡乐畅购智能技术有限公司</div>-->
-        <!--</footer>-->
+        <router-view :supplier="supplier" @operateMuen="operateMuen"></router-view>
       </Layout>
     </Layout>
     <div @click="collapsedSider" v-if="!isCollapsed" class="zz-fixed"></div>
@@ -157,6 +92,7 @@
     },
     methods: {
       selectMenu(name) {
+        this.menu = name;
         localStorage.setItem('menu', name);
       },
       selectMenu1(name) {
@@ -199,6 +135,14 @@
           _this.supplier.supplierId = res.data.data.supplierId;
           _this.supplier.userType = res.data.data.userType;
         })
+      },
+
+      //子组件改变菜单选择
+      operateMuen(i){
+        this.menu1 = '3';
+        localStorage.setItem('menu1', '3');
+        this.menu = '3-1-1';
+        localStorage.setItem('menu', '3-1-1');
       }
     },
     mounted() {

@@ -52,9 +52,7 @@
     data() {
       return {
         policyData: {},
-        defaultList: [{
-          "filename": "http://ylmanager.oss-cn-shanghai.aliyuncs.com/Image/20190916/5e0fe2c0-d830-11e9-a215-714f93aad73b"
-        }],
+        defaultList: [],
         imgName: '',
         visible: false,
         uploadList: []
@@ -106,8 +104,7 @@
         const _this = this;
         _this.Axios.get('/aliyun/oss/policy').then(res => {
           _this.policyData = res.data.data;
-          _this.policyData.key = _this.policyData.dir + `/${uuidv1()}`
-          console.log(_this.policyData)
+          _this.policyData.key = _this.policyData.dir + `/${uuidv1()}`;
         })
       }
 

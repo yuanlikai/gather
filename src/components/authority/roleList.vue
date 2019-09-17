@@ -224,6 +224,7 @@
                             menu[i].checked = false;
                             menuList.push(menu[i])
                           }
+                          console.log(menu);
                           _this.roleTree = menuList;
                           setTimeout(() => {
                             _this.cheTree = _this.$refs.tree.getCheckedNodes()
@@ -275,6 +276,7 @@
         const _this = this;
         _this.Axios.get('/Manage/Menu/tree').then(res => {
           _this.roleTree = res.data.data;
+          console.log(_this.roleTree)
         })
       },
 
@@ -317,6 +319,7 @@
             for (let i in _this.cheTree) {
               menuIds.push(_this.cheTree[i].id)
             }
+            console.log(menuIds)
             if (_this.id === '') {
               _this.Axios.post('/Manage/Role/addRole', _this.Qs.stringify({
                 roleName: _this.formValidate.roleName,        //角色名称

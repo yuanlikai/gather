@@ -1,20 +1,16 @@
-<style lang="less">
-  .ivu-tree li ul {
-    padding: 0 0 0 60px;
-  }
-</style>
+
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">订单列表</div>
     </Card>
-    <RadioGroup :style="{margin: '16px 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
+    <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
                 v-model="formValidate.state" @on-change="start=1,getOrder()">
       <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
         {{ item.Name }}
       </Radio>
     </RadioGroup>
-    <RadioGroup :style="{margin: '16px 20px 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
+    <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
                 v-model="formValidate.state">
       <Radio style="padding:0 20px" label="异常订单">异常订单</Radio>
       <Radio style="padding:0 20px" label="超时发货">超时发货</Radio>
@@ -41,7 +37,7 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="产品名称：" prop="proname">
+            <FormItem label="商品名称：" prop="proname">
               <Input v-model="formValidate.proname" placeholder="请输入"/>
             </FormItem>
           </Col>
@@ -95,8 +91,10 @@
       </p>
       <p slot="extra">
         <ButtonGroup>
-          <Button type="dashed">批量发货</Button>
-          <Button type="dashed">导出订单</Button>
+          <Button type="dashed" v-show="formValidate.state==='1'">批量发货</Button>
+          <Button type="dashed">批量导出订单</Button>
+        </ButtonGroup>
+        <ButtonGroup>
           <Button type="dashed">下载模板</Button>
         </ButtonGroup>
       </p>
@@ -109,7 +107,7 @@
     <Modal v-model="modal1" width="360">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
-        <span>Confirm the delivery</span>
+        <span>请填写发货信息</span>
       </p>
       <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidate1" :label-width="80">
         <FormItem label="快递公司" prop="Express">
@@ -256,7 +254,7 @@
         OperBtn: [],
         columns: [
           {
-            type: 'selection',
+            type: 'index',
             width: 60,
             align: 'center'
           },
@@ -290,14 +288,14 @@
             tooltip: true,
             align: "center",
           },
-          {
-            title: '用户名',
-            key: 'UserName',
-            minWidth: 88,
-            maxWidth: 120,
-            tooltip: true,
-            align: "center",
-          },
+          // {
+          //   title: '用户名',
+          //   key: 'UserName',
+          //   minWidth: 88,
+          //   maxWidth: 120,
+          //   tooltip: true,
+          //   align: "center",
+          // },
           {
             title: '订单状态',
             key: 'StateStr',
@@ -316,16 +314,16 @@
             sortable: true
           },
           {
-            title: '收货人',
-            key: 'Consignee',
+            title: '供应商',
+            key: 'Supplier',
             minWidth: 88,
             maxWidth: 120,
             tooltip: true,
             align: "center",
           },
           {
-            title: '供应商',
-            key: 'Supplier',
+            title: '收货人',
+            key: 'Consignee',
             minWidth: 88,
             maxWidth: 120,
             tooltip: true,
@@ -490,14 +488,14 @@
         },
         ruleValidate1: {
           Express: [
-            {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+            {required: true, message: '请填写快递公司', trigger: 'blur'}
           ],
           ExpressNo: [
-            {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+            {required: true, message: '请填写快递单号', trigger: 'blur'}
           ],
         },
         formValidate: {
-          state: '0',
+          state: this.$route.query.id?this.$route.query.id:'0',
           supplierid: '-1',
           ordernumber: '',
           proname: '',
@@ -553,6 +551,7 @@
         _this.loading1 = true;
         _this.Axios.get('/Manage/Order/pageList', {
           params: {
+            sortid:'',
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid,
             ordernumber: _this.formValidate.ordernumber,
@@ -603,7 +602,6 @@
           if (valid) {
             this.start = 1;
             this.getOrder();
-            this.$Message.success('Success!');
           } else {
             this.$Message.error('Fail!');
           }
@@ -638,14 +636,14 @@
       getStatus() {
         const _this = this;
         _this.Axios.get('/Manage/Order/getStateStr').then(res => {
-          _this.statusList=res.data.data;
-          for(let i = 0;i<_this.statusList.length;i++){
+          _this.statusList = res.data.data;
+          for (let i = 0; i < _this.statusList.length; i++) {
             _this.Axios.get('/Manage/Order/getOrderNum', {
               params: {
                 state: _this.statusList[i].Id
               }
             }).then(res => {
-              _this.statusList[i].Name=_this.statusList[i].Name+'('+ res.data.num +')'
+              _this.statusList[i].Name = _this.statusList[i].Name + '(' + res.data.num + ')'
             });
           }
         })

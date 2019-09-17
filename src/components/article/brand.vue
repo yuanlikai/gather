@@ -1,8 +1,4 @@
-<style lang="less">
-  .ivu-tree li ul {
-    padding: 0 0 0 60px;
-  }
-</style>
+
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
