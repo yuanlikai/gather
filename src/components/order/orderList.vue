@@ -7,7 +7,7 @@
     <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
                 v-model="formValidate.state" @on-change="start=1,getOrder()">
       <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
-        {{ item.Name }}
+        {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
       </Radio>
     </RadioGroup>
     <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
@@ -57,7 +57,7 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="成交时间：" prop="time">
+            <FormItem label="下单时间：" prop="time">
               <DatePicker @on-change="start=1,getOrder()" style="width: 100%;cursor: pointer;" v-model="formValidate.time"
                           format="yyyy/MM/dd" type="daterange"
                           placement="bottom-end" placeholder="请选择" :editable="false"></DatePicker>
@@ -104,27 +104,7 @@
         <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
-    <express ref="express"></express>
-    <!--<Modal v-model="modal1" width="360">-->
-      <!--<p slot="header" style="text-align:center">-->
-        <!--<Icon type="ios-information-circle"></Icon>-->
-        <!--<span>请填写发货信息</span>-->
-      <!--</p>-->
-      <!--<Form ref="formValidate1" :model="formValidate1" :rules="ruleValidate1" :label-width="80">-->
-        <!--<FormItem label="快递公司" prop="Express">-->
-          <!--<Input v-model="formValidate1.Express" placeholder="请输入"></Input>-->
-        <!--</FormItem>-->
-        <!--<FormItem label="快递单号" prop="ExpressNo">-->
-          <!--<Input v-model="formValidate1.ExpressNo" placeholder="请输入"></Input>-->
-        <!--</FormItem>-->
-        <!--<FormItem label="备注" prop="Description">-->
-          <!--<Input type="textarea" v-model="formValidate1.Description" placeholder="请输入"></Input>-->
-        <!--</FormItem>-->
-      <!--</Form>-->
-      <!--<div slot="footer">-->
-        <!--<Button type="success" size="large" long @click="shipments('formValidate1')">发货</Button>-->
-      <!--</div>-->
-    <!--</Modal>-->
+    <express ref="express" @getOrder="getOrder" @getOrderNum="getOrderNum"></express>
     <Modal v-model="modal2" width="660">
       <p slot="header">
         <Icon type="ios-information-circle"></Icon>
@@ -243,8 +223,8 @@
                       const _this = this;
                       _this.OperBtn[params.index].number = Number(e);
                       for (let i in _this.ReOrder.prolist) {
-                        if (_this.ReOrder.prolist[i].id === params.row.ID) {
-                          _this.ReOrder.prolist[i].num = Number(e)
+                        if (_this.ReOrder.prolist[i].id == params.row.ID) {
+                          _this.ReOrder.prolist[i].num = String(e)
                         }
                       }
                       this.totalPrices();
@@ -292,14 +272,6 @@
             tooltip: true,
             align: "center",
           },
-          // {
-          //   title: '用户名',
-          //   key: 'UserName',
-          //   minWidth: 88,
-          //   maxWidth: 120,
-          //   tooltip: true,
-          //   align: "center",
-          // },
           {
             title: '订单状态',
             key: 'StateStr',
@@ -379,7 +351,6 @@
                   on: {
                     'on-ok': () => {
                       const _this = this;
-                      console.log(params.row.id)
                       _this.Axios.post('/Manage/Order/updateOrder', _this.Qs.stringify({
                         idstr: params.row.ID,
                         statusid: 1,
@@ -390,6 +361,7 @@
                         if (res.data.error === 0) {
                           _this.$Message.success('审核成功');
                           _this.getOrder();
+                          _this.getOrderNum();
                           _this.modal1 = false;
                         } else {
                           _this.$Message.error(res.data.errorMsg);
@@ -441,6 +413,7 @@
                       })).then(res => {
                         if (res.data.code === 0) {
                           _this.getOrder();
+                          _this.getOrderNum();
                           _this.$Message.success('退单成功！')
                         } else {
                           _this.$Message.error(res.data.errorMsg)
@@ -480,22 +453,6 @@
 
         ],
         data: [],
-
-        // formValidate1: {
-        //   idstr: '',
-        //   statusid: '',
-        //   Express: '',
-        //   ExpressNo: '',
-        //   Description: '',
-        // },
-        // ruleValidate1: {
-        //   Express: [
-        //     {required: true, message: '请填写快递公司', trigger: 'blur'}
-        //   ],
-        //   ExpressNo: [
-        //     {required: true, message: '请填写快递单号', trigger: 'blur'}
-        //   ],
-        // },
         formValidate: {
           state: this.$route.params.id?this.$route.params.id:'0',
           supplierid: '-1',
@@ -511,7 +468,8 @@
         supplierList: [],
         statusList: [],
         start: 1,
-        sortid:''
+        sortid:'',
+        orderNum:{},
       }
     },
     methods: {
@@ -531,32 +489,6 @@
         }
         this.getOrder();
       },
-
-      //确认发货
-      // shipments(name) {
-      //   const _this = this;
-      //   _this.$refs[name].validate((valid) => {
-      //     if (valid) {
-      //       _this.Axios.post('/Manage/Order/updateOrder', _this.Qs.stringify({
-      //         idstr: _this.formValidate1.idstr,
-      //         statusid: 2,
-      //         Express: _this.formValidate1.Express,
-      //         ExpressNo: _this.formValidate1.ExpressNo,
-      //         Description: _this.formValidate1.Description
-      //       })).then(res => {
-      //         if (res.data.error === 0) {
-      //           _this.$Message.success('发货成功');
-      //           _this.getOrder();
-      //           _this.modal1 = false;
-      //         } else {
-      //           _this.$Message.error(res.data.errorMsg);
-      //         }
-      //       })
-      //     } else {
-      //       _this.$Message.error('请填写必填项!');
-      //     }
-      //   })
-      // },
 
       // 分页
       paging(i) {
@@ -620,6 +552,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.start = 1;
+            this.total = 0;
             this.getOrder();
           } else {
             this.$Message.error('Fail!');
@@ -644,6 +577,7 @@
         })).then(res => {
           if (res.data.code === 0) {
             _this.$Message.success('已提交申请退单');
+            _this.getOrderNum();
             _this.modal2 = false;
           } else {
             _this.$Message.warning(res.data.errorMsg)
@@ -656,16 +590,14 @@
         const _this = this;
         _this.Axios.get('/Manage/Order/getStateStr').then(res => {
           _this.statusList = res.data.data;
-          // for (let i = 0; i < _this.statusList.length; i++) {
-          //   _this.Axios.get('/Manage/Order/getOrderNum', {
-          //     params: {
-          //       state: _this.statusList[i].Id
-          //     }
-          //   }).then(res => {
-          //     _this.statusList[i].Name = _this.statusList[i].Name + '(' + res.data.num + ')'
-          //   });
-          // }
         })
+      },
+      //获取状态数量
+      getOrderNum(){
+        const _this = this;
+        _this.Axios.get('/Manage/Order/getOrderNum').then(res => {
+          _this.orderNum=res.data
+        });
       },
 
       //获取供应商
@@ -704,6 +636,7 @@
       this.getOrder();
       this.getSupplier();
       this.getStatus();
+      this.getOrderNum();
     }
   }
 </script>

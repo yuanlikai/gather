@@ -18,8 +18,8 @@
         :rules="{ validator: validatePass,required: true, index: index, trigger: 'change'}">
         <Row>
           <Col span="18">
-            <Input type="text" v-model="item.Express" placeholder="请输入快递公司"></Input>
-            <Input type="text" v-model="item.ExpressNo" placeholder="请输入物流单号"></Input>
+            <Input :maxlength="20" type="text" v-model="item.Express" placeholder="请输入快递公司"></Input>
+            <Input :maxlength="20" type="text" v-model="item.ExpressNo" placeholder="请输入物流单号"></Input>
           </Col>
           <Col span="4" offset="1">
             <Button @click="handleRemove(index)">Delete</Button>
@@ -56,6 +56,8 @@
             }
           ],
           idstr:'',
+          Express: [],
+          ExpressNo: [],
           Description: '',
         }
       }
@@ -71,19 +73,26 @@
       },
       handleSubmit(name) {
         const _this = this;
+        this.formDynamic.Express=[];
+        this.formDynamic.ExpressNo=[];
+        for(let i in _this.formDynamic.items){
+          this.formDynamic.Express.push(_this.formDynamic.items[i].Express);
+          this.formDynamic.ExpressNo.push(_this.formDynamic.items[i].ExpressNo);
+        }
         this.$refs[name].validate((valid) => {
           if (valid) {
             _this.Axios.post('/Manage/Order/updateOrder', _this.Qs.stringify({
-              idstr: _this.formValidate1.idstr,
+              idstr: _this.formDynamic.idstr,
               statusid: 2,
-              Express: _this.formValidate1.Express,
-              ExpressNo: _this.formValidate1.ExpressNo,
-              Description: _this.formValidate1.Description
+              Express: _this.formDynamic.Express.join('，'),
+              ExpressNo: _this.formDynamic.ExpressNo.join('，'),
+              Description: _this.formDynamic.Description
             })).then(res => {
               if (res.data.error === 0) {
                 _this.$Message.success('发货成功');
-                _this.getOrder();
-                _this.modal1 = false;
+                _this.$emit('getOrder');
+                _this.$emit('getOrderNum')
+                _this.model = false;
               } else {
                 _this.$Message.error(res.data.errorMsg);
               }

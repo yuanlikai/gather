@@ -42,13 +42,13 @@
           <p class="colClass" style="font-weight: 500;">收货人及物流信息</p>
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
+          快递公司：{{data.Express}}
+        </Col>
+        <Col class="colClass" :xs="24" :md="12" :lg="8">
           收货人：{{data.Consignee}}
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           手机号：{{data.Phone}}
-        </Col>
-        <Col class="colClass" :xs="24" :md="12" :lg="8">
-          快递公司：{{data.Express}}
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           物流单号：{{data.ExpressNo}}
@@ -56,6 +56,8 @@
         <Col class="colClass" :md="24" :lg="16">
           地址：{{data.Address}}
         </Col>
+
+        <Button @click="amend" type="primary" style="margin-left: 16px">{{data.ExpressNo.length>0?'修改':'填写'}}物流信息</Button>
       </Row>
       <Divider/>
       <Row :gutter="30">
@@ -97,10 +99,15 @@
       </Row>
       <!--<Divider/>-->
     </Content>
+    <express ref="express" @getOrder="getDetails"></express>
   </div>
 </template>
 <script>
+  import express from './express'
   export default {
+    components:{
+      express
+    },
     data() {
       return {
         loading: true,
@@ -178,6 +185,20 @@
       }
     },
     methods: {
+      //修改物流信息
+      amend(){
+        const _this = this;
+        _this.$refs.express.model=true;
+        _this.$refs.express.formDynamic.idstr = _this.$route.query.idstr;
+        for (let i =0;i<_this.data.Express.split('，').length;i++){
+          _this.$refs.express.formDynamic.items[i]= {
+              Express: _this.data.Express.split('，')[i],
+              ExpressNo: _this.data.ExpressNo.split('，')[i]
+            }
+        }
+      },
+
+      //获取订单详情
       getDetails() {
         const _this = this;
         _this.Axios.get('/Manage/Order/detail', {

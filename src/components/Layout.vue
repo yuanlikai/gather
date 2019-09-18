@@ -23,16 +23,15 @@
       </Sider>
       <Layout :class="isCollapsed?'menucls':'menucla'">
         <Header :style="{padding: 10,display: 'flex'}" class="layout-header-bar">
-          <Icon @click.native="collapsedSider" :class="rotateIcon" :style="{margin: '0 24px','line-height':'64px'}"
+          <Icon @click.native="collapsedSider" :class="rotateIcon"
+                :style="{margin: '0 24px','line-height':'64px',cursor:'pointer'}"
                 type="md-menu"
                 size="24"></Icon>
-
           <Menu v-if="isMenu" @on-select="selectMenu1" mode="horizontal" :active-name="menu1">
             <MenuItem v-for="(item,index) in menuList" :key="index" :name="item.numb">
               {{item.name}}
             </MenuItem>
           </Menu>
-
           <Menu mode="horizontal" type="light" style="margin-left: auto;margin-right: 20px;">
             <div class="layout-logo"></div>
             <div class="layout-nav">
@@ -138,12 +137,12 @@
       },
 
       //子组件改变菜单选择
-      operateMuen(a,b){
+      operateMuen(a, b) {
         this.menu1 = a;
         localStorage.setItem('menu1', a);
         this.menu = b;
         localStorage.setItem('menu', b);
-        if(b==='1-1-2'){
+        if (b === '1-1-2') {
           this.$router.push('/home')
         }
       }

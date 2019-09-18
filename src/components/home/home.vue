@@ -9,7 +9,7 @@
       </p>
       <Row>
         <Col span="8" style="height: 35px;padding: 0 20px" v-for="(item,index) in statusList" :key="index">
-          <a @click="order(item.Id)">{{item.Name}}</a>&nbsp;&nbsp;(10)
+          <a @click="order(item.Id)">{{item.Name}}</a> ({{orderNum["num"+String(index+1)]}})
         </Col>
       </Row>
 
@@ -20,7 +20,8 @@
   export default {
     data() {
       return {
-        statusList:[]
+        statusList:[],
+        orderNum:{}
       }
     },
     methods: {
@@ -42,10 +43,19 @@
             id:Id
           }
         });
-      }
+      },
+
+      //获取状态数量
+      getOrderNum(){
+        const _this = this;
+        _this.Axios.get('/Manage/Order/getOrderNum').then(res => {
+          _this.orderNum=res.data;
+        });
+      },
     },
     mounted() {
-      this.getStatus()
+      this.getStatus();
+      this.getOrderNum()
 
     }
   }

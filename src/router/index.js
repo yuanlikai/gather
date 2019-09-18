@@ -79,6 +79,16 @@ export default new Router({
           path: '/home',
           name: '系统首页',
           component: resolve => require(['@/components/home/home'], resolve),
+        },
+        {
+          path: '/terrace',
+          name: '平台设置',
+          component: resolve => require(['@/components/setting/terrace'], resolve),
+        },
+        {
+          path: '/addTerrace',
+          name: '添加平台',
+          component: resolve => require(['@/components/setting/addTerrace'], resolve),
         }
       ]
     }
