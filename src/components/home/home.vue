@@ -35,10 +35,10 @@
       //根据ID 跳转到订单页面
       order(Id){
         this.menu1 = '3';
-        this.$emit('operateMuen')
+        this.$emit('operateMuen','3','3-1-1');
         this.$router.push({
-          path:'/orderList',
-          query:{
+          name:'订单列表',
+          params:{
             id:Id
           }
         });

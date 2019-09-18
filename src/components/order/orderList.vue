@@ -53,12 +53,12 @@
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="手机号：" prop="phone">
-              <Input v-model="formValidate.phone" placeholder="请输入"/>
+              <Input :maxlength="11" @on-keyup="formValidate.phone=formValidate.phone.replace(/[^\d]/g,'')" v-model="formValidate.phone" placeholder="请输入"/>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="成交时间：" prop="time">
-              <DatePicker @on-change="start=1,getOrder()" style="width: 100%" v-model="formValidate.time"
+              <DatePicker @on-change="start=1,getOrder()" style="width: 100%;cursor: pointer;" v-model="formValidate.time"
                           format="yyyy/MM/dd" type="daterange"
                           placement="bottom-end" placeholder="请选择" :editable="false"></DatePicker>
             </FormItem>
@@ -98,32 +98,33 @@
           <Button type="dashed">下载模板</Button>
         </ButtonGroup>
       </p>
-      <Table :loading="loading1" :show-header="true" :columns="columns" :data="data"></Table>
+      <Table @on-sort-change="sorts" :loading="loading1" :show-header="true" :columns="columns" :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
       <div style="width: 100%;text-align: center;margin-top: 15px">
         <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
-    <Modal v-model="modal1" width="360">
-      <p slot="header" style="text-align:center">
-        <Icon type="ios-information-circle"></Icon>
-        <span>请填写发货信息</span>
-      </p>
-      <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidate1" :label-width="80">
-        <FormItem label="快递公司" prop="Express">
-          <Input v-model="formValidate1.Express" placeholder="请输入"></Input>
-        </FormItem>
-        <FormItem label="快递单号" prop="ExpressNo">
-          <Input v-model="formValidate1.ExpressNo" placeholder="请输入"></Input>
-        </FormItem>
-        <FormItem label="备注" prop="Description">
-          <Input type="textarea" v-model="formValidate1.Description" placeholder="请输入"></Input>
-        </FormItem>
-      </Form>
-      <div slot="footer">
-        <Button type="success" size="large" long @click="shipments('formValidate1')">发货</Button>
-      </div>
-    </Modal>
+    <express ref="express"></express>
+    <!--<Modal v-model="modal1" width="360">-->
+      <!--<p slot="header" style="text-align:center">-->
+        <!--<Icon type="ios-information-circle"></Icon>-->
+        <!--<span>请填写发货信息</span>-->
+      <!--</p>-->
+      <!--<Form ref="formValidate1" :model="formValidate1" :rules="ruleValidate1" :label-width="80">-->
+        <!--<FormItem label="快递公司" prop="Express">-->
+          <!--<Input v-model="formValidate1.Express" placeholder="请输入"></Input>-->
+        <!--</FormItem>-->
+        <!--<FormItem label="快递单号" prop="ExpressNo">-->
+          <!--<Input v-model="formValidate1.ExpressNo" placeholder="请输入"></Input>-->
+        <!--</FormItem>-->
+        <!--<FormItem label="备注" prop="Description">-->
+          <!--<Input type="textarea" v-model="formValidate1.Description" placeholder="请输入"></Input>-->
+        <!--</FormItem>-->
+      <!--</Form>-->
+      <!--<div slot="footer">-->
+        <!--<Button type="success" size="large" long @click="shipments('formValidate1')">发货</Button>-->
+      <!--</div>-->
+    <!--</Modal>-->
     <Modal v-model="modal2" width="660">
       <p slot="header">
         <Icon type="ios-information-circle"></Icon>
@@ -158,14 +159,17 @@
   </div>
 </template>
 <script>
+  import express from './express'
   export default {
+    components:{
+      express
+    },
     props: ['supplier'],
     data() {
       return {
         total: 0,
         modal2: false,
         loading1: false,
-        modal1: false,
         OrderNumber: '',
         ReOrder: {
           dstr: '',  //原单Id
@@ -354,16 +358,14 @@
                   on: {
                     click: () => {
                       const _this = this;
-                      _this.modal1 = true;
-                      _this.formValidate1 = {
-                        idstr: '',
-                        statusid: '',
-                        Express: '',
-                        ExpressNo: '',
-                        Description: '',
-                      };
-                      _this.formValidate1.idstr = params.row.ID;
-                      _this.formValidate1.statusid = params.row.State
+                      _this.$refs.express.model=true;
+                      _this.$refs.express.formDynamic.idstr = params.row.ID;
+                      _this.$refs.express.formDynamic.items = [
+                        {
+                          Express: '',
+                          ExpressNo: ''
+                        }
+                      ]
                     }
                   }
                 }, '发货');
@@ -479,23 +481,23 @@
         ],
         data: [],
 
-        formValidate1: {
-          idstr: '',
-          statusid: '',
-          Express: '',
-          ExpressNo: '',
-          Description: '',
-        },
-        ruleValidate1: {
-          Express: [
-            {required: true, message: '请填写快递公司', trigger: 'blur'}
-          ],
-          ExpressNo: [
-            {required: true, message: '请填写快递单号', trigger: 'blur'}
-          ],
-        },
+        // formValidate1: {
+        //   idstr: '',
+        //   statusid: '',
+        //   Express: '',
+        //   ExpressNo: '',
+        //   Description: '',
+        // },
+        // ruleValidate1: {
+        //   Express: [
+        //     {required: true, message: '请填写快递公司', trigger: 'blur'}
+        //   ],
+        //   ExpressNo: [
+        //     {required: true, message: '请填写快递单号', trigger: 'blur'}
+        //   ],
+        // },
         formValidate: {
-          state: this.$route.query.id?this.$route.query.id:'0',
+          state: this.$route.params.id?this.$route.params.id:'0',
           supplierid: '-1',
           ordernumber: '',
           proname: '',
@@ -508,36 +510,53 @@
         },
         supplierList: [],
         statusList: [],
-        start: 1
+        start: 1,
+        sortid:''
       }
     },
     methods: {
 
-      //确认发货
-      shipments(name) {
-        const _this = this;
-        _this.$refs[name].validate((valid) => {
-          if (valid) {
-            _this.Axios.post('/Manage/Order/updateOrder', _this.Qs.stringify({
-              idstr: _this.formValidate1.idstr,
-              statusid: 2,
-              Express: _this.formValidate1.Express,
-              ExpressNo: _this.formValidate1.ExpressNo,
-              Description: _this.formValidate1.Description
-            })).then(res => {
-              if (res.data.error === 0) {
-                _this.$Message.success('发货成功');
-                _this.getOrder();
-                _this.modal1 = false;
-              } else {
-                _this.$Message.error(res.data.errorMsg);
-              }
-            })
-          } else {
-            _this.$Message.error('请填写必填项!');
-          }
-        })
+      //订单时间金额升序降序
+      sorts(i){
+        switch (i.order) {
+          case 'asc':
+            i.key==='AddTime'?this.sortid='1':this.sortid='3';
+            break;
+          case 'desc':
+            i.key==='AddTime'?this.sortid='2':this.sortid='4';
+            break;
+          default:
+            this.sortid='';
+            break
+        }
+        this.getOrder();
       },
+
+      //确认发货
+      // shipments(name) {
+      //   const _this = this;
+      //   _this.$refs[name].validate((valid) => {
+      //     if (valid) {
+      //       _this.Axios.post('/Manage/Order/updateOrder', _this.Qs.stringify({
+      //         idstr: _this.formValidate1.idstr,
+      //         statusid: 2,
+      //         Express: _this.formValidate1.Express,
+      //         ExpressNo: _this.formValidate1.ExpressNo,
+      //         Description: _this.formValidate1.Description
+      //       })).then(res => {
+      //         if (res.data.error === 0) {
+      //           _this.$Message.success('发货成功');
+      //           _this.getOrder();
+      //           _this.modal1 = false;
+      //         } else {
+      //           _this.$Message.error(res.data.errorMsg);
+      //         }
+      //       })
+      //     } else {
+      //       _this.$Message.error('请填写必填项!');
+      //     }
+      //   })
+      // },
 
       // 分页
       paging(i) {
@@ -551,7 +570,7 @@
         _this.loading1 = true;
         _this.Axios.get('/Manage/Order/pageList', {
           params: {
-            sortid:'',
+            sortid:_this.sortid,
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid,
             ordernumber: _this.formValidate.ordernumber,
@@ -637,15 +656,15 @@
         const _this = this;
         _this.Axios.get('/Manage/Order/getStateStr').then(res => {
           _this.statusList = res.data.data;
-          for (let i = 0; i < _this.statusList.length; i++) {
-            _this.Axios.get('/Manage/Order/getOrderNum', {
-              params: {
-                state: _this.statusList[i].Id
-              }
-            }).then(res => {
-              _this.statusList[i].Name = _this.statusList[i].Name + '(' + res.data.num + ')'
-            });
-          }
+          // for (let i = 0; i < _this.statusList.length; i++) {
+          //   _this.Axios.get('/Manage/Order/getOrderNum', {
+          //     params: {
+          //       state: _this.statusList[i].Id
+          //     }
+          //   }).then(res => {
+          //     _this.statusList[i].Name = _this.statusList[i].Name + '(' + res.data.num + ')'
+          //   });
+          // }
         })
       },
 

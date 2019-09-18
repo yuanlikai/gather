@@ -7,7 +7,7 @@
         <Menu v-if="isMenu" @on-select="selectMenu" :theme="'dark'" :active-name="menu"
               width="256px">
           <div class="i-layout-sider-logo i-layout-sider-logo-dark">
-            <a class="i-link i-link-color">
+            <a @click="operateMuen('1','1-1-2')" class="i-link i-link-color">
               <img src="../assets/img/logo-wat.png">
             </a>
           </div>
@@ -138,11 +138,14 @@
       },
 
       //子组件改变菜单选择
-      operateMuen(i){
-        this.menu1 = '3';
-        localStorage.setItem('menu1', '3');
-        this.menu = '3-1-1';
-        localStorage.setItem('menu', '3-1-1');
+      operateMuen(a,b){
+        this.menu1 = a;
+        localStorage.setItem('menu1', a);
+        this.menu = b;
+        localStorage.setItem('menu', b);
+        if(b==='1-1-2'){
+          this.$router.push('/home')
+        }
       }
     },
     mounted() {
