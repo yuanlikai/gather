@@ -74,7 +74,7 @@ margin-right: 16px">
           </FormItem>
           <FormItem v-if="id===''" label="供应商" prop="supplierId">
             <Select v-model="formValidate.supplierId" style="width:200px">
-              <Option v-for="item in supplierList" :value="String(item.ID)" :key="item.ID">{{ item.Name }}</Option>
+              <Option v-for="item in supplierList" :value="String(item.id)" :key="item.id">{{ item.supplierName }}</Option>
             </Select>
           </FormItem>
           <FormItem v-if="userInfoType!=='SUPPLIER'" label="角色绑定" prop="roleIds">
@@ -207,8 +207,9 @@ margin-right: 16px">
       //获取供应商下拉
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/Manage/Supplier/list').then(res => {
-          if (res.data.error === 0) {
+        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
+          console.log(res.data.data)
+          if (res.data.code === 0) {
             _this.supplierList = res.data.data
           } else {
             _this.$Message.error(res.data.message)

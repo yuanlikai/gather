@@ -1,4 +1,3 @@
-
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
@@ -6,21 +5,33 @@
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="70" style="width: 500px">
-        <FormItem label="分类名称" prop="name" style="width: 500px">
-          <Input :maxlength="50" v-model="formValidate.name" placeholder="请输入"></Input>
+        <FormItem label="品牌名称" prop="brandName" style="width: 500px">
+          <Input :maxlength="30" v-model="formValidate.brandName" placeholder="请输入"></Input>
         </FormItem>
-        <FormItem v-show="$route.query.name" label="上级分类" prop="parentId" style="width: 500px">
-          <Input v-model="formValidate.parentId" disabled="disabled" placeholder="请输入"></Input>
+        <FormItem label="品牌简称" prop="abbrBrandName" style="width: 500px">
+          <Input :maxlength="6" v-model="formValidate.abbrBrandName" placeholder="请输入"></Input>
+        </FormItem>
+        <FormItem label="品牌logo" prop="logoUrl" style="width: 500px">
+          <upImg ref="logoUrl"></upImg>
+        </FormItem>
+        <FormItem label="专区大图" style="width: 500px">
+          <upImg ref="brandImg"></upImg>
+        </FormItem>
+        <FormItem label="品牌故事" prop="brandStory" style="width: 500px">
+          <Input :maxlength="100" type="textarea" v-model="formValidate.brandStory" placeholder="请输入"></Input>
         </FormItem>
         <FormItem label="排序" prop="sortsNum" style="width: 500px">
-          <Input :maxlength="3" @on-keyup="formValidate.sortsNum=formValidate.sortsNum.replace(/[^\d]/g,'')" v-model="formValidate.sortsNum" placeholder="请输入"></Input>
+          <Input :maxlength="3" @on-keyup="formValidate.sortsNum=formValidate.sortsNum.replace(/[^\d]/g,'')"
+                 v-model="formValidate.sortsNum" placeholder="请输入"></Input>
         </FormItem>
-        <FormItem label="分类图标" prop="sortsNum" style="width: 500px">
-          <upImg ref="classify"></upImg>
+        <FormItem label="是否显示" prop="display" style="width: 500px">
+          <RadioGroup v-model="formValidate.display">
+            <Radio label="true">是</Radio>
+            <Radio label="false">否</Radio>
+          </RadioGroup>
         </FormItem>
-        <FormItem label="分类描述" prop="description" style="width: 500px">
-          <Input :maxlength="30" type="textarea" v-model="formValidate.description" placeholder="请输入"></Input>
-        </FormItem>
+
+
         <FormItem prop="description" style="width: 500px">
           <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
         </FormItem>
@@ -31,24 +42,37 @@
 </template>
 <script>
   import upImg from '../upImg'
+
   export default {
-    components:{
+    components: {
       upImg
     },
     data() {
+      const validate = (rule, value, callback) => {
+        if (this.$refs.logoUrl.uploadList < 1) {
+          callback(new Error('请上传品牌logo'));
+        } else {
+          callback();
+        }
+      };
       return {
-        detail:{},
+        detail: {},
         formValidate: {
-          id: '',              //分类id 传入就是新增
-          sortsNum:'',          //排序
-          parentId: this.$route.query.name,         //上级分类id
-          name: '',           //分类名称
-          description: '',     //隔开 最大长度30
+          id:'',  //更新时传id
+          brandName:'',  //品牌名称30
+          abbrBrandName:'',  //品牌简写6
+          brandStory:'',  //品牌故事100
+          logoUrl:'',  //品牌LOGO路径160
+          sortsNum:'',  //排序编号 3
+          display:'true',  //是否显示 true为显示 false为不显示
         },
         ruleValidate: {
-          name: [
-            {required: true, message: '请输入名称', trigger: 'blur'}
-          ]
+          brandName: [
+            {required: true, message: '请输入品牌名称', trigger: 'blur'}
+          ],
+          logoUrl: [
+            {validator: validate, required: true, trigger: 'change'}
+          ],
         },
       }
     },
@@ -59,17 +83,20 @@
         const _this = this;
         _this.$refs[name].validate((valid) => {
           if (valid) {
-            _this.Axios.post('/Manage/Category/saveCategory',_this.Qs.stringify({
-              id: _this.formValidate.id,                      //分类id 传入就是新增
-              sortsNum:_this.formValidate.sortsNum,          //排序
-              parentId: _this.$route.query.parentId?_this.$route.query.parentId:'',         //上级分类id
-              imgUrl: _this.$refs.classify.uploadList.length>0?_this.$refs.classify.uploadList[0].filename:'',              //图标
-              name: _this.formValidate.name,                  //分类名称
-              description: _this.formValidate.description,     //隔开 最大长度30
-            })).then(res=>{
-              if(res.data.code===0){
+            console.log(_this.$refs.logoUrl.uploadList[0].filename)
+            _this.Axios.post('/Manage/Brand/save', _this.Qs.stringify({
+              id:'',  //更新时传id
+              brandName: _this.formValidate.brandName,  //品牌名称30
+              abbrBrandName: _this.formValidate.abbrBrandName,  //品牌简写6
+              brandStory: _this.formValidate.brandStory,  //品牌故事100
+              sortsNum: _this.formValidate.sortsNum,  //排序编号 3
+              logoUrl: _this.$refs.logoUrl.uploadList[0].filename,  //品牌LOGO路径160
+              brandImg: _this.$refs.brandImg.uploadList.length>0?_this.$refs.brandImg.uploadList[0].filename:'',  //品牌大图路径160
+              display: _this.formValidate.display,  //是否显示 true为显示 false为不显示
+            })).then(res => {
+              if (res.data.code === 0) {
                 _this.$Message.success('添加成功！')
-              }else {
+              } else {
                 _this.$Message.warning(res.data.message)
               }
             })
@@ -83,23 +110,23 @@
       },
 
       //获取分类详情
-      getDetail(){
+      getDetail() {
         const _this = this;
-        _this.Axios.get('/Manage/Category/detail',{
-          params:{
-            id:_this.$route.query.id
+        _this.Axios.get('/Manage/Category/detail', {
+          params: {
+            id: _this.$route.query.id
           }
-        }).then(res=>{
-          _this.formValidate= {
+        }).then(res => {
+          _this.formValidate = {
             id: res.data.data.id,              //分类id 传入就是新增
-            sortsNum:res.data.data.sortsNum,          //排序
+            sortsNum: res.data.data.sortsNum,          //排序
             parentId: this.$route.query.name,         //上级分类id
             name: res.data.data.name,           //分类名称
             description: res.data.data.description,     //隔开 最大长度30
           };
-          if(res.data.data.imgUrl){
+          if (res.data.data.imgUrl) {
             _this.$refs.classify.defaultList.push({
-              filename:res.data.data.imgUrl
+              filename: res.data.data.imgUrl
             });
           }
           console.log(res.data.data)
@@ -108,7 +135,7 @@
       }
     },
     mounted() {
-      this.$route.query.id?this.getDetail():'';
+      this.$route.query.id ? this.getDetail() : '';
     }
   }
 </script>

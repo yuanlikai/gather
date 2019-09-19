@@ -67,13 +67,13 @@
           {
             title: '关联分类数(三级)',
             tooltip: true,
-            key: '',
+            key: 'categoryCount',
             align: "center",
           },
           {
             title: '关联供应商数',
             tooltip: true,
-            key: '',
+            key: 'supplierCount',
             align: "center",
           },
           {

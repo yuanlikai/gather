@@ -90,7 +90,7 @@
       </p>
       <p slot="extra">
         <ButtonGroup>
-          <Button type="dashed" v-show="formValidate.state==='1'">批量发货</Button>
+          <Button type="dashed" v-if="formValidate.state==='1'">批量发货</Button>
           <Button type="dashed">批量导出订单</Button>
         </ButtonGroup>
         <ButtonGroup>
@@ -492,12 +492,11 @@
       // 分页
       paging(i) {
         this.start = i;
-        this.getOrder();
+        this.getOrder(this.formValidate.state>8?'yc':'');
       },
 
       //获取订单列表
       getOrder(i) {
-        console.log(i==='yc')
         const _this = this;
         _this.loading1 = true;
         _this.Axios.get(i!=='yc'?'/Manage/Order/pageList':'/Manage/Order/getYcOrderList', {
