@@ -1,19 +1,18 @@
-
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">订单列表</div>
     </Card>
     <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
-                v-model="formValidate.state" @on-change="start=1,getOrder()">
+                v-model="formValidate.state" @on-change="start=1;total=0;getOrder()">
       <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
         {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
       </Radio>
     </RadioGroup>
     <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
-                v-model="formValidate.state">
-      <Radio style="padding:0 20px" label="异常订单">异常订单</Radio>
-      <Radio style="padding:0 20px" label="超时发货">超时发货</Radio>
+                v-model="formValidate.state" @on-change="start=1,getOrder('yc')">
+      <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
+      <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
     </RadioGroup>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
@@ -27,7 +26,7 @@
                       v-model="supplier.userType==='SUPPLIER'?Number(supplier.supplierId):formValidate.supplierid"
                       @on-change="start=1,getOrder()">
                 <Option value="-1">全部</Option>
-                <Option v-for="(item,index) in supplierList" :value="item.ID" :key="index">{{ item.Name }}</Option>
+                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}</Option>
               </Select>
             </FormItem>
           </Col>
@@ -104,7 +103,7 @@
         <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
-    <express ref="express" @getOrder="getOrder" @getOrderNum="getOrderNum"></express>
+    <express ref="express" @getOrder="getOrder(formValidate.state>8?'yc':'')" @getOrderNum="getOrderNum"></express>
     <Modal v-model="modal2" width="660">
       <p slot="header">
         <Icon type="ios-information-circle"></Icon>
@@ -487,7 +486,7 @@
             this.sortid='';
             break
         }
-        this.getOrder();
+        this.getOrder(this.formValidate.state>8?'yc':'');
       },
 
       // 分页
@@ -497,11 +496,13 @@
       },
 
       //获取订单列表
-      getOrder() {
+      getOrder(i) {
+        console.log(i==='yc')
         const _this = this;
         _this.loading1 = true;
-        _this.Axios.get('/Manage/Order/pageList', {
+        _this.Axios.get(i!=='yc'?'/Manage/Order/pageList':'/Manage/Order/getYcOrderList', {
           params: {
+            typeid:i==='yc'?(_this.formValidate.state==='9'?'1':'2'):'',
             sortid:_this.sortid,
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid,
@@ -577,6 +578,7 @@
         })).then(res => {
           if (res.data.code === 0) {
             _this.$Message.success('已提交申请退单');
+            _this.getOrder(_this.formValidate.state>8?'yc':'');
             _this.getOrderNum();
             _this.modal2 = false;
           } else {
@@ -603,7 +605,7 @@
       //获取供应商
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/Manage/Supplier/list').then(res => {
+        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
           _this.supplierList = res.data.data
         })
       },

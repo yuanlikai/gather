@@ -3,14 +3,15 @@
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">平台列表</div>
     </Card>
-    <RadioGroup v-model="state"  :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button">
-      <Radio style="padding:0 20px" label="0">
+    <RadioGroup @on-change="start=1;total=0;getTerrace()" v-model="status" :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large"
+                type="button">
+      <Radio style="padding:0 20px" label="全部">
         全部平台
       </Radio>
-      <Radio style="padding:0 20px" label="1">
+      <Radio style="padding:0 20px" label="true">
         启用
       </Radio>
-      <Radio style="padding:0 20px" label="2">
+      <Radio style="padding:0 20px" label="false">
         停用
       </Radio>
     </RadioGroup>
@@ -31,8 +32,8 @@
   export default {
     data() {
       return {
-        loading:false,
-        state:'0',
+        loading: true,
+        status: '全部',
         columns: [
           {
             type: 'index',
@@ -42,53 +43,68 @@
           {
             title: '平台名称',
             tooltip: true,
-            key: 'ProductName',
+            key: 'platformName',
             align: "center",
           },
           {
             title: '简称',
             tooltip: true,
-            key: 'ProductName',
+            key: 'abbrPlatformName',
+            align: "center",
+          },
+          {
+            title: '域名',
+            tooltip: true,
+            key: 'domian',
             align: "center",
           },
           {
             title: '上架商品数',
             tooltip: true,
-            key: 'ProductName',
+            key: '',
             align: "center",
           },
           {
             title: '关联分类数(三级)',
             tooltip: true,
-            key: 'ProductName',
+            key: '',
             align: "center",
           },
           {
             title: '关联供应商数',
             tooltip: true,
-            key: 'ProductName',
+            key: '',
             align: "center",
           },
           {
             title: '状态',
             tooltip: true,
-            key: 'ProductName',
-            align: "center",
-          },
-          {
-            title: '状态',
-            tooltip: true,
-            key: 'ProductName',
             align: "center",
             render:(h,params)=>{
+              return h('div',[
+                h('Badge',{
+                  props:{
+                    status: params.row.status===true?'success':'error'
+                  }
+                }),
+                h('span',params.row.status===true?'启用':'停用')
+              ],)
+            }
+          },
+          {
+            title: '操作',
+            tooltip: true,
+            width: 100,
+            align: "center",
+            render: (h, params) => {
               return h('div', [
                 h('a', {
                   on: {
                     click: () => {
                       let href = this.$router.resolve({
-                        path: '/orderDetails',
+                        path: '/addTerrace',
                         query: {
-                          idstr: params.row.ID,
+                          id: params.row.id,
                         }
                       });
                       window.open(href.href, '_blank')
@@ -99,26 +115,23 @@
             }
           },
         ],
-        data:[
-          {
-            ProductName:'123'
-          }
-        ],
-        start:1,
-        total:0,
+        data: [],
+        start: 1,
+        total: 0,
       }
     },
     methods: {
       //获取平台列表
-      getTerrace(){
+      getTerrace() {
         const _this = this;
         _this.loading = true;
         _this.Axios.get('/Manage/Platform/pageList', {
           params: {
-            status:''
+            status: _this.status!=='全部'?_this.status:''
           }
         }).then(res => {
           if (res.data.code === 0) {
+            console.log(res.data.data.content)
             _this.data = res.data.data.content;
             _this.total = res.data.data.totalElements;
           } else {

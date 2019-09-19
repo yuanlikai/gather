@@ -28,7 +28,7 @@
       <p slot="title">
         数据列表
       </p>
-      <Button type="dashed" style="width: 100%;margin-bottom: 16px;">添加</Button>
+      <Button to="/#/addBrand" target="_blank" type="dashed" style="width: 100%;margin-bottom: 16px;">添加</Button>
       <Table :loading="loading1" :show-header="true" :columns="columns" :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
       <div style="width: 100%;text-align: center;margin-top: 15px">

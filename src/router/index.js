@@ -71,6 +71,12 @@ export default new Router({
           component: resolve => require(['@/components/article/brand'], resolve),
         },
         {
+          path: '/addBrand',
+          name: '添加品牌',
+          component: resolve => require(['@/components/article/addBrand'], resolve),
+        },
+
+        {
           path: '/addClassify',
           name: '添加分类',
           component: resolve => require(['@/components/article/addClassify'], resolve),

@@ -1,4 +1,3 @@
-
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
@@ -30,17 +29,25 @@
 </template>
 <script>
   import upImg from '../upImg'
+
   export default {
-    components:{
+    components: {
       upImg
     },
     data() {
+      const validate = (rule, value, callback) => {
+        if (this.$refs.logo.uploadList < 1) {
+          callback(new Error('请上传logo'));
+        } else {
+          callback();
+        }
+      };
       return {
-        detail:{},
+        detail: {},
         formValidate: {
           id: '',
-          platformName:'',
-          abbrPlatformName:'',
+          platformName: '',
+          abbrPlatformName: '',
           logoUrl: '',
           domian: '',
           description: '',
@@ -50,13 +57,13 @@
             {required: true, message: '请输入名称', trigger: 'blur'}
           ],
           abbrPlatformName: [
-            {required: true, message: '请输入名称', trigger: 'blur'}
+            {required: true, message: '请输入简称', trigger: 'blur'}
           ],
           logoUrl: [
-            {required: true, message: '请输入名称', trigger: 'blur'}
+            {validator: validate, required: true, trigger: 'change'}
           ],
-          description: [
-            {required: true, message: '请输入名称', trigger: 'blur'}
+          domian: [
+            {required: true, message: '请输入域名', trigger: 'blur'}
           ],
         },
       }
@@ -68,17 +75,17 @@
         const _this = this;
         _this.$refs[name].validate((valid) => {
           if (valid) {
-            _this.Axios.post('/Manage/Category/saveCategory',_this.Qs.stringify({
-              id: _this.formValidate.id,                      //分类id 传入就是新增
-              sortsNum:_this.formValidate.sortsNum,          //排序
-              parentId: _this.$route.query.parentId?_this.$route.query.parentId:'',         //上级分类id
-              imgUrl: _this.$refs.classify.uploadList.length>0?_this.$refs.classify.uploadList[0].filename:'',              //图标
-              name: _this.formValidate.name,                  //分类名称
-              description: _this.formValidate.description,     //隔开 最大长度30
-            })).then(res=>{
-              if(res.data.code===0){
-                _this.$Message.success('添加成功！')
-              }else {
+            _this.Axios.post('/Manage/Platform/save', _this.Qs.stringify({
+              id: _this.formValidate.id,
+              platformName: _this.formValidate.platformName,
+              abbrPlatformName: _this.formValidate.abbrPlatformName,
+              logoUrl: _this.$refs.logo.uploadList[0].filename,
+              domian: _this.formValidate.domian,
+              description: _this.formValidate.description,
+            })).then(res => {
+              if (res.data.code === 0) {
+                _this.$Message.success(_this.$route.query.id ? '修改成功！' :'添加成功！')
+              } else {
                 _this.$Message.warning(res.data.message)
               }
             })
@@ -92,32 +99,29 @@
       },
 
       //获取分类详情
-      getDetail(){
+      getDetail() {
         const _this = this;
-        _this.Axios.get('/Manage/Category/detail',{
-          params:{
-            id:_this.$route.query.id
+        _this.Axios.get('/Manage/Platform/detail', {
+          params: {
+            id: _this.$route.query.id
           }
-        }).then(res=>{
-          _this.formValidate= {
-            id: res.data.data.id,              //分类id 传入就是新增
-            sortsNum:res.data.data.sortsNum,          //排序
-            parentId: this.$route.query.name,         //上级分类id
-            name: res.data.data.name,           //分类名称
-            description: res.data.data.description,     //隔开 最大长度30
+        }).then(res => {
+          _this.formValidate = {
+            id: res.data.data.id,
+            platformName: res.data.data.platformName,
+            abbrPlatformName: res.data.data.abbrPlatformName,
+            domian: res.data.data.domian,
+            description: res.data.data.description,
           };
-          if(res.data.data.imgUrl){
-            _this.$refs.classify.defaultList.push({
-              filename:res.data.data.imgUrl
-            });
-          }
-          console.log(res.data.data)
+          _this.$refs.logo.defaultList.push({
+            filename: res.data.data.logoUrl
+          });
         })
 
       }
     },
     mounted() {
-      this.$route.query.id?this.getDetail():'';
+      this.$route.query.id ? this.getDetail() : '';
     }
   }
 </script>

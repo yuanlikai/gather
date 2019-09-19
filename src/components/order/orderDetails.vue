@@ -1,14 +1,14 @@
-
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">当前订单状态：<span style="color: red;">{{data.StateStr}}</span></div>
       <ButtonGroup style="float: right;">
-        <Button type="dashed">申请关闭订单</Button>
-        <Button type="dashed">转为异常订单</Button>
+        <Button type="dashed" @click="model=true">转为异常订单</Button>
+
       </ButtonGroup>
     </Card>
-    <Content :style="{position:'relative',margin: '0 20px 20px 20px', background: '#fff',padding: '16px',height:'auto'}">
+    <Content
+      :style="{position:'relative',margin: '0 20px 20px 20px', background: '#fff',padding: '16px',height:'auto'}">
       <Spin fix v-if="loading"></Spin>
       <Row :gutter="30">
         <Col span="24">
@@ -57,7 +57,8 @@
           地址：{{data.Address}}
         </Col>
 
-        <Button @click="amend" type="primary" style="margin-left: 16px">{{data.ExpressNo.length>0?'修改':'填写'}}物流信息</Button>
+        <Button @click="amend" type="primary" style="margin-left: 16px">{{data.ExpressNo?'修改':'填写'}}物流信息
+        </Button>
       </Row>
       <Divider/>
       <Row :gutter="30">
@@ -100,18 +101,43 @@
       <!--<Divider/>-->
     </Content>
     <express ref="express" @getOrder="getDetails"></express>
+    <Modal v-model="model" width="360">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>确定转为异常？</span>
+      </p>
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="60">
+        <FormItem label="备注" prop="abnormalstr">
+          <Input type="textarea" v-model="formValidate.abnormalstr" placeholder="请输入备注信息"></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer">
+        <Button type="primary" @click="handleSubmit('formValidate')">确定</Button>
+      </div>
+    </Modal>
+
   </div>
 </template>
 <script>
   import express from './express'
+
   export default {
-    components:{
+    components: {
       express
     },
     data() {
       return {
+        model: false,
+        formValidate: {
+          abnormalstr: '',
+        },
+        ruleValidate: {
+          abnormalstr: [
+            {required: true, message: '请填写异常备注', trigger: 'blur'}
+          ],
+        },
         loading: true,
-        columns1:[
+        columns1: [
           {
             title: '操作者',
             tooltip: true,
@@ -185,16 +211,42 @@
       }
     },
     methods: {
-      //修改物流信息
-      amend(){
+
+      //异常弹窗
+      handleSubmit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.abnormal();
+          }
+        })
+      },
+
+      //订单转为异常
+      abnormal() {
         const _this = this;
-        _this.$refs.express.model=true;
+        _this.Axios.post('/Manage/Order/operTransAbnormal', _this.Qs.stringify({
+          orderid: _this.$route.query.idstr,
+          abnormalstr: _this.formValidate.abnormalstr,  // 异常原因
+        })).then(res => {
+          if (res.data.error === 0) {
+            _this.model=false;
+            _this.$Message.success('转为异常成功')
+          } else {
+            _this.$Message.warning(res.data.errorMsg)
+          }
+        })
+      },
+
+      //修改物流信息
+      amend() {
+        const _this = this;
+        _this.$refs.express.model = true;
         _this.$refs.express.formDynamic.idstr = _this.$route.query.idstr;
-        for (let i =0;i<_this.data.Express.split('，').length;i++){
-          _this.$refs.express.formDynamic.items[i]= {
-              Express: _this.data.Express.split('，')[i],
-              ExpressNo: _this.data.ExpressNo.split('，')[i]
-            }
+        for (let i = 0; i < _this.data.Express.split('，').length; i++) {
+          _this.$refs.express.formDynamic.items[i] = {
+            Express: _this.data.Express.split('，')[i],
+            ExpressNo: _this.data.ExpressNo.split('，')[i]
+          }
         }
       },
 

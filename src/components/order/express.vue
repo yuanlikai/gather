@@ -1,8 +1,3 @@
-<style lang="less">
-  .ivu-tree li ul {
-    padding: 0 0 0 60px;
-  }
-</style>
 <template>
   <Modal v-model="model" width="360">
     <p slot="header" style="text-align:center">
