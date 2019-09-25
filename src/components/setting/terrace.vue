@@ -32,6 +32,7 @@
   export default {
     data() {
       return {
+        modal:true,
         loading: true,
         status: '全部',
         columns: [
@@ -94,10 +95,29 @@
           {
             title: '操作',
             tooltip: true,
-            width: 100,
+            width: 120,
             align: "center",
             render: (h, params) => {
               return h('div', [
+
+                h('a', {
+                  on: {
+                    click: () => {
+                      let href = this.$router.resolve({
+                        path: '/terraceClassify',
+                        query: {
+                          id: params.row.id,
+                        }
+                      });
+                      window.open(href.href, '_blank')
+                    }
+                  }
+                }, '关联'),
+                h('Divider',{
+                  props:{
+                    type:'vertical'
+                  }
+                }),
                 h('a', {
                   on: {
                     click: () => {

@@ -41,7 +41,7 @@
                 </Tooltip>
               </router-link>
               <Dropdown trigger="click" style="margin-left: 20px;cursor: pointer;" @on-click="out">
-                <Avatar style="margin-right: 8px" src="https://i.loli.net/2017/08/21/599a521472424.jpg"/>
+                <Avatar style="margin-right: 8px" src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/touxiang.jpg"/>
                 {{user}}
                 <Icon type="ios-arrow-down"/>
                 <DropdownMenu slot="list">

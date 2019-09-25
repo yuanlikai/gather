@@ -75,23 +75,16 @@
             key: 'sortsNum',
             minWidth: 120,
             align: "center",
-            sortable: true
+            sortable: "custom"
           },
           {
             title: '设置',
             tooltip: true,
             key: 'ProductName',
-            width: 210,
+            width: 180,
             align: "center", render: (h, params) => {
               return h('div', [
                 h('a', {
-                  style: {
-                    display:params.row.treeLevel === 3?'none':'',
-                    height: '12px',
-                    marginRight: '5px',
-                    paddingRight: '5px',
-                    borderRight: '1px solid #e8eaec'
-                  },
                   on: {
                     click: () => {
                       let href = this.$router.resolve({
@@ -106,14 +99,12 @@
                     }
                   }
                 }, '新增下级'),
+                h('Divider',{
+                  props:{
+                    type:'vertical'
+                  }
+                }),
                 h('a', {
-                  style: {
-                    display:params.row.treeLevel === 3?'none':'',
-                    height: '12px',
-                    marginRight: '5px',
-                    paddingRight: '5px',
-                    borderRight: '1px solid #e8eaec'
-                  },
                   on: {
                     click: () => {
                       let href = this.$router.resolve({
@@ -128,13 +119,6 @@
                     }
                   }
                 }, '查看下级'),
-                h('a', {
-                  on: {
-                    click: () => {
-
-                    }
-                  }
-                }, '转移商品'),
               ])
             }
           },
@@ -147,12 +131,6 @@
             render: (h, params) => {
               return h('div', [
                 h('a', {
-                  style: {
-                    height: '12px',
-                    marginRight: '5px',
-                    paddingRight: '5px',
-                    borderRight: '1px solid #e8eaec'
-                  },
                   on: {
                     click: () => {
                       let href = this.$router.resolve({
@@ -165,6 +143,11 @@
                     }
                   }
                 }, '编辑'),
+                h('Divider',{
+                  props:{
+                    type:'vertical'
+                  }
+                }),
                 h('Poptip', {
                   props: {
                     confirm: true,

@@ -27,7 +27,7 @@
         callback:policyData.callback,
         policy:policyData.policy,
         signature:policyData.signature,
-        key:policyData.key,
+        key:key(),
         ossaccessKeyId:policyData.accessKeyId,
         dir:policyData.dir,
         host:'http://ylmanager.oss-cn-shanghai.aliyuncs.com',
@@ -49,13 +49,15 @@
   import uuidv1 from 'uuid/v1';
 
   export default {
+    props:['num'],
     data() {
       return {
         policyData: {},
         defaultList: [],
         imgName: '',
         visible: false,
-        uploadList: []
+        uploadList: [],
+        index:1,
       }
     },
     methods: {
@@ -67,10 +69,12 @@
         const fileList = this.$refs.upload.fileList;
         this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
       },
+      handleRemove1(file) {
+        const fileList = this.$refs.upload.fileList;
+        this.$refs.upload.fileList.splice(0, this.uploadList.length);
+      },
       handleSuccess(res, file) {
         file.filename = file.response.data.filename;
-        file.name = file.response.data.filename;
-        console.log(this.uploadList)
       },
       handleFormatError(file) {
         this.$Notice.warning({
@@ -85,10 +89,11 @@
         });
       },
       handleBeforeUpload() {
-        const check = this.uploadList.length < 1;
+        let num = this.num?this.num:1;
+        const check = this.uploadList.length < num;
         if (!check) {
           this.$Notice.warning({
-            title: 'Up to five pictures can be uploaded.'
+            title: '最多只能上传'+ num +'张图片'
           });
         }
         return check;
@@ -99,12 +104,15 @@
         }, 300)
       },
 
+      key(){
+        return this.policyData.dir + `/${uuidv1()}`
+      },
+
       //获取上传权限
       policy() {
         const _this = this;
         _this.Axios.get('/aliyun/oss/policy').then(res => {
           _this.policyData = res.data.data;
-          _this.policyData.key = _this.policyData.dir + `/${uuidv1()}`;
         })
       }
 
@@ -132,7 +140,6 @@
   }
 
   .demo-upload-list img {
-    width: 100%;
     height: 100%;
   }
 

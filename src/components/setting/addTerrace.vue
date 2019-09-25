@@ -4,26 +4,30 @@
       <div class="ivu-page-header-title">添加平台</div>
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
-      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="70" style="width: 500px">
-        <FormItem label="名称" prop="platformName" style="width: 500px">
-          <Input :maxlength="10" v-model="formValidate.platformName" placeholder="请输入"></Input>
-        </FormItem>
-        <FormItem label="简称" prop="abbrPlatformName" style="width: 500px">
-          <Input :maxlength="5" v-model="formValidate.abbrPlatformName" placeholder="请输入"></Input>
-        </FormItem>
-        <FormItem label="logo" prop="logoUrl" style="width: 500px">
-          <upImg ref="logo"></upImg>
-        </FormItem>
-        <FormItem label="域名" prop="domian" style="width: 500px">
-          <Input :maxlength="100" v-model="formValidate.domian" placeholder="请输入"></Input>
-        </FormItem>
-        <FormItem label="描述" prop="description" style="width: 500px">
-          <Input :maxlength="80" type="textarea" v-model="formValidate.description" placeholder="请输入"></Input>
-        </FormItem>
-        <FormItem prop="description" style="width: 500px">
-          <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
-        </FormItem>
-      </Form>
+      <Row>
+        <Col :md="{span:18,offset:3}" :lg="{span:10,offset:6}">
+          <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="70">
+            <FormItem label="名称" prop="platformName">
+              <Input :maxlength="10" v-model="formValidate.platformName" placeholder="请输入"></Input>
+            </FormItem>
+            <FormItem label="简称" prop="abbrPlatformName">
+              <Input :maxlength="5" v-model="formValidate.abbrPlatformName" placeholder="请输入"></Input>
+            </FormItem>
+            <FormItem label="logo" prop="logoUrl">
+              <upImg ref="logo"></upImg>
+            </FormItem>
+            <FormItem label="域名" prop="domian">
+              <Input :maxlength="100" v-model="formValidate.domian" placeholder="请输入"></Input>
+            </FormItem>
+            <FormItem label="描述" prop="description">
+              <Input :maxlength="80" type="textarea" v-model="formValidate.description" placeholder="请输入"></Input>
+            </FormItem>
+            <FormItem prop="description">
+              <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+            </FormItem>
+          </Form>
+        </Col>
+      </Row>
     </Card>
   </div>
 </template>
@@ -84,7 +88,7 @@
               description: _this.formValidate.description,
             })).then(res => {
               if (res.data.code === 0) {
-                _this.$Message.success(_this.$route.query.id ? '修改成功！' :'添加成功！')
+                _this.$Message.success(_this.$route.query.id ? '修改成功！' : '添加成功！')
               } else {
                 _this.$Message.warning(res.data.message)
               }

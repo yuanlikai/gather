@@ -79,7 +79,7 @@
             key: 'sortsNum',
             minWidth: 120,
             align: "center",
-            sortable: true
+            sortable: "custom"
           },
           {
             title: '关联供应商',
@@ -87,7 +87,7 @@
             key: 'supplierCount',
             minWidth: 120,
             align: "center",
-            sortable: true
+            sortable: "custom"
           },
           {
             title: '是否显示',
@@ -98,7 +98,8 @@
             render: (h, params) => {
               return h('i-switch', {
                 props: {
-                  value: params.row.display
+                  value: params.row.display,
+                  size:'small'
                 },
                 on: {
                   'on-change': (i) => {
@@ -106,18 +107,24 @@
                       id: params.row.id,   //品牌id
                       display: !params.row.display,   //是否显示 true为显示 false为隐藏
                     })).then(res => {
-
+                      if(res.data.code===0){
+                        this.getBrand()
+                      }else {
+                        this.$Message.warning(res.data.message)
+                      }
                     });
                   }
                 }
-              }, [
-                h('span', {
-                  slot: "open"
-                }, '是'),
-                h('span', {
-                  slot: "close"
-                }, '否')
-              ])
+              },
+              //   [
+              //   h('span', {
+              //     slot: "open"
+              //   }, '是'),
+              //   h('span', {
+              //     slot: "close"
+              //   }, '否')
+              // ]
+              )
             }
           },
           {
@@ -129,12 +136,6 @@
             render: (h, params) => {
               return h('div', [
                 h('a', {
-                  style: {
-                    height: '12px',
-                    marginRight: '5px',
-                    paddingRight: '5px',
-                    borderRight: '1px solid #e8eaec'
-                  },
                   on: {
                     click: () => {
                       let href = this.$router.resolve({
@@ -142,12 +143,16 @@
                         query: {
                           id: params.row.id
                         }
-                      })
+                      });
                       window.open(href.href, '_blank')
                     }
                   }
                 }, '编辑'),
-
+                h('Divider',{
+                  props:{
+                    type:'vertical'
+                  }
+                }),
                 h('Poptip', {
                   props: {
                     confirm: true,
@@ -157,11 +162,11 @@
                   on: {
                     'on-ok': () => {
                       const _this = this;
-                      _this.Axios.post('/Manage/Menu/deleteMenus', _this.Qs.stringify({
+                      _this.Axios.post('/Manage/Brand/deleteBrand', _this.Qs.stringify({
                         id: params.row.id
-                      }, {indices: false})).then(res => {
+                      })).then(res => {
                         if (res.data.code === 0) {
-                          _this.getMenuList();
+                          _this.getBrand();
                           _this.$Message.success('删除成功')
                         } else {
                           _this.$Message.error(res.data.message)
@@ -179,6 +184,8 @@
         data: [],
         start: 1,
         selection: [],
+        sortsNum:'normal',
+        supplierCount:'normal'
       }
     },
     methods: {
@@ -191,8 +198,8 @@
             start: _this.start - 1,
             size: 10,
             brandNameLike: _this.formValidate.brandNameLike,  //品牌名称模糊搜搜
-            sortsNumAsc: '',                //排序编号true升序 false为降序
-            supplierCountAsc: '',           //供应商关联排序 true为升序
+            sortsNumAsc: _this.sortsNum==='normal'?'':(_this.sortsNum==='asc'?true:false),                //排序编号true升序 false为降序
+            supplierCountAsc: _this.sortsNum==='normal'?'':(_this.sortsNum==='asc'?true:false),           //供应商关联排序 true为升序
           }
         }).then(res => {
           if (res.data.code === 0) {
@@ -207,6 +214,7 @@
 
       //多选
       choice(selection) {
+        this.selection = [];
         for (let i in selection) {
           this.selection.push(selection[i].id)
         }
@@ -236,13 +244,18 @@
       //排序
       sorts(i) {
         const _this = this;
-        console.log(i)
+        _this.loading1 = true;
+        _this.sortsNum = 'normal';
+        _this.supplierCount = 'normal';
         switch (i.key) {
           case "sortsNum":
             _this.sortsNum = i.order;
             break;
+          case "supplierCount":
+            _this.supplierCount = i.order;
+            break;
         }
-        // _this.getClassify();
+        _this.getBrand();
       },
 
       // 分页

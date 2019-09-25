@@ -261,7 +261,7 @@
             minWidth: 110,
             tooltip: true,
             align: "center",
-            sortable: true
+            sortable: "custom"
           },
           {
             title: '来源平台',
@@ -286,7 +286,7 @@
             maxWidth: 120,
             tooltip: true,
             align: "center",
-            sortable: true
+            sortable: "custom"
           },
           {
             title: '供应商',
@@ -315,17 +315,12 @@
           {
             title: '操作',
             align: 'center',
-            width: 120,
+            width: 130,
             render: (h, params) => {
+              console.log(params.row)
               let a;
               if (params.row.State === 1) {
                 a = h('a', {
-                  style: {
-                    height: '12px',
-                    marginRight: '5px',
-                    paddingRight: '5px',
-                    borderRight: '1px solid #e8eaec',
-                  },
                   on: {
                     click: () => {
                       const _this = this;
@@ -369,23 +364,10 @@
                     }
                   }
                 }, [
-                  h('a', {
-                    style: {
-                      height: '12px',
-                      marginRight: '5px',
-                      paddingRight: '5px',
-                      borderRight: '1px solid #e8eaec',
-                    }
-                  }, '审核')
+                  h('a', '审核')
                 ]);
               } else if (params.row.State === 2) {
                 a = h('a', {
-                  style: {
-                    height: '12px',
-                    marginRight: '5px',
-                    paddingRight: '5px',
-                    borderRight: '1px solid #e8eaec',
-                  },
                   on: {
                     click: () => {
                       const _this = this;
@@ -421,18 +403,20 @@
                     }
                   }
                 }, [
-                  h('a', {
-                    style: {
-                      height: '12px',
-                      marginRight: '5px',
-                      paddingRight: '5px',
-                      borderRight: '1px solid #e8eaec',
-                    }
-                  }, '确认退单')
+                  h('a', '确认退单')
                 ]);
               }
               return h('div', [
                 a,
+
+                h('Divider',{
+                  style:{
+                    display:params.row.State!==6?'inline-block':'none'
+                  },
+                  props:{
+                    type:'vertical'
+                  }
+                }),
                 h('a', {
                   on: {
                     click: () => {

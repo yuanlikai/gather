@@ -21,19 +21,7 @@
           </FormItem>
         </Form>
       </div>
-      <!--<div article="page-account-other"><span>其它登录方式</span>-->
-        <!--<img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-wechat.c69ec08c.svg" alt="wechat">-->
-        <!--<img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-qq.2cf4276d.svg" alt="qq">-->
-        <!--<img src="https://file.iviewui.com/admin-pro-dist/img/icon-social-weibo.cbf658a0.svg" alt="weibo">-->
-        <!--<a href="/register" article="page-account-register">注册账户</a>-->
-      <!--</div>-->
     </div>
-    <!--<footer class="ivu-global-footer i-copyright" style="position: fixed">-->
-      <!--<div class="ivu-global-footer-links">-->
-        <!--<a href="http://www.e6best.com/" target="_blank" title="官网">官网</a>-->
-        <!--<a href="https://weibo.com/u/6596595059" target="_blank" title="微博">微博</a></div>-->
-      <!--<div class="ivu-global-footer-copyright">Copyright © 2019 上海怡乐畅购智能技术有限公司</div>-->
-    <!--</footer>-->
   </div>
 </template>
 

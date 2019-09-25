@@ -194,12 +194,6 @@
             render: (h, params) => {
               return h('div', [
                 h('a', {
-                  style: {
-                    height: '12px',
-                    marginRight: '5px',
-                    paddingRight: '5px',
-                    borderRight: '1px solid #e8eaec'
-                  },
                   on: {
                     click: () => {
                       const _this = this;
@@ -237,6 +231,11 @@
                     }
                   }
                 },'编辑'),
+                h('Divider',{
+                  props:{
+                    type:'vertical'
+                  }
+                }),
                 h('Poptip', {
                   props: {
                     confirm: true,
