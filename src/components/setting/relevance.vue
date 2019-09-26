@@ -33,7 +33,7 @@
                     width: '250px',
                     height: '300px'
                 }"
-          :titles="['全部平台','已关联平台']"
+          :titles="['全部平台','已关联品牌']"
           :operations="['取消','关联']"
           :render-format="renders1"
           @on-change="handleChange1"></Transfer>
@@ -91,15 +91,15 @@
       //获取平台列表
       terraceList() {
         const _this = this;
-        _this.Axios.get('/Manage/Platform/pageList', {
+        _this.Axios.get('/Manage/Platform/list', {
           params: {
             status: true
           }
         }).then(res => {
-          for (let i in res.data.data.content) {
+          for (let i in res.data.data) {
             _this.data.push({
-              "key": res.data.data.content[i].id,
-              "label": res.data.data.content[i].abbrPlatformName,
+              "key": res.data.data[i].id,
+              "label": res.data.data[i].abbrPlatformName,
             })
           }
         })
@@ -123,11 +123,11 @@
       //获取品牌列表
       brandList() {
         const _this = this;
-        _this.Axios.get('/Manage/Brand/pageList').then(res => {
-          for (let i in res.data.data.content) {
+        _this.Axios.get('/Manage/Brand/list').then(res => {
+          for (let i in res.data.data) {
             _this.data1.push({
-              "key": res.data.data.content[i].id,
-              "label": res.data.data.content[i].abbrBrandName,
+              "key": res.data.data[i].id,
+              "label": res.data.data[i].abbrBrandName,
             })
           }
         })
@@ -158,7 +158,7 @@
   }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="less">
+<style scoped lang="less">
   .ivu-btn-small {
     padding: 1px 7px 3px;
   }

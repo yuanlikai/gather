@@ -363,7 +363,8 @@
             category2: _this.formValidate.classify[1],
             category3: _this.formValidate.classify[2],
             brandId: _this.formValidate.brandId,
-            recycleBin: false
+            recycleBin: false,
+            onSale:'',
           }
         }).then(res => {
           if (res.data.code === 0) {

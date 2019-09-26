@@ -83,43 +83,48 @@
             key: 'ProductName',
             width: 180,
             align: "center", render: (h, params) => {
-              return h('div', [
-                h('a', {
-                  on: {
-                    click: () => {
-                      let href = this.$router.resolve({
-                        path: '/addClassify',
-                        query: {
-                          parentId: params.row.id,
-                          name: params.row.name
-                        }
-                      });
-                      window.open(href.href, '_blank')
+              if (this.$route.query.treeLevel === '3') {
+                return h('a','暂无功能')
+              } else {
 
+                return h('div', [
+                  h('a', {
+                    on: {
+                      click: () => {
+                        let href = this.$router.resolve({
+                          path: '/addClassify',
+                          query: {
+                            parentId: params.row.id,
+                            name: params.row.name
+                          }
+                        });
+                        window.open(href.href, '_blank')
+
+                      }
                     }
-                  }
-                }, '新增下级'),
-                h('Divider',{
-                  props:{
-                    type:'vertical'
-                  }
-                }),
-                h('a', {
-                  on: {
-                    click: () => {
-                      let href = this.$router.resolve({
-                        path: '/classify',
-                        query: {
-                          treeLevel: params.row.treeLevel + 1,   //层级
-                          parentId: params.row.id,    //上级分类id
-                          name: params.row.name,    //上级分类id
-                        }
-                      });
-                      window.open(href.href, '_blank')
+                  }, '新增下级'),
+                  h('Divider', {
+                    props: {
+                      type: 'vertical'
                     }
-                  }
-                }, '查看下级'),
-              ])
+                  }),
+                  h('a', {
+                    on: {
+                      click: () => {
+                        let href = this.$router.resolve({
+                          path: '/classify',
+                          query: {
+                            treeLevel: params.row.treeLevel + 1,   //层级
+                            parentId: params.row.id,    //上级分类id
+                            name: params.row.name,    //上级分类id
+                          }
+                        });
+                        window.open(href.href, '_blank')
+                      }
+                    }
+                  }, '查看下级'),
+                ])
+              }
             }
           },
           {
@@ -134,18 +139,18 @@
                   on: {
                     click: () => {
                       let href = this.$router.resolve({
-                        path:'/addClassify',
-                        query:{
-                          id:params.row.id
+                        path: '/addClassify',
+                        query: {
+                          id: params.row.id
                         }
                       });
-                      window.open(href.href,'_blank')
+                      window.open(href.href, '_blank')
                     }
                   }
                 }, '编辑'),
-                h('Divider',{
-                  props:{
-                    type:'vertical'
+                h('Divider', {
+                  props: {
+                    type: 'vertical'
                   }
                 }),
                 h('Poptip', {
@@ -177,27 +182,27 @@
           },
         ],
         data: [],
-        sortsNum:'normal',
+        sortsNum: 'normal',
       }
     },
     methods: {
       //获取分类列表
       getClassify() {
         const _this = this;
-        _this.loading1=true;
+        _this.loading1 = true;
         _this.Axios.get('/Manage/Category/pageList', {
           params: {
-            start:_this.start - 1,
+            start: _this.start - 1,
             size: 10,
             treeLevel: _this.$route.query.treeLevel ? _this.$route.query.treeLevel : '1',   //层级
             parentId: _this.$route.query.parentId ? _this.$route.query.parentId : '',    //上级分类id
-            sortsNumAsc: _this.sortsNum==='normal'?'':(_this.sortsNum==='asc'?true:false),     //true 升序  false 降序
+            sortsNumAsc: _this.sortsNum === 'normal' ? '' : (_this.sortsNum === 'asc' ? true : false),     //true 升序  false 降序
           }
         }).then(res => {
-          if(res.data.code===0){
+          if (res.data.code === 0) {
             _this.data = res.data.data.content;
             _this.total = res.data.data.totalElements
-          }else {
+          } else {
             _this.$Message.warning(res.data.message)
           }
           _this.loading1 = false;
@@ -211,12 +216,12 @@
       },
 
       //排序
-      sorts(i){
+      sorts(i) {
         const _this = this;
         switch (i.key) {
           case "sortsNum":
-            _this.sortsNum=i.order;
-          break;
+            _this.sortsNum = i.order;
+            break;
         }
         _this.getClassify();
       }

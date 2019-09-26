@@ -162,7 +162,7 @@
                 },
                 on: {
                   'on-ok': () => {
-                    this.Axios.post('/Manage/SkuInfo/delete', this.Qs.stringify({
+                    this.Axios.post('/Manage/SkuInfo/recycleBin', this.Qs.stringify({
                       skuInfoIds: [params.row.id]
                     }, {indices: false})).then(res => {
                       if (res.data.code === 0) {

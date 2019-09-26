@@ -38,6 +38,10 @@
                     <Option v-for="(item,index) in brandList" :value="item.id" :key="index">{{item.brandName}}</Option>
                   </Select>
                 </FormItem>
+                <FormItem label="折扣" prop="discount">
+                  <Input :maxlength="15" v-model="formValidate1.discount" placeholder="请输入"></Input>
+                </FormItem>
+
                 <FormItem label="商品介绍" prop="description">
                   <Input :rows="3" :maxlength="80" type="textarea" v-model="formValidate1.description"
                          placeholder="请输入"></Input>
@@ -306,8 +310,9 @@
       //获取品牌列表
       getBrand() {
         const _this = this;
-        _this.Axios.get('/Manage/Brand/pageList').then(res => {
-          _this.brandList = res.data.data.content
+        _this.Axios.get('/Manage/Brand/selectBrand').then(res => {
+          console.log(res.data)
+          _this.brandList = res.data.data
         })
       },
     },

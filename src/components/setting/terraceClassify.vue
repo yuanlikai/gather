@@ -33,7 +33,7 @@
         _this.Axios.post('/Manage/Category/relevanceCategory',_this.Qs.stringify({
           platformId:_this.$route.query.id,     //平台id
           cancelCategoryIds:cancelCategoryIds.length>0?cancelCategoryIds:[''],     //取消的三级分类id集合
-          categoryIds:categoryIds,     //选中的三级分类id集合
+          categoryIds:categoryIds.length>0?categoryIds:[''],     //选中的三级分类id集合
         }, {indices: false})).then(res=>{
          if(res.data.code===0){
            _this.getTree();

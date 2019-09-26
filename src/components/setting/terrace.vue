@@ -147,6 +147,8 @@
         _this.loading = true;
         _this.Axios.get('/Manage/Platform/pageList', {
           params: {
+            start: _this.start - 1,
+            size: 10,
             status: _this.status!=='全部'?_this.status:''
           }
         }).then(res => {

@@ -8,11 +8,16 @@
         <Col :md="{span:18,offset:3}" :lg="{span:10,offset:6}">
           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="70">
             <FormItem label="名称" prop="platformName">
-              <Input :maxlength="10" v-model="formValidate.platformName" placeholder="请输入"></Input>
+              <Input :maxlength="20" v-model="formValidate.platformName" placeholder="请输入"></Input>
             </FormItem>
             <FormItem label="简称" prop="abbrPlatformName">
               <Input :maxlength="5" v-model="formValidate.abbrPlatformName" placeholder="请输入"></Input>
             </FormItem>
+
+            <FormItem v-if="!$route.query.id" label="编号" prop="platformNo">
+              <Input :maxlength="3" v-model="formValidate.platformNo" placeholder="请输入"></Input>
+            </FormItem>
+
             <FormItem label="logo" prop="logoUrl">
               <upImg ref="logo"></upImg>
             </FormItem>
@@ -53,6 +58,7 @@
           platformName: '',
           abbrPlatformName: '',
           logoUrl: '',
+          platformNo:'',
           domian: '',
           description: '',
         },
@@ -62,6 +68,9 @@
           ],
           abbrPlatformName: [
             {required: true, message: '请输入简称', trigger: 'blur'}
+          ],
+          platformNo:[
+            {required: true, message: '请输入编号', trigger: 'blur'}
           ],
           logoUrl: [
             {validator: validate, required: true, trigger: 'change'}
@@ -85,6 +94,7 @@
               abbrPlatformName: _this.formValidate.abbrPlatformName,
               logoUrl: _this.$refs.logo.uploadList[0].filename,
               domian: _this.formValidate.domian,
+              platformNo: _this.formValidate.platformNo,
               description: _this.formValidate.description,
             })).then(res => {
               if (res.data.code === 0) {
