@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">新建商品</div>
+      <div class="ivu-page-header-title">{{$route.query.id?'编辑商品':'新建商品'}}</div>
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto',minHeight:'300px'}">
       <Row>
@@ -105,7 +105,8 @@
         <Col span="24" style="text-align: center">
           <Icon type="ios-checkmark-circle" size="90" color="#19be6b" style="margin: 32px 0 24px 0"/>
           <div class="ivu-result-title">{{$route.query.id ? '修改成功' : '添加成功'}}</div>
-          <Alert style="width:50%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">已提交申请，等待审核</Alert>
+          <Alert style="width:50%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">已提交申请，等待审核
+          </Alert>
           <Button type="primary" @click="current = 0">继续新建</Button>&nbsp;
         </Col>
       </Row>
@@ -253,7 +254,7 @@
       },
       handleReset(name) {
         this.$refs[name].resetFields();
-        this.tag=[];
+        this.tag = [];
         this.$refs.pics1.handleRemove1(0);
         this.$refs.pics2.handleRemove1(0);
       },
@@ -261,28 +262,61 @@
       //获取分类详情
       getDetail() {
         const _this = this;
-        _this.Axios.get('/Manage/Brand/detail', {
+        _this.Axios.get('/Manage/SkuInfo/detail', {
           params: {
             id: _this.$route.query.id
           }
         }).then(res => {
+          console.log(res.data.data)
           _this.formValidate = {
-            id: res.data.data.id,  //更新时传id
-            brandName: res.data.data.brandName,  //品牌名称30
-            abbrBrandName: res.data.data.abbrBrandName,  //品牌简写6
-            brandStory: res.data.data.brandStory,  //品牌故事100
-            logoUrl: res.data.data.logoUrl,  //品牌LOGO路径160
-            sortsNum: res.data.data.sortsNum,  //排序编号 3
-            display: String(res.data.data.display),  //是否显示 true为显示 false为不显示
+            classify: [res.data.data.category1, res.data.data.category2, res.data.data.category3],  //分类数组
           };
-          _this.$refs.logoUrl.defaultList.push({
-            filename: res.data.data.logoUrl
-          });
-          if (res.data.data.brandImg) {
-            _this.$refs.brandImg.defaultList.push({
-              filename: res.data.data.brandImg
-            });
+          _this.formValidate1 = {
+            skuInfoName: res.data.data.skuInfoName,  //商品名称
+            subTitle: res.data.data.subTitle,     //副标题
+            brandId: res.data.data.brandId,      //品牌ID
+            description: res.data.data.description,  //描述
+            discount: res.data.data.discount,     //折扣 15
+          };
+          _this.tag = res.data.data.keyWords.split(' ')     //关键词50
+
+
+          for (let i in res.data.data.mianPics) {
+            _this.$refs.pics1.defaultList.push({
+              filename: res.data.data.mianPics[i].filePath
+            })
           }
+          for (let i in res.data.data.detailPics) {
+            _this.$refs.pics2.defaultList.push({
+              filename: res.data.data.detailPics[i].filePath
+            })
+          }
+
+          _this.formValidate2 = {
+            marketPrice: res.data.data.marketPrice,    //市场价
+            price: res.data.data.price,          //售价
+            skuInfoNo: res.data.data.skuInfoNo,      //SKU编号
+          };
+
+          console.log(res.data.data)
+          console.log(res.data.data.mianPics)
+          // _this.formValidate = {
+          //   id: res.data.data.id,  //更新时传id
+          //   brandName: res.data.data.brandName,  //品牌名称30
+          //   abbrBrandName: res.data.data.abbrBrandName,  //品牌简写6
+          //   brandStory: res.data.data.brandStory,  //品牌故事100
+          //   logoUrl: res.data.data.logoUrl,  //品牌LOGO路径160
+          //   sortsNum: res.data.data.sortsNum,  //排序编号 3
+          //   display: String(res.data.data.display),  //是否显示 true为显示 false为不显示
+          // };
+          // _this.$refs.logoUrl.defaultList.push({
+          //   filename: res.data.data.logoUrl
+          // });
+          // if (res.data.data.brandImg) {
+          //   _this.$refs.brandImg.defaultList.push({
+          //     filename: res.data.data.brandImg
+          //   });
+          // }
         })
       },
 
@@ -311,7 +345,6 @@
       getBrand() {
         const _this = this;
         _this.Axios.get('/Manage/Brand/selectBrand').then(res => {
-          console.log(res.data)
           _this.brandList = res.data.data
         })
       },
@@ -328,6 +361,7 @@
   .ivu-tag-border {
     line-height: 22px;
   }
+
   .ivu-result-title {
     margin-bottom: 16px;
     color: #17233d;

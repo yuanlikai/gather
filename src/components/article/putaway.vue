@@ -3,7 +3,7 @@
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">商品上架</div>
     </Card>
-    <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
+    <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}" v-show="!$route.query.ids">
       <p slot="title">
         筛选查询
       </p>
@@ -38,11 +38,12 @@
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title" style="text-align: left">
         选择商品
+        {{current}}
       </p>
       <div style="margin: 0 auto;width: 900px;">
         <Steps v-show="current!==2" :current="current" style="margin: 16px 0 0 0">
-          <Step title="选择商品" style="width: 70%;"></Step>
-          <Step title="填写销售信息" style="width: 30%;"></Step>
+          <Step v-show="!$route.query.ids" title="选择商品" style="width: 70%;"></Step>
+          <Step v-show="!$route.query.ids" title="填写销售信息" style="width: 30%;"></Step>
         </Steps>
 
         <Row v-show="current===0">
@@ -62,7 +63,7 @@
               :render-format="renders"
               @on-change="handleChange"></Transfer>
           </Col>
-          <Button @click="fillIn" :disabled="!targetKeys.length>0" type="primary" style="margin: 32px 0">
+          <Button @click="fillIn();current=1" :disabled="!targetKeys.length>0" type="primary" style="margin: 32px 0">
             下一步，填写销售信息
           </Button>
         </Row>
@@ -77,7 +78,7 @@
                 <Table :columns="columns" :data="item"></Table>
               </Col>
             </Row>
-            <Button type="primary" ghost style="margin: 32px 16px 32px 0" @click="current=0">上一步，选择商品平台</Button>
+            <Button type="primary" ghost style="margin: 32px 16px 32px 0" @click="current=0" v-show="!$route.query.ids">上一步，选择商品平台</Button>
             <Button type="primary" style="margin: 32px 0" @click="putaway" :loading="sjLoding">上架</Button>
           </Col>
         </Row>
@@ -108,7 +109,7 @@
         },
         treeData: [],
         brandList: [],
-        current: 0,
+        current: this.$route.query.ids?1:0,
         sjLoding: false,
         data: [],
         targetKeys: [],
@@ -208,9 +209,8 @@
       //填写销售信息
       fillIn() {
         const _this = this;
-        _this.current = 1;
         _this.Axios.post('/Manage/SkuInfo/readyOnsaleList', _this.Qs.stringify({
-          ids: _this.targetKeys,
+          ids: _this.$route.query.ids?_this.$route.query.ids:_this.targetKeys,
         }, {indices: false})).then(res => {
           _this.fillInList = res.data.data
           console.log(_this.fillInList)
@@ -222,9 +222,6 @@
         return item.label;
       },
       handleChange(newTargetKeys, direction, moveKeys) {
-        // console.log(newTargetKeys);
-        // console.log(direction);
-        // console.log(moveKeys);
         console.log(newTargetKeys)
         this.targetKeys = newTargetKeys;
       },
@@ -279,7 +276,13 @@
         this.dataList()
       },
     },
+    watch:{
+      '$route'(to, from) {
+        this.current=0
+      }
+    },
     mounted() {
+      this.$route.query.ids?this.fillIn():''
       this.dataList();
       this.getTree();
       this.getBrand()

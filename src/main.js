@@ -22,7 +22,16 @@ import 'iview/dist/styles/iview.css';
 
 Vue.use(iView);
 
-
+Vue.prototype.riqi=function(sj){
+  var d = new Date(sj * 1);    //根据时间戳生成的时间对象
+  var date = (d.getFullYear()) + "-" +
+    (d.getMonth() + 1) + "-" +
+    (d.getDate()) + " " +
+    (d.getHours()) + ":" +
+    (d.getMinutes()) + ":" +
+    (d.getSeconds());
+  return   date
+};
 
 // 添加响应拦截器
 axios.interceptors.response.use(function (response) {

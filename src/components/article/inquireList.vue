@@ -154,28 +154,48 @@
             width: 160,
             align: "center",
             render: (h, params) => {
-              return h('Poptip', {
-                props: {
-                  confirm: true,
-                  transfer: true,
-                  title: '确定加入回收站？',
-                },
-                on: {
-                  'on-ok': () => {
-                    this.Axios.post('/Manage/SkuInfo/recycleBin', this.Qs.stringify({
-                      skuInfoIds: [params.row.id]
-                    }, {indices: false})).then(res => {
-                      if (res.data.code === 0) {
-                        this.getList();
-                        this.$Message.success('成功加入回收站')
-                      } else {
-                        this.$Message.warning(res.data.message)
-                      }
-                    })
+              return h('div',[
+                h('a', {
+                  on:{
+                    click:()=>{
+                      let href = this.$router.resolve({
+                        path:'/addArticle',
+                        query:{
+                          id: params.row.id
+                        }
+                      });
+                      window.open(href.href,'_blank')
+                    }
                   }
-                }
-              }, [
-                h('a', '加入回收站')
+                }, '编辑'),
+                h('Divider', {
+                  props: {
+                    type: 'vertical'
+                  }
+                }),
+                h('Poptip', {
+                  props: {
+                    confirm: true,
+                    transfer: true,
+                    title: '确定加入回收站？',
+                  },
+                  on: {
+                    'on-ok': () => {
+                      this.Axios.post('/Manage/SkuInfo/recycleBin', this.Qs.stringify({
+                        skuInfoIds: [params.row.id]
+                      }, {indices: false})).then(res => {
+                        if (res.data.code === 0) {
+                          this.getList();
+                          this.$Message.success('成功加入回收站')
+                        } else {
+                          this.$Message.warning(res.data.message)
+                        }
+                      })
+                    }
+                  }
+                }, [
+                  h('a', '加入回收站')
+                ])
               ])
             }
           }

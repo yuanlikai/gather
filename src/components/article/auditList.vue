@@ -3,6 +3,18 @@
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">商品审核</div>
     </Card>
+    <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
+                v-model="formValidate.state" @on-change="resetPage();getList()">
+      <Radio style="padding:0 20px" label="AUDITING">
+        待审核 ({{countList.auditingCount}})
+      </Radio>
+      <Radio style="padding:0 20px" label="PASS">
+        已通过 ({{countList.passCount}})
+      </Radio>
+      <Radio style="padding:0 20px" label="REJECT">
+        未通过 ({{countList.notPassCount}})
+      </Radio>
+    </RadioGroup>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
         筛选查询
@@ -80,13 +92,26 @@
               <Radio label="REJECT">审核不通过</Radio>
             </RadioGroup>
           </FormItem>
-          <FormItem label="反馈详情：" prop="rejectReason">
+          <FormItem v-if="formValidate1.approvalStatus!=='PASS'" label="反馈详情：" prop="rejectReason">
             <Input v-model="formValidate1.rejectReason" type="textarea" :rows="4" placeholder="请输入反馈详情"/>
           </FormItem>
         </Form>
       </div>
       <div slot="footer">
         <Button type="primary" size="large" @click="audit">确定</Button>
+      </div>
+    </Modal>
+    <Modal v-model="modal1" width="500">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>审核详情</span>
+      </p>
+      <div style="text-align:center">
+        <Table :columns="columns1" :data="data1"></Table>
+        <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large" @click="modal1=false">确定</Button>
       </div>
     </Modal>
   </div>
@@ -96,6 +121,7 @@
     data() {
       return {
         modal: false,
+        modal1:false,
         loading1: true,
         formValidate1: {
           name: '',
@@ -104,11 +130,38 @@
           rejectReason: '',
         },
         formValidate: {
+          state: 'AUDITING',
           skuInfoNameLike: '',
           classify: [],
           brandId: '',
           supplierId: '',
         },
+        columns1: [
+          {
+            title: '审核时间',
+            key: 'timeCreated',
+            render:(h,params)=>{
+              return h('span',this.riqi(params.row.timeCreated))
+            }
+          },
+          {
+            title: '审核人员',
+            key: 'approverName'
+          },
+          {
+            title: '审核结果',
+            key: 'approvalStatus',
+            render:(h,params)=>{
+              return h('span',params.row.approvalStatus.name)
+
+            }
+          },
+          {
+            title: '反馈详情',
+            key: 'feedback'
+          }
+        ],
+        data1:[],
         columns: [
           {
             type: 'selection',
@@ -192,7 +245,31 @@
             tooltip: true,
             align: "center",
             render: (h, params) => {
-              return h('span', '待审核')
+              if (params.row.approvalStatus === 'AUDITING') {
+                return h('span', '待审核')
+              } else if (params.row.approvalStatus === 'PASS') {
+                return h('div', [
+                  h('div', '已通过'),
+                  h('a', {
+                    on:{
+                      'click':()=>{
+                        this.ExamineLog(params.row.id)
+                      }
+                    }
+                  },'审核详情'),
+                ])
+              } else if (params.row.approvalStatus === 'REJECT') {
+                return h('div', [
+                  h('div', '未通过'),
+                  h('a', {
+                    on:{
+                      'click':()=>{
+                        this.ExamineLog(params.row.id)
+                      }
+                    }
+                  }, '审核详情')
+                ])
+              }
             }
           },
           {
@@ -202,17 +279,21 @@
             width: 120,
             align: "center",
             render: (h, params) => {
-              return h('a', {
-                on: {
-                  click: () => {
-                    this.formValidate1.id = params.row.id;
-                    this.formValidate1.rejectReason = '';
-                    this.formValidate1.approvalStatus = 'PASS';
-                    this.formValidate1.name = params.row.skuInfoName;
-                    this.modal = true
+              if(params.row.approvalStatus === 'AUDITING'){
+                return h('a', {
+                  on: {
+                    click: () => {
+                      this.formValidate1.id = params.row.id;
+                      this.formValidate1.rejectReason = '';
+                      this.formValidate1.approvalStatus = 'PASS';
+                      this.formValidate1.name = params.row.skuInfoName;
+                      this.modal = true
+                    }
                   }
-                }
-              }, '审核')
+                }, '审核')
+              }else {
+                return h('span', '暂无操作')
+              }
             }
           }
         ],
@@ -222,10 +303,24 @@
         treeData: [],
         brandList: [],
         selection: [],
-        supplierList: []
+        supplierList: [],
+        countList:{},
       }
     },
     methods: {
+
+      //审核详情
+      ExamineLog(id){
+        this.modal1=true;
+        const _this = this;
+        _this.Axios.get('/Manage/ExamineLog/pageList', {
+          params:{
+            skuInfoId:id
+          }
+        }).then(res => {
+          _this.data1=res.data.data.content
+        })
+      },
 
       //审核
       audit() {
@@ -238,6 +333,7 @@
           if (res.data.code === 0) {
             _this.modal = false;
             _this.getList();
+            _this.count();
             _this.$Message.success('审核通过')
           } else {
             _this.$Message.warning(res.data.message)
@@ -261,7 +357,7 @@
           params: {
             start: _this.start - 1,
             size: 10,
-            approvalStatus: 'AUDITING',
+            approvalStatus: _this.formValidate.state,
             supplierId: _this.formValidate.supplierId,
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,
             category1: _this.formValidate.classify[0],
@@ -347,6 +443,14 @@
         })
       },
 
+      //统计数目
+      count(){
+        const _this = this;
+        _this.Axios.get('/Manage/SkuInfo/count').then(res => {
+          _this.countList = res.data.data
+        })
+      },
+
       resetPage() {
         this.start = 1;
         this.total = 0;
@@ -356,7 +460,8 @@
       this.getList();
       this.getTree();
       this.getBrand();
-      this.selectList()
+      this.selectList();
+      this.count();
     }
   }
 </script>

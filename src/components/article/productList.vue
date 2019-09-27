@@ -3,6 +3,18 @@
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">商品列表</div>
     </Card>
+    <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
+                v-model="state" @on-change="resetPage();getList()">
+      <Radio style="padding:0 20px" label="all">
+        全部商品 ({{countList.totle}})
+      </Radio>
+      <Radio style="padding:0 20px" label="true">
+        上架 ({{countList.onSaleCount}})
+      </Radio>
+      <Radio style="padding:0 20px" label="false">
+        下架 ({{countList.notSaleCount}})
+      </Radio>
+    </RadioGroup>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
         筛选查询
@@ -52,58 +64,37 @@
              :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
       <div style="width: 100%;text-align: right;margin-top: 15px">
-        <Dropdown style="float: left;margin-left: 22px;text-align: left" trigger="click" @on-click="batch()">
-          <Button>
-            批量操作
-            <Icon type="ios-arrow-down"></Icon>
-          </Button>
-          <DropdownMenu slot="list">
-            <DropdownItem @click="getList()" name="1">批量上架</DropdownItem>
-            <DropdownItem @click="getList()" name="1">批量下架</DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+
+        <Button  style="float: left;margin-left: 22px;text-align: left" v-show="state==='true'" @click="batch">批量下架</Button>
+        <Button  style="float: left;margin-left: 22px;text-align: left" v-show="state==='false'" @click="putaway">批量上架</Button>
+        <!--<Dropdown style="float: left;margin-left: 22px;text-align: left" trigger="click" @on-click="batch()">-->
+          <!--<Button>-->
+            <!--批量操作-->
+            <!--<Icon type="ios-arrow-down"></Icon>-->
+          <!--</Button>-->
+
+          <!--<DropdownMenu slot="list">-->
+            <!--<DropdownItem @click="getList()" name="1">批量上架</DropdownItem>-->
+            <!--<DropdownItem @click="getList()" name="1">批量下架</DropdownItem>-->
+          <!--</DropdownMenu>-->
+        <!--</Dropdown>-->
         <Page @on-change="paging" :total="Number(total)" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
-    <Modal v-model="modal" width="360">
-      <p slot="header" style="text-align:center">
-        <Icon type="ios-information-circle"></Icon>
-        <span>Delete confirmation</span>
-      </p>
-      <div>
-        <Form ref="formValidate1" :model="formValidate1" :label-width="80">
-          <FormItem label="商品名称：" prop="name">
-            {{formValidate1.name}}
-          </FormItem>
-          <FormItem label="商品审核：" prop="approvalStatus">
-            <RadioGroup v-model="formValidate1.approvalStatus">
-              <Radio label="PASS">审核通过</Radio>
-              <Radio label="REJECT">审核不通过</Radio>
-            </RadioGroup>
-          </FormItem>
-          <FormItem label="反馈详情：" prop="rejectReason">
-            <Input v-model="formValidate1.rejectReason" type="textarea" :rows="4" placeholder="请输入反馈详情"/>
-          </FormItem>
-        </Form>
-      </div>
-      <div slot="footer">
-        <Button type="primary" size="large" @click="audit">确定</Button>
-      </div>
-    </Modal>
+    <editorProduct ref="editor"></editorProduct>
   </div>
 </template>
 <script>
+  import editorProduct from './editorProduct'
   export default {
+    components:{
+      editorProduct
+    },
     data() {
       return {
-        modal: false,
+        state:'all',
         loading1: true,
-        formValidate1: {
-          name: '',
-          id: '',
-          approvalStatus: 'PASS',
-          rejectReason: '',
-        },
+        countList:{},
         formValidate: {
           skuInfoNameLike: '',
           classify: [],
@@ -157,6 +148,7 @@
           {
             title: '商品名称',
             tooltip: true,
+            minWidth: 70,
             key: 'skuInfoName',
             render: (h, params) => {
               return h('div', [
@@ -176,11 +168,42 @@
             align: "center",
           },
           {
-            title: '商品分类',
+            title: '价格',
+            tooltip: true,
+            key: 'price',
             align: "center",
             render: (h, params) => {
-              return h('p', `${params.row.category1Name} > ${params.row.category2Name} > ${params.row.category3Name}`)
+              return h('div', [
+                h('span', {
+                  style: {
+                    marginTop: '2px'
+                  }
+                }, params.row.price),
+                h('Icon', {
+                  style: {
+                    cursor: 'pointer',
+                    marginLeft: '4px',
+                    color: '#2b85e4'
+                  },
+                  props: {
+                    type: 'ios-create-outline',
+                    size: 22
+                  },
+                  on: {
+                    click: () => {
+                      this.$refs.editor.getList(params.row.id);
+                      this.$refs.editor.modal=true;
+                    }
+                  }
+                })
+              ])
             }
+          },
+          {
+            title: '平台',
+            tooltip: true,
+            key: 'skuInfoNo',
+            align: "center",
           },
           {
             title: '供应商',
@@ -193,32 +216,47 @@
             tooltip: true,
             align: "center",
             render: (h, params) => {
-              return h('Icon', {
-                style: {
-                  cursor: 'pointer'
-                },
-                props: {
-                  type: 'ios-create',
-                  size: 22
-                },
-                on: {
-                  click: () => {
-                    alert('123')
+              return h('div', [
+                h('span', params.row.stock),
+                h('Icon', {
+                  style: {
+                    cursor: 'pointer',
+                    marginLeft: '4px',
+                    color: '#2b85e4'
+                  },
+                  props: {
+                    type: 'ios-create-outline',
+                    size: 22
+                  },
+                  on: {
+                    click: () => {
+                      alert('123')
+                    }
                   }
-                }
-              })
+                })
+              ])
             }
           },
           {
-            title: '销量',
+            title: '状态',
             tooltip: true,
             align: "center",
+            render:(h,params)=>{
+              return h('div',[
+                h('Badge',{
+                  props:{
+                    status: params.row.onSale===true?'success':'error'
+                  }
+                }),
+                h('span',params.row.onSale===true?'上架':'下架')
+              ])
+            }
           },
           {
             title: '操作',
             tooltip: true,
             key: 'ProductName',
-            width: 120,
+            width: 150,
             align: "center",
             render: (h, params) => {
               return h('div', [
@@ -229,7 +267,7 @@
 
                       }
                     }
-                  }, '查询'),
+                  }, '查看'),
                   h('Divider', {
                     props: {
                       type: 'vertical'
@@ -239,17 +277,17 @@
                     props: {
                       confirm: true,
                       transfer: true,
-                      title: '确定删除该商品？',
+                      title: '确定下架该商品？',
                     },
                     on: {
                       'on-ok': () => {
                         const _this = this;
-                        _this.Axios.post('/Manage/Category/deleteCategory', _this.Qs.stringify({
-                          id: params.row.id
+                        _this.Axios.post('/Manage/SkuInfo/batchUnSold', _this.Qs.stringify({
+                          skuInfoIds: [params.row.id]
                         }, {indices: false})).then(res => {
                           if (res.data.code === 0) {
-                            _this.getClassify();
-                            _this.$Message.success('删除成功')
+                            this.getList();
+                            _this.$Message.success('下架成功！')
                           } else {
                             _this.$Message.warning(res.data.message)
                           }
@@ -257,27 +295,31 @@
                       }
                     }
                   }, [
-                    h('a', '下架')
+                    h('a',{
+                      style:{
+                        display:params.row.onSale!==false?'inner-block':'none',
+                        color:'#19be6b'
+                      }
+                    }, '下架')
                   ]),
-                ]),
-                h('div', {
-                  style: {
-                    marginTop: '4px'
-                  }
-                }, [
-                  h('a', {
-                    on: {
-                      click: () => {
+
+                  h('a',{
+                    style:{
+                      display:params.row.onSale!==true?'inner-block':'none',
+                      color:'#ed4014'
+                    },
+                    on:{
+                      click:()=>{
                         let href = this.$router.resolve({
-                          path:'/productLog',
+                          path:'/putaway',
                           query:{
-                            id:params.row.id
+                            ids:[params.row.id]
                           }
-                        })
+                        });
                         window.open(href.href,'_blank')
                       }
                     }
-                  }, '日志'),
+                  },  '上架'),
                   h('Divider', {
                     props: {
                       type: 'vertical'
@@ -291,22 +333,26 @@
                     },
                     on: {
                       'on-ok': () => {
-                        this.Axios.post('/Manage/SkuInfo/delete', this.Qs.stringify({
-                          skuInfoIds: [params.row.id]
-                        }, {indices: false})).then(res => {
-                          if (res.data.code === 0) {
-                            this.getList();
-                            this.$Message.success('成功加入回收站')
-                          } else {
-                            this.$Message.warning(res.data.message)
-                          }
-                        })
+                        if(params.row.onSale===true){
+                          this.$Message.warning('不能删除已上架产品')
+                        }else {
+                          this.Axios.post('/Manage/SkuInfo/delete', this.Qs.stringify({
+                            id: params.row.id
+                          })).then(res => {
+                            if (res.data.code === 0) {
+                              this.getList();
+                              this.$Message.success('删除成功！')
+                            } else {
+                              this.$Message.warning(res.data.message)
+                            }
+                          })
+                        }
                       }
                     }
                   }, [
                     h('a', '删除')
                   ]),
-                ])
+                ]),
               ])
             }
           }
@@ -322,24 +368,6 @@
     },
     methods: {
 
-      //审核
-      audit() {
-        const _this = this;
-        _this.Axios.post('/Manage/SkuInfo/examine', _this.Qs.stringify({
-          id: _this.formValidate1.id,   //id
-          rejectReason: _this.formValidate1.rejectReason,   //拒绝理由
-          approvalStatus: _this.formValidate1.approvalStatus,   //审核状态 PASS("审核通过"), REJECT("拒绝");
-        })).then(res => {
-          if (res.data.code === 0) {
-            _this.modal = false;
-            _this.resetPage();
-            _this.getList();
-            _this.$Message.success('审核通过')
-          } else {
-            _this.$Message.warning(res.data.message)
-          }
-        })
-      },
 
       //赛选
       screen(i) {
@@ -364,7 +392,7 @@
             category3: _this.formValidate.classify[2],
             brandId: _this.formValidate.brandId,
             recycleBin: false,
-            onSale:'',
+            onSale: _this.state==='all'?'':_this.state,
           }
         }).then(res => {
           if (res.data.code === 0) {
@@ -416,16 +444,16 @@
         }
       },
 
-      //批量显示隐藏
+      //批量下架
       batch(i) {
         const _this = this;
         if (_this.selection.length > 0) {
-          _this.Axios.post('/Manage/SkuInfo/restore', this.Qs.stringify({
-            skuInfoIds: _this.selection
+          _this.Axios.post('/Manage/SkuInfo/batchUnSold', _this.Qs.stringify({
+            skuInfoIds:  _this.selection
           }, {indices: false})).then(res => {
             if (res.data.code === 0) {
-              _this.getList();
-              _this.$Message.success('还原商品成功')
+              this.getList();
+              _this.$Message.success('批量下架成功！')
             } else {
               _this.$Message.warning(res.data.message)
             }
@@ -433,6 +461,18 @@
         } else {
           _this.$Message.warning('至少选择一个商品')
         }
+      },
+
+      //批量上架
+      putaway(){
+        console.log(this.selection)
+        let href = this.$router.resolve({
+          path:'/putaway',
+          query:{
+            ids:this.selection
+          }
+        })
+        window.open(href.href,'_blank')
       },
 
       //获取供应商下拉
@@ -443,6 +483,15 @@
         })
       },
 
+      //统计数目
+      count(){
+        const _this = this;
+        _this.Axios.get('/Manage/SkuInfo/count').then(res => {
+          _this.countList = res.data.data
+        })
+      },
+
+
       resetPage() {
         this.start = 1;
         this.total = 0;
@@ -452,7 +501,8 @@
       this.getList();
       this.getTree();
       this.getBrand();
-      this.selectList()
+      this.selectList();
+      this.count()
     }
   }
 </script>
