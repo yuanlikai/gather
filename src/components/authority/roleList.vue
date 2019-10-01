@@ -182,9 +182,9 @@
             minWidth: 88,
             key: 'timeModified',
             align: 'center',
-            // render: (h, params) => {
-            //   return h('p', this.GetLocalTime(params.row.timeModified))
-            // }
+            render: (h, params) => {
+              return h('p', this.riqi(params.row.timeModified))
+            }
           },
           {
             title: '操作',
@@ -366,6 +366,7 @@
 
       // 获取选中半选中树形结构
       checkTree(i) {
+        console.log(this.$refs.tree.getCheckedAndIndeterminateNodes())
         this.cheTree = this.$refs.tree.getCheckedAndIndeterminateNodes();
       },
 

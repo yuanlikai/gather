@@ -199,7 +199,7 @@
             size: 10,
             brandNameLike: _this.formValidate.brandNameLike,  //品牌名称模糊搜搜
             sortsNumAsc: _this.sortsNum==='normal'?'':(_this.sortsNum==='asc'?true:false),                //排序编号true升序 false为降序
-            supplierCountAsc: _this.sortsNum==='normal'?'':(_this.sortsNum==='asc'?true:false),           //供应商关联排序 true为升序
+            supplierCountAsc: _this.supplierCount==='normal'?'':(_this.supplierCount==='asc'?true:false),           //供应商关联排序 true为升序
           }
         }).then(res => {
           if (res.data.code === 0) {

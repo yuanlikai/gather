@@ -97,7 +97,7 @@
             key: 'abbrSupplierName',
           },
           {
-            title: '字母代号',
+            title: '字母编号',
             tooltip: true,
             key: 'supplierNo',
             align: "center",

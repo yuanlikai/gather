@@ -64,15 +64,6 @@
              :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
       <div style="width: 100%;text-align: right;margin-top: 15px">
-        <Dropdown style="float: left;margin-left: 22px" trigger="click" @on-click="batch()">
-          <Button>
-            批量操作
-            <Icon type="ios-arrow-down"></Icon>
-          </Button>
-          <DropdownMenu slot="list">
-            <DropdownItem @click="getList()" name="1">加入回收站</DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
         <Page @on-change="paging" :total="Number(total)" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
@@ -164,7 +155,7 @@
         data1:[],
         columns: [
           {
-            type: 'selection',
+            type: 'index',
             width: 60,
             align: 'center'
           },
@@ -217,7 +208,7 @@
                   style: {
                     color: '#888888'
                   }
-                }, `品牌：${params.row.brandName}`)
+                }, `品牌：${params.row.brandName?params.row.brandName:'未绑定'}`)
               ])
             }
           },
@@ -270,7 +261,27 @@
                   }, '审核详情')
                 ])
               }
-            }
+            },
+            filters: [
+              {
+                label: '待审核',
+                value: 'AUDITING'
+              },
+              {
+                label: '已通过',
+                value: 'PASS'
+              },
+              {
+                label: '未通过',
+                value: 'REJECT'
+              },
+            ],
+            filterMultiple: false,
+            filterRemote(value){
+              this.$parent.resetPage();
+              this.$parent.formValidate.state=value.length>0?value[0]:'all';
+              this.$parent.getList()
+            },
           },
           {
             title: '操作',
@@ -280,17 +291,37 @@
             align: "center",
             render: (h, params) => {
               if(params.row.approvalStatus === 'AUDITING'){
-                return h('a', {
-                  on: {
-                    click: () => {
-                      this.formValidate1.id = params.row.id;
-                      this.formValidate1.rejectReason = '';
-                      this.formValidate1.approvalStatus = 'PASS';
-                      this.formValidate1.name = params.row.skuInfoName;
-                      this.modal = true
+                return ('div',[
+                  h('a',{
+                    on:{
+                      click:()=>{
+                        let href = this.$router.resolve({
+                          path:'/examine',
+                          query:{
+                            id:params.row.id
+                          }
+                        });
+                        window.open(href.href,'_blank')
+                      }
                     }
-                  }
-                }, '审核')
+                  },  '查看'),
+                  h('Divider', {
+                    props: {
+                      type: 'vertical'
+                    }
+                  }),
+                  h('a', {
+                    on: {
+                      click: () => {
+                        this.formValidate1.id = params.row.id;
+                        this.formValidate1.rejectReason = '';
+                        this.formValidate1.approvalStatus = 'PASS';
+                        this.formValidate1.name = params.row.skuInfoName;
+                        this.modal = true
+                      }
+                    }
+                  }, '审核')
+                ])
               }else {
                 return h('span', '暂无操作')
               }
@@ -446,7 +477,7 @@
       //统计数目
       count(){
         const _this = this;
-        _this.Axios.get('/Manage/SkuInfo/count').then(res => {
+        _this.Axios.get('/Manage/SkuInfo/count2').then(res => {
           _this.countList = res.data.data
         })
       },

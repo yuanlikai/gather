@@ -4,13 +4,13 @@
       <div class="ivu-page-header-title">订单列表</div>
     </Card>
     <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
-                v-model="formValidate.state" @on-change="start=1;total=0;getOrder()">
+                v-model="formValidate.state" @on-change="types='',start=1;total=0;getOrder()">
       <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
         {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
       </Radio>
     </RadioGroup>
     <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
-                v-model="formValidate.state" @on-change="start=1,getOrder('yc')">
+                v-model="formValidate.state" @on-change="types='yc',start=1,getOrder('yc')">
       <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
       <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
     </RadioGroup>
@@ -23,10 +23,11 @@
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="供应商：" prop="supplierid">
               <Select :disabled="supplier.userType==='SUPPLIER'"
-                      v-model="supplier.userType==='SUPPLIER'?Number(supplier.supplierId):formValidate.supplierid"
+                      v-model="supplier.userType==='SUPPLIER'?supplier.supplierId:formValidate.supplierid"
                       @on-change="start=1,getOrder()">
                 <Option value="-1">全部</Option>
-                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}</Option>
+                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}
+                </Option>
               </Select>
             </FormItem>
           </Col>
@@ -52,12 +53,14 @@
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="手机号：" prop="phone">
-              <Input :maxlength="11" @on-keyup="formValidate.phone=formValidate.phone.replace(/[^\d]/g,'')" v-model="formValidate.phone" placeholder="请输入"/>
+              <Input :maxlength="11" @on-keyup="formValidate.phone=formValidate.phone.replace(/[^\d]/g,'')"
+                     v-model="formValidate.phone" placeholder="请输入"/>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="下单时间：" prop="time">
-              <DatePicker @on-change="start=1,getOrder()" style="width: 100%;cursor: pointer;" v-model="formValidate.time"
+              <DatePicker @on-change="getTime" style="width: 100%;cursor: pointer;"
+                          v-model="formValidate.time"
                           format="yyyy/MM/dd" type="daterange"
                           placement="bottom-end" placeholder="请选择" :editable="false"></DatePicker>
             </FormItem>
@@ -90,12 +93,39 @@
       </p>
       <p slot="extra">
         <ButtonGroup>
-          <Button type="dashed" v-if="formValidate.state==='1'">批量发货</Button>
-          <Button type="dashed">批量导出订单</Button>
+          <!--state: _this.formValidate.state,-->
+          <!--supplierid: _this.formValidate.supplierid,-->
+          <!--ordernumber: _this.formValidate.ordernumber,-->
+          <!--proname: _this.formValidate.proname,-->
+          <!--stockno: _this.formValidate.stockno,-->
+          <!--consignee: _this.formValidate.consignee,-->
+          <!--phone: _this.formValidate.phone,-->
+          <!--price1: _this.formValidate.price1,-->
+          <!--price2: _this.formValidate.price2,-->
+          <!--begintime: _this.formValidate.time[0],-->
+          <!--endtime: _this.formValidate.time[1],-->
+          <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
+          '&supplierid='+formValidate.supplierid+
+          '&ordernumber='+formValidate.ordernumber+
+          '&proname='+formValidate.proname+
+          '&stockno='+formValidate.stockno+
+          '&consignee='+formValidate.consignee+
+          '&phone='+formValidate.phone+
+          '&price1='+formValidate.price1+
+          '&price2='+formValidate.price2+
+          '&begintime='+formValidate.time[0]+
+          '&endtime='+formValidate.time[1]" target="_blank">
+            <Button type="dashed">批量导出订单</Button>
+          </a>
+
         </ButtonGroup>
         <ButtonGroup>
-          <Button type="dashed">下载模板</Button>
+          <a style="float: right" href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban.xls" download="muban">
+            <Button type="dashed">下载发货模板</Button>
+          </a>
+          <Upload style="float: right" v-if="formValidate.state==='1'"></Upload>
         </ButtonGroup>
+
       </p>
       <Table @on-sort-change="sorts" :loading="loading1" :show-header="true" :columns="columns" :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
@@ -139,9 +169,12 @@
 </template>
 <script>
   import express from './express'
+  import Upload from './Upload'
+
   export default {
-    components:{
-      express
+    components: {
+      express,
+      Upload
     },
     props: ['supplier'],
     data() {
@@ -317,14 +350,13 @@
             align: 'center',
             width: 130,
             render: (h, params) => {
-              console.log(params.row)
               let a;
               if (params.row.State === 1) {
                 a = h('a', {
                   on: {
                     click: () => {
                       const _this = this;
-                      _this.$refs.express.model=true;
+                      _this.$refs.express.model = true;
                       _this.$refs.express.formDynamic.idstr = params.row.ID;
                       _this.$refs.express.formDynamic.items = [
                         {
@@ -409,12 +441,12 @@
               return h('div', [
                 a,
 
-                h('Divider',{
-                  style:{
-                    display:params.row.State!==6?'inline-block':'none'
+                h('Divider', {
+                  style: {
+                    display: params.row.State === 6 ? 'none' : 'inline-block'
                   },
-                  props:{
-                    type:'vertical'
+                  props: {
+                    type: 'vertical'
                   }
                 }),
                 h('a', {
@@ -437,7 +469,7 @@
         ],
         data: [],
         formValidate: {
-          state: this.$route.params.id?this.$route.params.id:'0',
+          state: this.$route.params.id ? this.$route.params.id : '0',
           supplierid: '-1',
           ordernumber: '',
           proname: '',
@@ -451,42 +483,43 @@
         supplierList: [],
         statusList: [],
         start: 1,
-        sortid:'',
-        orderNum:{},
+        sortid: '',
+        orderNum: {},
+        types: 'yc'
       }
     },
     methods: {
 
       //订单时间金额升序降序
-      sorts(i){
+      sorts(i) {
         switch (i.order) {
           case 'asc':
-            i.key==='AddTime'?this.sortid='1':this.sortid='3';
+            i.key === 'AddTime' ? this.sortid = '1' : this.sortid = '3';
             break;
           case 'desc':
-            i.key==='AddTime'?this.sortid='2':this.sortid='4';
+            i.key === 'AddTime' ? this.sortid = '2' : this.sortid = '4';
             break;
           default:
-            this.sortid='';
+            this.sortid = '';
             break
         }
-        this.getOrder(this.formValidate.state>8?'yc':'');
+        this.getOrder(this.formValidate.state > 8 ? 'yc' : '');
       },
 
       // 分页
       paging(i) {
         this.start = i;
-        this.getOrder(this.formValidate.state>8?'yc':'');
+        this.getOrder(this.formValidate.state > 8 ? 'yc' : '');
       },
 
       //获取订单列表
       getOrder(i) {
         const _this = this;
         _this.loading1 = true;
-        _this.Axios.get(i!=='yc'?'/Manage/Order/pageList':'/Manage/Order/getYcOrderList', {
+        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
           params: {
-            typeid:i==='yc'?(_this.formValidate.state==='9'?'1':'2'):'',
-            sortid:_this.sortid,
+            typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
+            sortid: _this.sortid,
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid,
             ordernumber: _this.formValidate.ordernumber,
@@ -503,6 +536,7 @@
           }
         }).then(res => {
           if (res.data.error === 0) {
+            _this.getOrderNum();
             _this.data = res.data.data;
             _this.total = res.data.total;
           } else {
@@ -561,7 +595,7 @@
         })).then(res => {
           if (res.data.code === 0) {
             _this.$Message.success('已提交申请退单');
-            _this.getOrder(_this.formValidate.state>8?'yc':'');
+            _this.getOrder(_this.formValidate.state > 8 ? 'yc' : '');
             _this.getOrderNum();
             _this.modal2 = false;
           } else {
@@ -578,10 +612,10 @@
         })
       },
       //获取状态数量
-      getOrderNum(){
+      getOrderNum() {
         const _this = this;
         _this.Axios.get('/Manage/Order/getOrderNum').then(res => {
-          _this.orderNum=res.data
+          _this.orderNum = res.data
         });
       },
 
@@ -589,6 +623,7 @@
       getSupplier() {
         const _this = this;
         _this.Axios.get('/Manage/Supplier/selectList').then(res => {
+          console.log(res.data)
           _this.supplierList = res.data.data
         })
       },
@@ -615,6 +650,12 @@
         i.forEach(function (item, index) {
           _this.ReOrder.total += item.Price * item.num
         });
+      },
+
+      getTime(i){
+        this.formValidate.time=[i[0],i[1]];
+        this.start=1;
+        this.getOrder()
       }
     },
     mounted() {

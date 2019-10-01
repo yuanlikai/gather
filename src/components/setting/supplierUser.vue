@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">用户管理</div>
+      <div class="ivu-page-header-title">供应商用户</div>
     </Card>
     <Card :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
@@ -72,11 +72,11 @@ margin-right: 16px">
           <FormItem v-if="id===''" label="确认密码" prop="affirmPassword">
             <Input :maxlength="25" type="password" v-model="formValidate.affirmPassword" placeholder="请确认密码"></Input>
           </FormItem>
-          <!--<FormItem v-if="id===''" label="供应商" prop="supplierId">-->
-            <!--<Select v-model="formValidate.supplierId" style="width:200px">-->
-              <!--<Option v-for="item in supplierList" :value="String(item.id)" :key="item.id">{{ item.supplierName }}</Option>-->
-            <!--</Select>-->
-          <!--</FormItem>-->
+          <FormItem v-if="id===''" label="供应商" prop="supplierId">
+            <Select v-model="formValidate.supplierId" style="width:200px">
+              <Option v-for="item in supplierList" :value="String(item.id)" :key="item.id">{{ item.supplierName }}</Option>
+            </Select>
+          </FormItem>
           <FormItem v-if="userInfoType!=='SUPPLIER'" label="角色绑定" prop="roleIds">
             <Select :disabled="userInfoType!=='SUPPLIER'?false:true" v-model="formValidate.roleIds" multiple>
               <Option v-for="item in cityList" :value="item.id" :key="item.id">{{ item.roleName }}</Option>
@@ -85,12 +85,12 @@ margin-right: 16px">
           <FormItem label="用户姓名" prop="name">
             <Input :maxlength="5" v-model="formValidate.name" placeholder="请确认姓名"></Input>
           </FormItem>
-          <FormItem label="是否锁定" prop="statuss">
-            <i-switch v-model="statuss">
-              <span slot="open">是</span>
-              <span slot="close">否</span>
-            </i-switch>
-          </FormItem>
+          <!--<FormItem label="是否锁定" prop="statuss">-->
+            <!--<i-switch v-model="statuss">-->
+              <!--<span slot="open">是</span>-->
+              <!--<span slot="close">否</span>-->
+            <!--</i-switch>-->
+          <!--</FormItem>-->
         </Form>
       </div>
       <div slot="footer">
@@ -204,18 +204,18 @@ margin-right: 16px">
         this.getUser()
       },
 
-      // //获取供应商下拉
-      // getSupplier() {
-      //   const _this = this;
-      //   _this.Axios.get('/Manage/Supplier/selectList').then(res => {
-      //     console.log(res.data.data)
-      //     if (res.data.code === 0) {
-      //       _this.supplierList = res.data.data
-      //     } else {
-      //       _this.$Message.error(res.data.message)
-      //     }
-      //   })
-      // },
+      //获取供应商下拉
+      getSupplier() {
+        const _this = this;
+        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
+          console.log(res.data.data)
+          if (res.data.code === 0) {
+            _this.supplierList = res.data.data
+          } else {
+            _this.$Message.error(res.data.message)
+          }
+        })
+      },
 
       //删除用户
       delHandle(username, id) {
@@ -259,7 +259,7 @@ margin-right: 16px">
       // 获取角色列表
       cityRole() {
         const _this = this;
-        _this.Axios.get('/Manage/Role/list', {
+        _this.Axios.get('/Manage/Role/supplierRoleList', {
           params: {
             excludeSuper: true,
             supplierExclusive: false
@@ -297,7 +297,7 @@ margin-right: 16px">
       getUser() {
         const _this = this;
         _this.loading = true;
-        _this.Axios.post('/Manage/UserInfo/pageList', _this.Qs.stringify({
+        _this.Axios.post('/Manage/UserInfo/supplierUsers', _this.Qs.stringify({
           start: _this.start,
           size: 5,
           usernameLike: _this.pre === '0' ? this.like : '',         //账号模糊查询
@@ -324,13 +324,13 @@ margin-right: 16px">
             _this.modal_loading = true;
             if (_this.id === '') {
               // 添加用户
-              _this.Axios.post('/Manage/UserInfo/addUser', _this.Qs.stringify({
-                status: _this.statuss === false ? '1' : '0',  //"0"为锁定 "1"为正常
+              _this.Axios.post('/Manage/UserInfo/addSupplierUser', _this.Qs.stringify({
                 username: _this.formValidate.username,  //账号
                 password: _this.formValidate.affirmPassword,  //密码
                 name: _this.formValidate.name,   //用户姓名
                 roleIdSet: _this.formValidate.roleIds,  //角色id素组
-                supplierId: _this.formValidate.supplierId
+                supplierId: _this.formValidate.supplierId,
+                sex:'MALE'
               }, {indices: false})).then(res => {
                 if (res.data.code === 0) {
                   _this.addAccount = false;
@@ -343,13 +343,13 @@ margin-right: 16px">
               })
             } else {
               // 更新用户
-              _this.Axios.post('/Manage/UserInfo/updateUser', _this.Qs.stringify({
+              _this.Axios.post('/Manage/UserInfo/updateSupplierUser', _this.Qs.stringify({
                 id: _this.id,
-                status: _this.statuss === false ? '1' : '0',  //"0"为锁定 "1"为正常
                 username: _this.formValidate.username,  //账号
                 name: _this.formValidate.name,   //用户姓名
                 roleIdSet: _this.formValidate.roleIds,  //角色id素组
-                supplierId: _this.formValidate.supplierId
+                supplierId: _this.formValidate.supplierId,
+                sex:'MALE'
               }, {indices: false})).then(res => {
                 if (res.data.code === 0) {
                   _this.addAccount = false;
@@ -374,7 +374,7 @@ margin-right: 16px">
       this.getUser();
       this.cityRole();
       this.getRole();
-      // this.getSupplier();
+      this.getSupplier();
     }
   }
 </script>

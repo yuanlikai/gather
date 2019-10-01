@@ -35,13 +35,14 @@
           <Menu mode="horizontal" type="light" style="margin-left: auto;margin-right: 20px;">
             <div class="layout-logo"></div>
             <div class="layout-nav">
-              <router-link to="/log">
+              <router-link to="/log" v-show="supplier.userType==='SUPER'">
                 <Tooltip content="日志" placement="bottom">
                   <Icon size="18" color="#555555" type="md-ionic"/>
                 </Tooltip>
               </router-link>
               <Dropdown trigger="click" style="margin-left: 20px;cursor: pointer;" @on-click="out">
-                <Avatar style="margin-right: 8px" src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/touxiang.jpg"/>
+                <Avatar style="margin-right: 8px"
+                        src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/touxiang.jpg"/>
                 {{user}}
                 <Icon type="ios-arrow-down"/>
                 <DropdownMenu slot="list">

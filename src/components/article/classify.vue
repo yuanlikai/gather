@@ -86,7 +86,6 @@
               if (this.$route.query.treeLevel === '3') {
                 return h('a','暂无功能')
               } else {
-
                 return h('div', [
                   h('a', {
                     on: {
@@ -141,7 +140,8 @@
                       let href = this.$router.resolve({
                         path: '/addClassify',
                         query: {
-                          id: params.row.id
+                          id: params.row.id,
+                          parentId: params.row.parentId
                         }
                       });
                       window.open(href.href, '_blank')

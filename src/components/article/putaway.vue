@@ -38,7 +38,6 @@
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title" style="text-align: left">
         选择商品
-        {{current}}
       </p>
       <div style="margin: 0 auto;width: 900px;">
         <Steps v-show="current!==2" :current="current" style="margin: 16px 0 0 0">
@@ -79,7 +78,7 @@
               </Col>
             </Row>
             <Button type="primary" ghost style="margin: 32px 16px 32px 0" @click="current=0" v-show="!$route.query.ids">上一步，选择商品平台</Button>
-            <Button type="primary" style="margin: 32px 0" @click="putaway" :loading="sjLoding">上架</Button>
+            <Button type="primary" v-show="show" style="margin: 32px 0" @click="putaway" :loading="sjLoding">上架</Button>
           </Col>
         </Row>
 
@@ -90,7 +89,7 @@
             <Alert style="width:80%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">
               商品上架成功，请到商品列表查看
             </Alert>
-            <Button type="primary" @click="current = 0">继续上架</Button>&nbsp;
+            <Button type="primary" @click="current = 0" v-show="!$route.query.ids">继续上架</Button>&nbsp;
           </Col>
         </Row>
       </div>
@@ -101,6 +100,7 @@
   export default {
     data() {
       return {
+        show:true,
         loading: true,
         formValidate: {
           skuInfoNameLike: '',
@@ -127,14 +127,26 @@
             title: '市场价 (必填)',
             key: 'marketPrice',
             render: (h, params) => {
-              return h('i-input', {
-                props: {
-                  value: params.row.marketPrice,
-                  maxlength: 7
+              return h('input', {
+                style:{
+                  width: '100px',
+                  border:'1px solid #dcdee2',
+                  padding:'0 4px'
+                },
+                attrs:{
+                  value:params.row.marketPrice,
+                  type:"text",
+                  maxlength:'7'
                 },
                 on: {
-                  'on-blur': (event) => {
-                    this.fillInList[params.row.platformName][params.index].marketPrice = event.target.value
+                  'input': (event) => {
+                    if (event.target.value.length < 1) {
+                      event.target.value = 1
+                    }
+                    event.target.value= event.target.value.match(/\d+(\.\d{0,2})?/) ? event.target.value.match(/\d+(\.\d{0,2})?/)[0] : ''
+                  },
+                  'blur': (event) => {
+                    this.fillInList[params.row.platformName][params.index].marketPrice=event.target.value;
                   }
                 }
               })
@@ -144,14 +156,26 @@
             title: '售价 (必填)',
             key: 'price',
             render: (h, params) => {
-              return h('i-input', {
-                props: {
-                  value: params.row.price,
-                  maxlength: 7
+              return h('input', {
+                style:{
+                  width: '100px',
+                  border:'1px solid #dcdee2',
+                  padding:'0 4px'
+                },
+                attrs:{
+                  value:params.row.price,
+                  type:"text",
+                  maxlength:'7'
                 },
                 on: {
-                  'on-blur': (event) => {
-                    this.fillInList[params.row.platformName][params.index].price = event.target.value
+                  'input': (event) => {
+                    if (event.target.value.length < 1) {
+                      event.target.value = 1
+                    }
+                    event.target.value= event.target.value.match(/\d+(\.\d{0,2})?/) ? event.target.value.match(/\d+(\.\d{0,2})?/)[0] : ''
+                  },
+                  'blur': (event) => {
+                    this.fillInList[params.row.platformName][params.index].price=event.target.value;
                   }
                 }
               })
@@ -161,14 +185,23 @@
             title: '折扣（0.1~9.9）',
             key: 'discount',
             render: (h, params) => {
-              return h('i-input', {
-                props: {
-                  value: params.row.discount,
-                  maxlength: 7
+              return h('input', {
+                style:{
+                  width: '100px',
+                  border:'1px solid #dcdee2',
+                  padding:'0 4px'
+                },
+                attrs:{
+                  value:params.row.discount,
+                  type:"text",
+                  maxlength:'7'
                 },
                 on: {
-                  'on-blur': (event) => {
-                    this.fillInList[params.row.platformName][params.index].discount = event.target.value
+                  'input': (event) => {
+                    event.target.value= event.target.value.match(/\d+(\.\d{0,1})?/) ? event.target.value.match(/\d+(\.\d{0,1})?/)[0] : ''
+                  },
+                  'blur': (event) => {
+                    this.fillInList[params.row.platformName][params.index].discount=event.target.value;
                   }
                 }
               })
@@ -213,7 +246,11 @@
           ids: _this.$route.query.ids?_this.$route.query.ids:_this.targetKeys,
         }, {indices: false})).then(res => {
           _this.fillInList = res.data.data
-          console.log(_this.fillInList)
+          console.log(res.data.data)
+          if(!res.data.data){
+            _this.show=false;
+            _this.$Message.warning('该商品分类未绑定平台')
+          }
         })
 
       },
@@ -231,7 +268,7 @@
         const _this = this;
         _this.loading = true;
         _this.data = [];
-        _this.Axios.get('/Manage/SkuInfo/readyOnsalePageList', {
+        _this.Axios.get('/Manage/SkuInfo/readyOnsaleProducts', {
           params: {
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,    //商品名模糊搜索
             skuInfoNoLike: '',    //商品编号模糊搜索
@@ -242,11 +279,12 @@
             seed: '',    //true为未上架商品
           }
         }).then(res => {
-          for (let i in res.data.data.content) {
+          for (let i in res.data.data) {
             _this.data.push({
-              "key": res.data.data.content[i].id,
-              "label": res.data.data.content[i].abbrPlatformNames ? res.data.data.content[i].skuInfoName + " - " + res.data.data.content[i].abbrPlatformNames : res.data.data.content[i].skuInfoName,
-              "disabled": !res.data.data.content[i].abbrPlatformNames
+              "key": res.data.data[i].id,
+              "label": res.data.data[i].abbrPlatformNames ? res.data.data[i].skuInfoName + " - " + res.data.data[i].abbrPlatformNames : res.data.data[i].skuInfoName,
+              // "label": '<a>123</a>',
+              "disabled": !res.data.data[i].abbrPlatformNames
             })
           }
           _this.loading = false;
@@ -278,14 +316,22 @@
     },
     watch:{
       '$route'(to, from) {
-        this.current=0
+        this.current=0;
+        this.getTree();
+        this.getBrand();
+        this.dataList();
       }
     },
     mounted() {
-      this.$route.query.ids?this.fillIn():''
-      this.dataList();
-      this.getTree();
-      this.getBrand()
+      if(this.$route.query.ids){
+        this.fillIn()
+      }else{
+        this.getTree();
+        this.getBrand();
+        this.dataList();
+      }
+
+
     }
   }
 </script>

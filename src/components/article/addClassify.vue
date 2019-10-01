@@ -1,11 +1,11 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">添加分类</div>
+      <div class="ivu-page-header-title">{{$route.query.id?'编辑':'添加'}}分类</div>
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
 
-      <Row>
+      <Row v-show="current===0">
         <Col :md="{span:18,offset:3}" :lg="{span:10,offset:6}">
           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="70">
             <FormItem label="分类名称" prop="name">
@@ -30,6 +30,16 @@
           </Form>
         </Col>
       </Row>
+      <Row v-show="current===1">
+        <Col span="24" style="text-align: center">
+          <Icon type="ios-checkmark-circle" size="90" color="#19be6b" style="margin: 32px 0 24px 0"/>
+          <div class="ivu-result-title">{{$route.query.id?'修改':'添加'}}成功</div>
+          <Alert style="width:50%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">
+            分类{{$route.query.id?'修改':'添加'}}成功，请到分类列表查看
+          </Alert>
+          <Button v-show="!$route.query.id" type="primary" @click="current = 0">继续添加</Button>&nbsp;
+        </Col>
+      </Row>
     </Card>
   </div>
 </template>
@@ -42,6 +52,7 @@
     },
     data() {
       return {
+        current:0,
         detail: {},
         formValidate: {
           id: '',              //分类id 传入就是新增
@@ -73,7 +84,10 @@
               description: _this.formValidate.description,     //隔开 最大长度30
             })).then(res => {
               if (res.data.code === 0) {
-                _this.$Message.success('添加成功！')
+                _this.$Message.success('添加成功！');
+                _this.handleReset('formValidate');
+                _this.$refs.classify.uploadList=[];
+                _this.current=1
               } else {
                 _this.$Message.warning(res.data.message)
               }

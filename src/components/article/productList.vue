@@ -38,14 +38,14 @@
               </Select>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="供应商：" prop="brandNameLike">
-              <Select v-model="formValidate.supplierId" :clearable="true" @on-change="resetPage();getList()" clearable>
-                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{item.supplierName}}
-                </Option>
-              </Select>
-            </FormItem>
-          </Col>
+          <!--<Col :xs="24" :md="12" :lg="8">-->
+          <!--<FormItem label="供应商：" prop="brandNameLike">-->
+          <!--<Select v-model="formValidate.supplierId" :clearable="true" @on-change="resetPage();getList()" clearable>-->
+          <!--<Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{item.supplierName}}-->
+          <!--</Option>-->
+          <!--</Select>-->
+          <!--</FormItem>-->
+          <!--</Col>-->
           <Col :xs="24" :md="24" :lg="8" style="">
             <FormItem>
               <Button type="primary" style="margin-right: 6px" @click="resetPage();getList()">查询</Button>
@@ -57,44 +57,38 @@
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
-        数据列表
+        数据列表{{state}}
       </p>
-      <Table @on-selection-change="choice" :loading="loading1" :show-header="true"
+      <Table @on-selection-change="choice" @on-sort-change="sorts" :loading="loading1" :show-header="true"
              :columns="columns"
              :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
       <div style="width: 100%;text-align: right;margin-top: 15px">
-
-        <Button  style="float: left;margin-left: 22px;text-align: left" v-show="state==='true'" @click="batch">批量下架</Button>
-        <Button  style="float: left;margin-left: 22px;text-align: left" v-show="state==='false'" @click="putaway">批量上架</Button>
-        <!--<Dropdown style="float: left;margin-left: 22px;text-align: left" trigger="click" @on-click="batch()">-->
-          <!--<Button>-->
-            <!--批量操作-->
-            <!--<Icon type="ios-arrow-down"></Icon>-->
-          <!--</Button>-->
-
-          <!--<DropdownMenu slot="list">-->
-            <!--<DropdownItem @click="getList()" name="1">批量上架</DropdownItem>-->
-            <!--<DropdownItem @click="getList()" name="1">批量下架</DropdownItem>-->
-          <!--</DropdownMenu>-->
-        <!--</Dropdown>-->
+        <Button style="float: left;margin-left: 22px;text-align: left" v-show="state==='true'" @click="batch">批量下架
+        </Button>
+        <Button style="float: left;margin-left: 22px;text-align: left" v-show="state==='false'" @click="putaway">批量上架
+        </Button>
         <Page @on-change="paging" :total="Number(total)" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
     <editorProduct ref="editor"></editorProduct>
+    <repertory @getList="getList" ref="repertory"></repertory>
   </div>
 </template>
 <script>
   import editorProduct from './editorProduct'
+  import repertory from './repertory'
+
   export default {
-    components:{
-      editorProduct
+    components: {
+      editorProduct,
+      repertory
     },
     data() {
       return {
-        state:'all',
+        state: 'all',
         loading1: true,
-        countList:{},
+        countList: {},
         formValidate: {
           skuInfoNameLike: '',
           classify: [],
@@ -157,7 +151,7 @@
                   style: {
                     color: '#888888'
                   }
-                }, `品牌：${params.row.brandName}`)
+                }, `品牌：${params.row.brandName ? params.row.brandName : '未绑定'}`)
               ])
             }
           },
@@ -171,6 +165,7 @@
             title: '价格',
             tooltip: true,
             key: 'price',
+            sortable: "custom",
             align: "center",
             render: (h, params) => {
               return h('div', [
@@ -181,6 +176,7 @@
                 }, params.row.price),
                 h('Icon', {
                   style: {
+                    display: params.row.onSale === true ? 'inner-block' : 'none',
                     cursor: 'pointer',
                     marginLeft: '4px',
                     color: '#2b85e4'
@@ -192,7 +188,7 @@
                   on: {
                     click: () => {
                       this.$refs.editor.getList(params.row.id);
-                      this.$refs.editor.modal=true;
+                      this.$refs.editor.modal = true;
                     }
                   }
                 })
@@ -202,7 +198,7 @@
           {
             title: '平台',
             tooltip: true,
-            key: 'skuInfoNo',
+            key: 'onsalePlatformNames',
             align: "center",
           },
           {
@@ -230,7 +226,12 @@
                   },
                   on: {
                     click: () => {
-                      alert('123')
+                      console.log(params.row)
+                      this.$refs.repertory.formValidate.supplierKey = params.row.supplierKey;
+                      this.$refs.repertory.formValidate.stock = String(params.row.stock);
+                      this.$refs.repertory.formValidate.skuInfoNo = params.row.skuInfoNo;
+                      this.$refs.repertory.formValidate.skuInfoName = params.row.skuInfoName;
+                      this.$refs.repertory.modal = true;
                     }
                   }
                 })
@@ -241,16 +242,32 @@
             title: '状态',
             tooltip: true,
             align: "center",
-            render:(h,params)=>{
-              return h('div',[
-                h('Badge',{
-                  props:{
-                    status: params.row.onSale===true?'success':'error'
+            render: (h, params) => {
+              return h('div', [
+                h('Badge', {
+                  props: {
+                    status: params.row.onSale === true ? 'success' : 'error'
                   }
                 }),
-                h('span',params.row.onSale===true?'上架':'下架')
+                h('span', params.row.onSale === true ? '上架' : '下架')
               ])
-            }
+            },
+            filters: [
+              {
+                label: '上架',
+                value: 'true'
+              },
+              {
+                label: '下架',
+                value: 'false'
+              }
+            ],
+            filterMultiple: false,
+            filterRemote(value){
+              this.$parent.resetPage();
+              this.$parent.state=value.length>0?value[0]:'all';
+              this.$parent.getList()
+            },
           },
           {
             title: '操作',
@@ -264,7 +281,13 @@
                   h('a', {
                     on: {
                       click: () => {
-
+                        let href = this.$router.resolve({
+                          path: '/examine',
+                          query: {
+                            id: params.row.id
+                          }
+                        });
+                        window.open(href.href, '_blank')
                       }
                     }
                   }, '查看'),
@@ -295,31 +318,31 @@
                       }
                     }
                   }, [
-                    h('a',{
-                      style:{
-                        display:params.row.onSale!==false?'inner-block':'none',
-                        color:'#19be6b'
+                    h('a', {
+                      style: {
+                        display: params.row.onSale !== false ? 'inner-block' : 'none',
+                        color: '#19be6b'
                       }
                     }, '下架')
                   ]),
 
-                  h('a',{
-                    style:{
-                      display:params.row.onSale!==true?'inner-block':'none',
-                      color:'#ed4014'
+                  h('a', {
+                    style: {
+                      display: params.row.onSale !== true ? 'inner-block' : 'none',
+                      color: '#ed4014'
                     },
-                    on:{
-                      click:()=>{
+                    on: {
+                      click: () => {
                         let href = this.$router.resolve({
-                          path:'/putaway',
-                          query:{
-                            ids:[params.row.id]
+                          path: '/putaway',
+                          query: {
+                            ids: [params.row.id]
                           }
                         });
-                        window.open(href.href,'_blank')
+                        window.open(href.href, '_blank')
                       }
                     }
-                  },  '上架'),
+                  }, '上架'),
                   h('Divider', {
                     props: {
                       type: 'vertical'
@@ -333,9 +356,9 @@
                     },
                     on: {
                       'on-ok': () => {
-                        if(params.row.onSale===true){
+                        if (params.row.onSale === true) {
                           this.$Message.warning('不能删除已上架产品')
-                        }else {
+                        } else {
                           this.Axios.post('/Manage/SkuInfo/delete', this.Qs.stringify({
                             id: params.row.id
                           })).then(res => {
@@ -363,7 +386,8 @@
         treeData: [],
         brandList: [],
         selection: [],
-        supplierList: []
+        supplierList: [],
+        priceAsc:'normal'
       }
     },
     methods: {
@@ -380,7 +404,7 @@
       getList() {
         const _this = this;
         _this.loading1 = true;
-        _this.Axios.get('/Manage/SkuInfo/pageList', {
+        _this.Axios.get('/Manage/SkuInfo/supplierSkuPageList', {
           params: {
             start: _this.start - 1,
             size: 10,
@@ -392,7 +416,8 @@
             category3: _this.formValidate.classify[2],
             brandId: _this.formValidate.brandId,
             recycleBin: false,
-            onSale: _this.state==='all'?'':_this.state,
+            priceAsc: _this.priceAsc==='normal'?'':(_this.priceAsc==='asc'?true:false),
+            onSale: _this.state === 'all' ? '' : _this.state,
           }
         }).then(res => {
           if (res.data.code === 0) {
@@ -431,8 +456,8 @@
       //获取品牌列表
       getBrand() {
         const _this = this;
-        _this.Axios.get('/Manage/Brand/pageList').then(res => {
-          _this.brandList = res.data.data.content
+        _this.Axios.get('/Manage/Brand/selectBrand').then(res => {
+          _this.brandList = res.data.data
         })
       },
 
@@ -449,7 +474,7 @@
         const _this = this;
         if (_this.selection.length > 0) {
           _this.Axios.post('/Manage/SkuInfo/batchUnSold', _this.Qs.stringify({
-            skuInfoIds:  _this.selection
+            skuInfoIds: _this.selection
           }, {indices: false})).then(res => {
             if (res.data.code === 0) {
               this.getList();
@@ -464,34 +489,49 @@
       },
 
       //批量上架
-      putaway(){
+      putaway() {
         console.log(this.selection)
         let href = this.$router.resolve({
-          path:'/putaway',
-          query:{
-            ids:this.selection
+          path: '/putaway',
+          query: {
+            ids: this.selection
           }
-        })
-        window.open(href.href,'_blank')
+        });
+        window.open(href.href, '_blank')
       },
 
       //获取供应商下拉
       selectList() {
         const _this = this;
         _this.Axios.get('/Manage/Supplier/selectList').then(res => {
+          console.log(res.data)
           _this.supplierList = res.data.data
         })
       },
 
       //统计数目
-      count(){
+      count() {
         const _this = this;
-        _this.Axios.get('/Manage/SkuInfo/count').then(res => {
+        _this.Axios.get('/Manage/SkuInfo/count1', {
+          params: {
+            supplierId: '1'
+          }
+        }).then(res => {
           _this.countList = res.data.data
         })
       },
 
-
+      //排序
+      sorts(i) {
+        const _this = this;
+        _this.priceAsc = 'normal';
+        switch (i.key) {
+          case "price":
+            _this.priceAsc = i.order;
+            break;
+        }
+        _this.getList();
+      },
       resetPage() {
         this.start = 1;
         this.total = 0;
@@ -501,7 +541,7 @@
       this.getList();
       this.getTree();
       this.getBrand();
-      this.selectList();
+      // this.selectList();
       this.count()
     }
   }

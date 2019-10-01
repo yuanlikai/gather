@@ -111,6 +111,11 @@ export default new Router({
           component: resolve => require(['@/components/article/addArticle'], resolve),
         },
         {
+          path: '/examine',
+          name: '商品详情',
+          component: resolve => require(['@/components/article/examine'], resolve),
+        },
+        {
           path: '/addClassify',
           name: '添加分类',
           component: resolve => require(['@/components/article/addClassify'], resolve),
@@ -130,6 +135,12 @@ export default new Router({
           name: '供应商设置',
           component: resolve => require(['@/components/setting/supplier'], resolve),
         },
+        {
+          path: '/supplierUser',
+          name: '供应商用户',
+          component: resolve => require(['@/components/setting/supplierUser'], resolve),
+        },
+
         {
           path: '/relevance',
           name: '关联设置',

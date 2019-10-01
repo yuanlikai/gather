@@ -57,7 +57,7 @@
       },
       handleChange(newTargetKeys, direction, moveKeys) {
         const _this = this;
-        _this.Axios.post(direction === 'right' ? '/Manage/Supplier/relevancePlatform' : '/Manage/Supplier/cancelRelevancPlatform', {
+        _this.Axios.post(direction === 'right' ? '/Manage/Supplier/relevancePlatform' : '/Manage/SkuInfo/cancelRelevancPlatform', {
           supplierId: _this.$route.query.id,
           platFormIds: direction === 'right' ? newTargetKeys : moveKeys
         }).then(res => {

@@ -2,9 +2,8 @@
   <div class="login">
     <div class="page-account-container">
       <div class="page-account-top">
-        <div class="page-account-top-logo"><img src="../assets/img/logo.png"
-                                                alt="logo"></div>
-        <div class="page-account-top-desc">iView Admin Pro 企业级中台前端/设计解决方案</div>
+        <div class="page-account-top-logo">
+          <img src="../assets/img/logo.png" alt="logo"></div>
       </div>
       <div class="ivu-login">
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>

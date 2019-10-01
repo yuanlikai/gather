@@ -18,6 +18,13 @@ module.exports = {
           '^/img': ''
         }
       },
+      '/Upload': {
+        target: 'http://oms.e6best.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/Upload': ''
+        }
+      },
       '/': {
         target: 'http://106.14.136.7:8091',
         changeOrigin: true,

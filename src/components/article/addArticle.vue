@@ -38,9 +38,9 @@
                     <Option v-for="(item,index) in brandList" :value="item.id" :key="index">{{item.brandName}}</Option>
                   </Select>
                 </FormItem>
-                <FormItem label="折扣" prop="discount">
-                  <Input :maxlength="15" v-model="formValidate1.discount" placeholder="请输入"></Input>
-                </FormItem>
+                <!--<FormItem label="折扣" prop="discount">-->
+                <!--<Input @on-keyup="formValidate1.discount= formValidate1.discount.match(/\d+(\.\d{0,1})?/) ? formValidate1.discount.match(/\d+(\.\d{0,1})?/)[0] : ''" :maxlength="15" v-model="formValidate1.discount" placeholder="折扣为（0.1~9.9）之间"></Input>-->
+                <!--</FormItem>-->
 
                 <FormItem label="商品介绍" prop="description">
                   <Input :rows="3" :maxlength="80" type="textarea" v-model="formValidate1.description"
@@ -79,35 +79,44 @@
               <Col span="24">
                 <FormItem label="市场价" prop="marketPrice">
                   <Input :maxlength="7" v-model="formValidate2.marketPrice"
-                         @on-keyup="formValidate2.marketPrice=formValidate2.marketPrice.replace(/[^\d\.]/g,'')"
+                         @on-keyup="formValidate2.marketPrice= formValidate2.marketPrice.match(/\d+(\.\d{0,2})?/) ? formValidate2.marketPrice.match(/\d+(\.\d{0,2})?/)[0] : ''"
                          placeholder="请输入"></Input>
                 </FormItem>
                 <FormItem label="售价" prop="price">
                   <Input :maxlength="7" v-model="formValidate2.price"
-                         @on-keyup="formValidate2.price=formValidate2.price.replace(/[^\d\.]/g,'')"
+                         @on-keyup="formValidate2.price= formValidate2.price.match(/\d+(\.\d{0,2})?/) ? formValidate2.price.match(/\d+(\.\d{0,2})?/)[0] : ''"
                          placeholder="请输入"></Input>
                 </FormItem>
+
+                <FormItem label="折扣" prop="discount">
+                  <Input
+                    @on-keyup="formValidate2.discount= formValidate2.discount.match(/\d+(\.\d{0,1})?/) ? formValidate2.discount.match(/\d+(\.\d{0,1})?/)[0] : ''"
+                    :maxlength="15" v-model="formValidate2.discount" placeholder="折扣为（0.1~9.9）之间"></Input>
+                </FormItem>
+
                 <FormItem label="SKU编号" prop="skuInfoNo">
-                  <Input :maxlength="10" v-model="formValidate2.skuInfoNo"
+                  <Input :disabled="$route.query.id?true:false" :maxlength="10" v-model="formValidate2.skuInfoNo"
                          @on-keyup="formValidate2.skuInfoNo=formValidate2.skuInfoNo.replace(/[^\w\.\/]/ig,'')"
                          placeholder="请输入"></Input>
                 </FormItem>
                 <FormItem>
                   <Button type="primary" @click="current=1" ghost style="margin-right: 16px">上一步，填写商品信息</Button>
-                  <Button type="primary" @click="handleSubmit('formValidate2')">提交审核</Button>
+                  <Button type="primary" @click="handleSubmit('formValidate2')">{{!$route.query.id?'提交审核':'提交修改'}}
+                  </Button>
                 </FormItem>
               </Col>
             </Form>
           </Row>
         </Col>
       </Row>
-      <Row v-if="current===3">
+      <Row v-show="current===3">
         <Col span="24" style="text-align: center">
           <Icon type="ios-checkmark-circle" size="90" color="#19be6b" style="margin: 32px 0 24px 0"/>
           <div class="ivu-result-title">{{$route.query.id ? '修改成功' : '添加成功'}}</div>
-          <Alert style="width:50%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">已提交申请，等待审核
+          <Alert style="width:50%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">
+            {{!$route.query.id?'已提交申请，等待审核':'商品修改成功！'}}
           </Alert>
-          <Button type="primary" @click="current = 0">继续新建</Button>&nbsp;
+          <Button type="primary" @click="current = 0" v-show="!$route.query.id">继续新建</Button>
         </Col>
       </Row>
     </Card>
@@ -120,6 +129,14 @@
     components: {
       upImg
     },
+    watch: {
+      '$route'() {
+        this.current = 0;
+        this.handleReset('formValidate');
+        this.handleReset('formValidate1');
+        this.handleReset('formValidate2');
+      }
+    },
     data() {
       const validate1 = (rule, value, callback) => {
         this.$refs.pics1.uploadList < 1 ? callback(new Error('请上传商品题图')) : callback();
@@ -127,6 +144,24 @@
       const validate2 = (rule, value, callback) => {
         this.$refs.pics2.uploadList < 1 ? callback(new Error('请上传商品详情图')) : callback();
       };
+      const validate3 = (rule, value, callback) => {
+        const _this = this;
+        _this.Axios.get('/Manage/SkuInfo/validSkuInfoNo', {
+          params: {
+            id: _this.$route.query.id ? _this.$route.query.id : '',
+            skuInfoNo: value
+          }
+        }).then(res => {
+          if (res.data.code === 0) {
+            callback();
+          } else {
+            callback(new Error('商品编号重复'))
+          }
+        });
+      };
+
+
+      // validate3
       return {
         detail: {},
         current: 0,
@@ -138,7 +173,6 @@
           subTitle: '',     //副标题
           brandId: '',      //品牌ID
           description: '',  //描述
-          discount: '',     //折扣 15
           keyWords: '',     //关键词50
           pics: [],         //图片集合
         },
@@ -146,6 +180,7 @@
           marketPrice: '',    //市场价
           price: '',          //售价
           skuInfoNo: '',      //SKU编号
+          discount: '',     //折扣 15
         },
         ruleValidate: {
           classify: [
@@ -177,7 +212,7 @@
             {required: true, message: '请填写售价', trigger: 'blur'}
           ],
           skuInfoNo: [
-            {required: true, message: '请填写SKU编号', trigger: 'blur'}
+            {validator: validate3, required: true, trigger: 'blur'}
           ],
         },
         treeData: [],
@@ -216,8 +251,10 @@
             } else if (name === 'formValidate1') {
               _this.current = 2
             } else {
-              _this.Axios.post('/Manage/SkuInfo/insert', {
-                id: '',    //修改时传入
+
+
+              _this.Axios.post(_this.$route.query.id ? '/Manage/SkuInfo/update' : '/Manage/SkuInfo/insert', {
+                id: _this.$route.query.id ? _this.$route.query.id : '',    //修改时传入
 
                 categoryId: _this.formValidate.classify[2],   //第三季分类id
                 category1: _this.formValidate.classify[0],   //第一级分类id
@@ -227,13 +264,13 @@
                 skuInfoName: _this.formValidate1.skuInfoName,    //商品名称60
                 subTitle: _this.formValidate1.subTitle,         //副标题60
                 skuInfoPicUrl: _this.$refs.pics1.uploadList[0].filename,   //sku主图第一张150
-                discount: _this.formValidate1.discount,         //折扣 15
                 brandId: _this.formValidate1.brandId,           //品牌id
                 keyWords: _this.tag.join(' '),                  //关键词50
                 description: _this.formValidate1.description,   //描述80
                 pics: _this.formValidate1.pics,   //图片集合
 
                 marketPrice: _this.formValidate2.marketPrice,   //市场价整数7位小数2位
+                discount: _this.formValidate2.discount,         //折扣 15
                 price: _this.formValidate2.price,               //实付价格整数7位小数2位
                 skuInfoNo: _this.formValidate2.skuInfoNo,       //sku编号10
               }).then(res => {
@@ -278,14 +315,13 @@
             description: res.data.data.description,  //描述
             discount: res.data.data.discount,     //折扣 15
           };
-          _this.tag = res.data.data.keyWords.split(' ')     //关键词50
-
 
           for (let i in res.data.data.mianPics) {
             _this.$refs.pics1.defaultList.push({
               filename: res.data.data.mianPics[i].filePath
             })
           }
+
           for (let i in res.data.data.detailPics) {
             _this.$refs.pics2.defaultList.push({
               filename: res.data.data.detailPics[i].filePath
@@ -293,30 +329,12 @@
           }
 
           _this.formValidate2 = {
-            marketPrice: res.data.data.marketPrice,    //市场价
-            price: res.data.data.price,          //售价
+            marketPrice: String(res.data.data.marketPrice),    //市场价
+            price: String(res.data.data.price),          //售价
             skuInfoNo: res.data.data.skuInfoNo,      //SKU编号
           };
+          _this.tag = res.data.data.keyWords.split(' ')     //关键词50
 
-          console.log(res.data.data)
-          console.log(res.data.data.mianPics)
-          // _this.formValidate = {
-          //   id: res.data.data.id,  //更新时传id
-          //   brandName: res.data.data.brandName,  //品牌名称30
-          //   abbrBrandName: res.data.data.abbrBrandName,  //品牌简写6
-          //   brandStory: res.data.data.brandStory,  //品牌故事100
-          //   logoUrl: res.data.data.logoUrl,  //品牌LOGO路径160
-          //   sortsNum: res.data.data.sortsNum,  //排序编号 3
-          //   display: String(res.data.data.display),  //是否显示 true为显示 false为不显示
-          // };
-          // _this.$refs.logoUrl.defaultList.push({
-          //   filename: res.data.data.logoUrl
-          // });
-          // if (res.data.data.brandImg) {
-          //   _this.$refs.brandImg.defaultList.push({
-          //     filename: res.data.data.brandImg
-          //   });
-          // }
         })
       },
 

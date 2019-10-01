@@ -1,21 +1,27 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">{{$route.query.disabled?'查看':'新建'}}供应商</div>
+      <div class="ivu-page-header-title">{{$route.query.id?'修改':'添加'}}供应商</div>
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <Row v-show="status">
         <Col :md="{span:18,offset:3}" :lg="{span:10,offset:6}">
           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="95">
             <FormItem label="企业名称" prop="supplierName">
-              <Input :disabled="$route.query.disabled" :maxlength="40" v-model="formValidate.supplierName" placeholder="请输入"></Input>
+              <Input :disabled="$route.query.id" :maxlength="40" v-model="formValidate.supplierName"
+                     placeholder="请输入"></Input>
             </FormItem>
             <FormItem label="简称" prop="abbrSupplierName">
-              <Input :disabled="$route.query.disabled" :maxlength="10" v-model="formValidate.abbrSupplierName" placeholder="请输入"></Input>
+              <Input :disabled="$route.query.id" :maxlength="10" v-model="formValidate.abbrSupplierName"
+                     placeholder="请输入"></Input>
             </FormItem>
-            <FormItem label="字母代号" prop="supplierNo">
-              <Input :disabled="$route.query.disabled" :maxlength="5" v-model="formValidate.supplierNo" placeholder="请输入"></Input>
+
+            <FormItem label="字母编号" prop="supplierNo">
+              <Input :disabled="$route.query.id" :maxlength="5" v-model="formValidate.supplierNo"
+                     placeholder="请输入"
+                     @on-keyup="formValidate.supplierNo = formValidate.supplierNo.replace(/[^a-zA-Z]/g,'').toUpperCase()"></Input>
             </FormItem>
+
             <FormItem label="SKU数量限制" prop="productLim">
               <Input :disabled="$route.query.disabled" :maxlength="4" v-model="formValidate.productLim"
                      @on-keyup="formValidate.productLim=formValidate.productLim.replace(/[^\d]/g,'');"
@@ -31,9 +37,10 @@
         <Col span="24" style="text-align: center">
           <Icon type="ios-checkmark-circle" size="90" color="#19be6b" style="margin: 32px 0 24px 0"/>
           <div class="ivu-result-title">{{$route.query.id ? '修改成功' : '添加成功'}}</div>
-          <Alert style="width:50%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">已完成修改供应商
+          <Alert style="width:50%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">
+            供应商{{$route.query.id?'修改':'添加'}}成功，请到供应商列表查看
           </Alert>
-          <Button type="primary" @click="handleReset('formValidate');status=true">重新修改</Button>&nbsp;
+          <Button type="primary" @click="handleReset('formValidate');status=true"  v-show="!$route.query.id">继续添加</Button>&nbsp;
         </Col>
       </Row>
     </Card>
@@ -47,6 +54,51 @@
       upImg
     },
     data() {
+      const validate1 = (rule, value, callback) => {
+        const _this = this;
+        _this.Axios.get('/Manage/Supplier/valid/supplierName', {
+          params: {
+            id: _this.$route.query.id ? _this.$route.query.id : '',
+            value: value
+          }
+        }).then(res => {
+          if (res.data.code === 0) {
+            callback();
+          } else {
+            callback(new Error('名称重复'))
+          }
+        });
+      };
+      const validate2 = (rule, value, callback) => {
+        const _this = this;
+        _this.Axios.get('/Manage/Supplier/valid/abbrSupplierName', {
+          params: {
+            id: _this.$route.query.id ? _this.$route.query.id : '',
+            value: value
+          }
+        }).then(res => {
+          if (res.data.code === 0) {
+            callback();
+          } else {
+            callback(new Error('简称重复'))
+          }
+        });
+      };
+      const validate3 = (rule, value, callback) => {
+        const _this = this;
+        _this.Axios.get('/Manage/Supplier/valid/supplierNo', {
+          params: {
+            id: _this.$route.query.id ? _this.$route.query.id : '',
+            value: value
+          }
+        }).then(res => {
+          if (res.data.code === 0) {
+            callback();
+          } else {
+            callback(new Error('编号重复'))
+          }
+        });
+      };
       return {
         status: true,
         detail: {},
@@ -59,13 +111,13 @@
         },
         ruleValidate: {
           supplierName: [
-            {required: true, message: '请输入企业名', trigger: 'blur'}
+            {validator: validate1, required: true, trigger: 'blur'}
           ],
           abbrSupplierName: [
-            {required: true, message: '请输入简称', trigger: 'blur'}
+            {validator: validate2, required: true, trigger: 'blur'}
           ],
           supplierNo: [
-            {required: true, message: '请输入字母代号', trigger: 'blur'}
+            {validator: validate3, required: true, trigger: 'blur'}
           ],
           productLim: [
             {required: true, message: '请输入SKU限制数量', trigger: 'blur'}
@@ -89,7 +141,7 @@
             })).then(res => {
               if (res.data.code === 0) {
                 _this.status = false;
-                _this.$Message.success(_this.$route.query.id ? '修改成功！':'添加成功！')
+                _this.$Message.success(_this.$route.query.id ? '修改成功！' : '添加成功！')
               } else {
                 _this.$Message.warning(res.data.message)
               }
@@ -100,7 +152,7 @@
         })
       },
       handleReset(name) {
-        this.$route.query.id?'':this.$refs[name].resetFields();
+        this.$route.query.id ? '' : this.$refs[name].resetFields();
 
       },
 

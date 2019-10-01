@@ -90,14 +90,14 @@
         </Col>
       </Row>
       <Divider/>
-      <Row :gutter="30">
-        <Col span="24">
-          <p class="colClass" style="font-weight: 500;">操作信息</p>
-        </Col>
-        <Col class="colClass" span="24">
-          <Table :show-header="true" :columns="columns1" :data="[]"></Table>
-        </Col>
-      </Row>
+      <!--<Row :gutter="30">-->
+        <!--<Col span="24">-->
+          <!--<p class="colClass" style="font-weight: 500;">操作信息</p>-->
+        <!--</Col>-->
+        <!--<Col class="colClass" span="24">-->
+          <!--<Table :show-header="true" :columns="columns1" :data="[]"></Table>-->
+        <!--</Col>-->
+      <!--</Row>-->
       <!--<Divider/>-->
     </Content>
     <express ref="express" @getOrder="getDetails"></express>

@@ -62,7 +62,7 @@
           {
             title: '上架商品数',
             tooltip: true,
-            key: '',
+            key: 'onsaleCount',
             align: "center",
           },
           {

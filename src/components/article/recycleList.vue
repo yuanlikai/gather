@@ -123,7 +123,7 @@
                   style: {
                     color: '#888888'
                   }
-                }, `品牌：${params.row.brandName}`)
+                }, `品牌：${params.row.brandName?params.row.brandName:'未绑定'}`)
               ])
             }
           },
@@ -154,28 +154,48 @@
             width: 120,
             align: "center",
             render: (h, params) => {
-              return h('Poptip', {
-                props: {
-                  confirm: true,
-                  transfer: true,
-                  title: '确定还原商品？',
-                },
-                on: {
-                  'on-ok': () => {
-                    this.Axios.post('/Manage/SkuInfo/restore', this.Qs.stringify({
-                      skuInfoIds: [params.row.id]
-                    }, {indices: false})).then(res => {
-                      if (res.data.code === 0) {
-                        this.getList();
-                        this.$Message.success('还原商品成功')
-                      } else {
-                        this.$Message.warning(res.data.message)
-                      }
-                    })
+              return h('div',[
+                h('a', {
+                  on: {
+                    click: () => {
+                      let href = this.$router.resolve({
+                        path: '/examine',
+                        query: {
+                          id: params.row.id
+                        }
+                      });
+                      window.open(href.href, '_blank')
+                    }
                   }
-                }
-              }, [
-                h('a', '还原')
+                }, '查看'),
+                h('Divider', {
+                  props: {
+                    type: 'vertical'
+                  }
+                }),
+                h('Poptip', {
+                  props: {
+                    confirm: true,
+                    transfer: true,
+                    title: '确定还原商品？',
+                  },
+                  on: {
+                    'on-ok': () => {
+                      this.Axios.post('/Manage/SkuInfo/restore', this.Qs.stringify({
+                        skuInfoIds: [params.row.id]
+                      }, {indices: false})).then(res => {
+                        if (res.data.code === 0) {
+                          this.getList();
+                          this.$Message.success('还原商品成功')
+                        } else {
+                          this.$Message.warning(res.data.message)
+                        }
+                      })
+                    }
+                  }
+                }, [
+                  h('a', '还原')
+                ])
               ])
             }
           }
@@ -200,7 +220,7 @@
       getList() {
         const _this = this;
         _this.loading1 = true;
-        _this.Axios.get('/Manage/SkuInfo/pageList', {
+        _this.Axios.get('/Manage/SkuInfo/supplierSkuPageList', {
           params: {
             start: _this.start - 1,
             size: 10,
@@ -247,10 +267,8 @@
       //获取品牌列表
       getBrand() {
         const _this = this;
-        _this.Axios.get('/Manage/Brand/pageList').then(res => {
-          _this.brandList = res.data.data.content
-          console.log(res.data.data.content)
-          console.log(_this.brandList)
+        _this.Axios.get('/Manage/Brand/selectBrand').then(res => {
+          _this.brandList = res.data.data
         })
       },
 
