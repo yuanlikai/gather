@@ -43,15 +43,9 @@
                   <span style="color: #000;">{{tag.length>0?tag:''}}</span>
                 </FormItem>
                 <FormItem label="题图：" prop="pics1">
-                  <div class="pics1">
-                    <div class="pics2"></div>
-                  </div>
                   <upImg ref="pics1" :num="6"></upImg>
                 </FormItem>
                 <FormItem label="详情图：" prop="pics2">
-                  <div class="pics1">
-                    <div class="pics2"></div>
-                  </div>
                   <upImg ref="pics2" :num="6"></upImg>
                 </FormItem>
               </Col>
@@ -167,15 +161,14 @@
         this.$refs.pics2.handleRemove1(0);
       },
 
-      //获取分类详情
+      //获取详情
       getDetail() {
         const _this = this;
         _this.Axios.get('/Manage/SkuInfo/detail', {
           params: {
-            id: _this.$route.query.id
+            id: _this.$route.query.examineId
           }
         }).then(res => {
-          console.log(res.data.data)
           _this.formValidate = {
             namePath: res.data.data.namePath,  //分类数组
           };
@@ -241,7 +234,7 @@
     mounted() {
       this.getTree();
       this.getBrand();
-      this.$route.query.id ? this.getDetail() : '';
+      this.getDetail()
     }
   }
 </script>

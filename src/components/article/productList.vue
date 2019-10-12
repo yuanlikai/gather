@@ -27,13 +27,13 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="商品分类" prop="classify">
+            <FormItem label="商品分类：" prop="classify">
               <Cascader v-model="formValidate.classify" :data="treeData" @on-change="screen"></Cascader>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="商品品牌：" prop="brandNameLike">
-              <Select v-model="formValidate.brandId" :clearable="true" @on-change="resetPage();getList()" clearable>
+              <Select v-model="formValidate.brandId" @on-change="resetPage();getList()" clearable>
                 <Option v-for="(item,index) in brandList" :value="item.id" :key="index">{{item.brandName}}</Option>
               </Select>
             </FormItem>
@@ -57,7 +57,7 @@
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
-        数据列表{{state}}
+        数据列表
       </p>
       <Table @on-selection-change="choice" @on-sort-change="sorts" :loading="loading1" :show-header="true"
              :columns="columns"
@@ -110,11 +110,13 @@
             render: (h, params) => {
               return h('Poptip', {
                 props: {
+                  trigger:'hover',
                   placement: 'right'
                 }
               }, [
                 h('img', {
                   style: {
+                    cursor:'pointer',
                     height: '30px'
                   },
                   attrs: {
@@ -146,7 +148,26 @@
             key: 'skuInfoName',
             render: (h, params) => {
               return h('div', [
-                h('div', params.row.skuInfoName),
+                h('a', {
+                  style: {
+                    float: 'left',
+                    width: '100%',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis'
+                  },
+                  on: {
+                    click: () => {
+                      let href = this.$router.resolve({
+                        path: '/examine',
+                        query: {
+                          examineId: params.row.id
+                        }
+                      });
+                      window.open(href.href, '_blank')
+                    }
+                  }
+                }, params.row.skuInfoName),
                 h('div', {
                   style: {
                     color: '#888888'
@@ -196,7 +217,7 @@
             }
           },
           {
-            title: '平台',
+            title: '上架平台',
             tooltip: true,
             key: 'onsalePlatformNames',
             align: "center",
@@ -226,7 +247,6 @@
                   },
                   on: {
                     click: () => {
-                      console.log(params.row)
                       this.$refs.repertory.formValidate.supplierKey = params.row.supplierKey;
                       this.$refs.repertory.formValidate.stock = String(params.row.stock);
                       this.$refs.repertory.formValidate.skuInfoNo = params.row.skuInfoNo;
@@ -263,9 +283,9 @@
               }
             ],
             filterMultiple: false,
-            filterRemote(value){
+            filterRemote(value) {
               this.$parent.resetPage();
-              this.$parent.state=value.length>0?value[0]:'all';
+              this.$parent.state = value.length > 0 ? value[0] : 'all';
               this.$parent.getList()
             },
           },
@@ -273,29 +293,11 @@
             title: '操作',
             tooltip: true,
             key: 'ProductName',
-            width: 150,
+            width: 120,
             align: "center",
             render: (h, params) => {
               return h('div', [
                 h('div', [
-                  h('a', {
-                    on: {
-                      click: () => {
-                        let href = this.$router.resolve({
-                          path: '/examine',
-                          query: {
-                            id: params.row.id
-                          }
-                        });
-                        window.open(href.href, '_blank')
-                      }
-                    }
-                  }, '查看'),
-                  h('Divider', {
-                    props: {
-                      type: 'vertical'
-                    }
-                  }),
                   h('Poptip', {
                     props: {
                       confirm: true,
@@ -321,7 +323,7 @@
                     h('a', {
                       style: {
                         display: params.row.onSale !== false ? 'inner-block' : 'none',
-                        color: '#19be6b'
+                        color: '#ed4014'
                       }
                     }, '下架')
                   ]),
@@ -329,7 +331,7 @@
                   h('a', {
                     style: {
                       display: params.row.onSale !== true ? 'inner-block' : 'none',
-                      color: '#ed4014'
+                      color: '#19be6b'
                     },
                     on: {
                       click: () => {
@@ -387,7 +389,7 @@
         brandList: [],
         selection: [],
         supplierList: [],
-        priceAsc:'normal'
+        priceAsc: 'normal'
       }
     },
     methods: {
@@ -416,7 +418,7 @@
             category3: _this.formValidate.classify[2],
             brandId: _this.formValidate.brandId,
             recycleBin: false,
-            priceAsc: _this.priceAsc==='normal'?'':(_this.priceAsc==='asc'?true:false),
+            priceAsc: _this.priceAsc === 'normal' ? '' : (_this.priceAsc === 'asc' ? true : false),
             onSale: _this.state === 'all' ? '' : _this.state,
           }
         }).then(res => {
@@ -490,7 +492,6 @@
 
       //批量上架
       putaway() {
-        console.log(this.selection)
         let href = this.$router.resolve({
           path: '/putaway',
           query: {
@@ -504,7 +505,6 @@
       selectList() {
         const _this = this;
         _this.Axios.get('/Manage/Supplier/selectList').then(res => {
-          console.log(res.data)
           _this.supplierList = res.data.data
         })
       },

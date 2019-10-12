@@ -2,10 +2,10 @@
   <div class="content">
     <div class="demo-upload-list" v-for="item in uploadList">
       <template v-if="item.status === 'finished'">
-        <img :src="item.filename">
+        <img :src="item.filename+'?x-oss-process=image/resize,m_pad,h_100,w_100,color_FFFFFF'">
         <div class="demo-upload-list-cover">
           <Icon type="ios-eye-outline" @click.native="handleView(item.filename)"></Icon>
-          <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+          <Icon v-show="!$route.query.examineId" type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
         </div>
       </template>
       <template v-else>
@@ -34,14 +34,17 @@
         success_action_status:'200',
       }"
       type="drag"
-      action="/img"
-      style="display: inline-block;width:58px;">
+      action="https://ylmanager.oss-cn-shanghai.aliyuncs.com"
+      style="display: inline-block;width:58px;" v-show="!$route.query.examineId">
       <div style="width: 58px;height:58px;line-height: 58px;">
         <Icon type="ios-camera" size="20"></Icon>
       </div>
     </Upload>
     <Modal title="View Image" v-model="visible" width="300">
       <img :src="imgName" v-if="visible" style="width: 100%">
+      <div slot="footer">
+        <Button type="primary" size="large" @click="visible=!visible">确定</Button>
+      </div>
     </Modal>
   </div>
 </template>
@@ -101,7 +104,7 @@
       upload() {
         setTimeout(() => {
           this.uploadList = this.$refs.upload.fileList;
-        }, 300)
+        }, 800)
       },
 
       key(){
@@ -118,6 +121,7 @@
 
     },
     mounted() {
+      this.uploadList = this.$refs.upload.fileList;
       this.upload();
       this.policy();
     }

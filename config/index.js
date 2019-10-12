@@ -11,13 +11,6 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/img': {
-        target: 'http://ylmanager.oss-cn-shanghai.aliyuncs.com',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/img': ''
-        }
-      },
       '/Upload': {
         target: 'http://oms.e6best.com',
         changeOrigin: true,
@@ -35,7 +28,7 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    host: '192.168.1.44', // can be overwritten by process.env.HOST 192.168.1.44
+    host: '192.168.1.106', // can be overwritten by process.env.HOST 192.168.1.44
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,

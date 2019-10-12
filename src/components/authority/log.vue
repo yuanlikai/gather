@@ -51,6 +51,9 @@
             title: '时间',
             key: 'timeCreated',
             align: "center",
+            render:(h,params)=>{
+              return h('span',this.riqi(params.row.timeCreated))
+            }
           },
           {
             title: '接口名称',
@@ -78,7 +81,6 @@
             size: 9,
           }
         }).then(res => {
-          console.log(res.data.data)
           _this.data=res.data.data.content;
           _this.total = Number(res.data.data.totalElements)
           _this.loading=false;

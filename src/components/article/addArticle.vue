@@ -304,7 +304,6 @@
             id: _this.$route.query.id
           }
         }).then(res => {
-          console.log(res.data.data)
           _this.formValidate = {
             classify: [res.data.data.category1, res.data.data.category2, res.data.data.category3],  //分类数组
           };
@@ -313,7 +312,6 @@
             subTitle: res.data.data.subTitle,     //副标题
             brandId: res.data.data.brandId,      //品牌ID
             description: res.data.data.description,  //描述
-            discount: res.data.data.discount,     //折扣 15
           };
 
           for (let i in res.data.data.mianPics) {
@@ -331,6 +329,7 @@
           _this.formValidate2 = {
             marketPrice: String(res.data.data.marketPrice),    //市场价
             price: String(res.data.data.price),          //售价
+            discount: res.data.data.discount,     //折扣 15
             skuInfoNo: res.data.data.skuInfoNo,      //SKU编号
           };
           _this.tag = res.data.data.keyWords.split(' ')     //关键词50

@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">供应商用户</div>
+      <div class="ivu-page-header-title" @click="abc">供应商用户</div>
     </Card>
     <Card :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
@@ -208,7 +208,6 @@ margin-right: 16px">
       getSupplier() {
         const _this = this;
         _this.Axios.get('/Manage/Supplier/selectList').then(res => {
-          console.log(res.data.data)
           if (res.data.code === 0) {
             _this.supplierList = res.data.data
           } else {
@@ -369,6 +368,9 @@ margin-right: 16px">
       handleReset(name) {
         this.$refs[name].resetFields();
       },
+      abc(event){
+        console.log(event.target.parentElement)
+      }
     },
     mounted() {
       this.getUser();

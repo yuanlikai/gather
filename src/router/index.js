@@ -140,7 +140,6 @@ export default new Router({
           name: '供应商用户',
           component: resolve => require(['@/components/setting/supplierUser'], resolve),
         },
-
         {
           path: '/relevance',
           name: '关联设置',

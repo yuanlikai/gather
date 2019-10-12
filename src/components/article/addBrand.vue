@@ -96,7 +96,7 @@
           abbrBrandName: '',  //品牌简写6
           brandStory: '',  //品牌故事100
           logoUrl: '',  //品牌LOGO路径160
-          sortsNum: '',  //排序编号 3
+          sortsNum: '50',  //排序编号 3
           display: 'true',  //是否显示 true为显示 false为不显示
           detailPics: [],
         },
@@ -117,7 +117,6 @@
         const _this = this;
         _this.formValidate.detailPics = [];
         let pics1 = _this.$refs.detailPics.uploadList;
-        console.log(pics1)
         for (let i = 0; i < pics1.length; i++) {
           _this.formValidate.detailPics.push(pics1[i].filename)
         }

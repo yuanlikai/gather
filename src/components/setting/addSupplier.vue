@@ -164,7 +164,6 @@
             id: _this.$route.query.id
           }
         }).then(res => {
-          console.log(res.data.data)
           _this.formValidate = {
             id: res.data.data.id,              //分类id 传入就是新增
             supplierName: res.data.data.supplierName,   //名称40
@@ -177,7 +176,6 @@
               filename: res.data.data.imgUrl
             });
           }
-          console.log(res.data.data)
         })
 
       }

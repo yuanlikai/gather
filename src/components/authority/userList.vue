@@ -208,7 +208,6 @@ margin-right: 16px">
       // getSupplier() {
       //   const _this = this;
       //   _this.Axios.get('/Manage/Supplier/selectList').then(res => {
-      //     console.log(res.data.data)
       //     if (res.data.code === 0) {
       //       _this.supplierList = res.data.data
       //     } else {

@@ -15,13 +15,13 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="商品分类" prop="classify">
+            <FormItem label="商品分类：" prop="classify">
               <Cascader v-model="formValidate.classify" :data="treeData" @on-change="screen"></Cascader>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="商品品牌：" prop="brandNameLike">
-              <Select v-model="formValidate.brandId" :clearable="true" @on-change="getList()" clearable>
+              <Select v-model="formValidate.brandId" @on-change="getList()" clearable>
                 <Option v-for="(item,index) in brandList" :value="item.id" :key="index">{{item.brandName}}</Option>
               </Select>
             </FormItem>
@@ -83,11 +83,13 @@
             render: (h, params) => {
               return h('Poptip', {
                 props: {
+                  trigger:'hover',
                   placement: 'right'
                 }
               }, [
                 h('img', {
                   style: {
+                    cursor:'pointer',
                     height: '30px'
                   },
                   attrs: {
@@ -118,7 +120,26 @@
             key: 'skuInfoName',
             render: (h, params) => {
               return h('div', [
-                h('div', params.row.skuInfoName),
+                h('a', {
+                  style: {
+                    float: 'left',
+                    width: '100%',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis'
+                  },
+                  on: {
+                    click: () => {
+                      let href = this.$router.resolve({
+                        path: '/examine',
+                        query: {
+                          examineId: params.row.id
+                        }
+                      });
+                      window.open(href.href, '_blank')
+                    }
+                  }
+                }, params.row.skuInfoName),
                 h('div', {
                   style: {
                     color: '#888888'
@@ -151,28 +172,10 @@
             title: '操作',
             tooltip: true,
             key: 'ProductName',
-            width: 120,
+            width: 100,
             align: "center",
             render: (h, params) => {
               return h('div',[
-                h('a', {
-                  on: {
-                    click: () => {
-                      let href = this.$router.resolve({
-                        path: '/examine',
-                        query: {
-                          id: params.row.id
-                        }
-                      });
-                      window.open(href.href, '_blank')
-                    }
-                  }
-                }, '查看'),
-                h('Divider', {
-                  props: {
-                    type: 'vertical'
-                  }
-                }),
                 h('Poptip', {
                   props: {
                     confirm: true,

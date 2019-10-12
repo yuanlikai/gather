@@ -15,13 +15,13 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="商品分类" prop="classify">
+            <FormItem label="商品分类：" prop="classify">
               <Cascader v-model="formValidate.classify" :data="treeData" @on-change="screen"></Cascader>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="品牌：" prop="brandNameLike">
-              <Select v-model="formValidate.brandId" :clearable="true" @on-change="dataList()" clearable>
+              <Select v-model="formValidate.brandId" @on-change="dataList()" clearable>
                 <Option v-for="(item,index) in brandList" :value="item.id" :key="index">{{item.brandName}}</Option>
               </Select>
             </FormItem>
@@ -39,7 +39,7 @@
       <p slot="title" style="text-align: left">
         选择商品
       </p>
-      <div style="margin: 0 auto;width: 900px;">
+      <div style="margin: 0 auto;max-width: 900px;">
         <Steps v-show="current!==2" :current="current" style="margin: 16px 0 0 0">
           <Step v-show="!$route.query.ids" title="选择商品" style="width: 70%;"></Step>
           <Step v-show="!$route.query.ids" title="填写销售信息" style="width: 30%;"></Step>
@@ -121,10 +121,12 @@
           },
           {
             title: 'SKU编号',
+            maxWidth:100,
             key: 'skuInfoNo'
           },
           {
             title: '市场价 (必填)',
+            maxWidth:170,
             key: 'marketPrice',
             render: (h, params) => {
               return h('input', {
@@ -154,6 +156,7 @@
           },
           {
             title: '售价 (必填)',
+            maxWidth:170,
             key: 'price',
             render: (h, params) => {
               return h('input', {
@@ -183,6 +186,7 @@
           },
           {
             title: '折扣（0.1~9.9）',
+            maxWidth:170,
             key: 'discount',
             render: (h, params) => {
               return h('input', {
@@ -211,7 +215,7 @@
       }
     },
     methods: {
-      //赛选
+      //筛选
       screen(i) {
         this.formValidate.classify = i;
         this.dataList()
@@ -246,7 +250,6 @@
           ids: _this.$route.query.ids?_this.$route.query.ids:_this.targetKeys,
         }, {indices: false})).then(res => {
           _this.fillInList = res.data.data
-          console.log(res.data.data)
           if(!res.data.data){
             _this.show=false;
             _this.$Message.warning('该商品分类未绑定平台')
@@ -259,7 +262,6 @@
         return item.label;
       },
       handleChange(newTargetKeys, direction, moveKeys) {
-        console.log(newTargetKeys)
         this.targetKeys = newTargetKeys;
       },
 

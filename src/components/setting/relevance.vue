@@ -113,7 +113,6 @@
             supplierId: _this.$route.query.id
           }
         }).then(res => {
-          console.log(res.data)
           for (let i in res.data.data) {
             _this.targetKeys.push(res.data.data[i].id)
           }
@@ -149,7 +148,6 @@
       }
     },
     mounted() {
-      console.log(this.targetKeys)
       this.terraceList();
       this.terraceList1();
       this.brandList();

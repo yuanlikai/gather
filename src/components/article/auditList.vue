@@ -27,20 +27,20 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="商品分类" prop="classify">
+            <FormItem label="商品分类：" prop="classify">
               <Cascader v-model="formValidate.classify" :data="treeData" @on-change="screen"></Cascader>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="商品品牌：" prop="brandNameLike">
-              <Select v-model="formValidate.brandId" :clearable="true" @on-change="resetPage();getList()" clearable>
+              <Select v-model="formValidate.brandId" @on-change="resetPage();getList()" clearable>
                 <Option v-for="(item,index) in brandList" :value="item.id" :key="index">{{item.brandName}}</Option>
               </Select>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="供应商：" prop="brandNameLike">
-              <Select v-model="formValidate.supplierId" :clearable="true" @on-change="resetPage();getList()" clearable>
+              <Select v-model="formValidate.supplierId" @on-change="resetPage();getList()" clearable>
                 <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{item.supplierName}}
                 </Option>
               </Select>
@@ -112,7 +112,7 @@
     data() {
       return {
         modal: false,
-        modal1:false,
+        modal1: false,
         loading1: true,
         formValidate1: {
           name: '',
@@ -131,8 +131,8 @@
           {
             title: '审核时间',
             key: 'timeCreated',
-            render:(h,params)=>{
-              return h('span',this.riqi(params.row.timeCreated))
+            render: (h, params) => {
+              return h('span', this.riqi(params.row.timeCreated))
             }
           },
           {
@@ -142,8 +142,8 @@
           {
             title: '审核结果',
             key: 'approvalStatus',
-            render:(h,params)=>{
-              return h('span',params.row.approvalStatus.name)
+            render: (h, params) => {
+              return h('span', params.row.approvalStatus.name)
 
             }
           },
@@ -152,7 +152,7 @@
             key: 'feedback'
           }
         ],
-        data1:[],
+        data1: [],
         columns: [
           {
             type: 'index',
@@ -168,11 +168,13 @@
             render: (h, params) => {
               return h('Poptip', {
                 props: {
+                  trigger:'hover',
                   placement: 'right'
                 }
               }, [
                 h('img', {
                   style: {
+                    cursor:'pointer',
                     height: '30px'
                   },
                   attrs: {
@@ -203,12 +205,31 @@
             key: 'skuInfoName',
             render: (h, params) => {
               return h('div', [
-                h('div', params.row.skuInfoName),
+                h('a', {
+                  style: {
+                    float: 'left',
+                    width: '100%',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis'
+                  },
+                  on: {
+                    click: () => {
+                      let href = this.$router.resolve({
+                        path: '/examine',
+                        query: {
+                          examineId: params.row.id
+                        }
+                      });
+                      window.open(href.href, '_blank')
+                    }
+                  }
+                }, params.row.skuInfoName),
                 h('div', {
                   style: {
                     color: '#888888'
                   }
-                }, `品牌：${params.row.brandName?params.row.brandName:'未绑定'}`)
+                }, `品牌：${params.row.brandName ? params.row.brandName : '未绑定'}`)
               ])
             }
           },
@@ -242,19 +263,19 @@
                 return h('div', [
                   h('div', '已通过'),
                   h('a', {
-                    on:{
-                      'click':()=>{
+                    on: {
+                      'click': () => {
                         this.ExamineLog(params.row.id)
                       }
                     }
-                  },'审核详情'),
+                  }, '审核详情'),
                 ])
               } else if (params.row.approvalStatus === 'REJECT') {
                 return h('div', [
                   h('div', '未通过'),
                   h('a', {
-                    on:{
-                      'click':()=>{
+                    on: {
+                      'click': () => {
                         this.ExamineLog(params.row.id)
                       }
                     }
@@ -277,9 +298,9 @@
               },
             ],
             filterMultiple: false,
-            filterRemote(value){
+            filterRemote(value) {
               this.$parent.resetPage();
-              this.$parent.formValidate.state=value.length>0?value[0]:'all';
+              this.$parent.formValidate.state = value.length > 0 ? value[0] : 'all';
               this.$parent.getList()
             },
           },
@@ -287,29 +308,11 @@
             title: '操作',
             tooltip: true,
             key: 'ProductName',
-            width: 120,
+            width: 100,
             align: "center",
             render: (h, params) => {
-              if(params.row.approvalStatus === 'AUDITING'){
-                return ('div',[
-                  h('a',{
-                    on:{
-                      click:()=>{
-                        let href = this.$router.resolve({
-                          path:'/examine',
-                          query:{
-                            id:params.row.id
-                          }
-                        });
-                        window.open(href.href,'_blank')
-                      }
-                    }
-                  },  '查看'),
-                  h('Divider', {
-                    props: {
-                      type: 'vertical'
-                    }
-                  }),
+              if (params.row.approvalStatus === 'AUDITING') {
+                return ('div', [
                   h('a', {
                     on: {
                       click: () => {
@@ -322,7 +325,7 @@
                     }
                   }, '审核')
                 ])
-              }else {
+              } else {
                 return h('span', '暂无操作')
               }
             }
@@ -335,21 +338,21 @@
         brandList: [],
         selection: [],
         supplierList: [],
-        countList:{},
+        countList: {},
       }
     },
     methods: {
 
       //审核详情
-      ExamineLog(id){
-        this.modal1=true;
+      ExamineLog(id) {
+        this.modal1 = true;
         const _this = this;
         _this.Axios.get('/Manage/ExamineLog/pageList', {
-          params:{
-            skuInfoId:id
+          params: {
+            skuInfoId: id
           }
         }).then(res => {
-          _this.data1=res.data.data.content
+          _this.data1 = res.data.data.content
         })
       },
 
@@ -475,7 +478,7 @@
       },
 
       //统计数目
-      count(){
+      count() {
         const _this = this;
         _this.Axios.get('/Manage/SkuInfo/count2').then(res => {
           _this.countList = res.data.data

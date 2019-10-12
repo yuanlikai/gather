@@ -485,7 +485,7 @@
         start: 1,
         sortid: '',
         orderNum: {},
-        types: 'yc'
+        types: ''
       }
     },
     methods: {
@@ -623,7 +623,6 @@
       getSupplier() {
         const _this = this;
         _this.Axios.get('/Manage/Supplier/selectList').then(res => {
-          console.log(res.data)
           _this.supplierList = res.data.data
         })
       },

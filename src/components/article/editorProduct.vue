@@ -35,9 +35,10 @@
             render: (h, params) => {
               return h('input', {
                 style: {
-                  width: '80px',
+                  width: '83px',
                   border: '1px solid #dcdee2',
-                  padding: '0 4px'
+                  padding: '0 4px',
+                  outline:'none'
                 },
                 attrs: {
                   value: params.row.marketPrice,
@@ -65,7 +66,7 @@
             render: (h, params) => {
               return h('input', {
                 style: {
-                  width: '80px',
+                  width: '83px',
                   border: '1px solid #dcdee2',
                   padding: '0 4px'
                 },
@@ -95,7 +96,7 @@
             render: (h, params) => {
               return h('input', {
                 style: {
-                  width: '80px',
+                  width: '83px',
                   border: '1px solid #dcdee2',
                   padding: '0 4px'
                 },
@@ -129,7 +130,7 @@
       //修改价格
       update() {
         const _this = this;
-        _this.loading = true
+        _this.loading = true;
         _this.Axios.post('/Manage/OnsalePrice/update', _this.data).then(res => {
           if (res.data.code === 0) {
             _this.modal = false;
@@ -150,7 +151,6 @@
           }
         }).then(res => {
           _this.data = res.data.data
-          console.log(res.data)
         })
       }
     },

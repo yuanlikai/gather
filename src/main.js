@@ -30,7 +30,7 @@ Vue.prototype.riqi=function(sj){
     (d.getHours()) + ":" +
     (d.getMinutes()) + ":" +
     (d.getSeconds());
-  return   date
+  return date
 };
 
 // 添加响应拦截器
@@ -40,9 +40,17 @@ axios.interceptors.response.use(function (response) {
   //无权限，重定向到登录页面
   if (error.response.status === 401) {
     router.push('/');
-    vm.$Message.warning('登录信息已过期，请重新登录！')
+    vm.$Notice.close('alert');
+    vm.$Notice.warning({
+      name:'alert',
+      title: '登录信息已过期，请重新登录！'
+    });
   }else if(error.response.status === 403) {
-    vm.$Message.warning('你的权限不足')
+    vm.$Notice.close('alert');
+    vm.$Notice.warning({
+      name:'alert',
+      title: '您的权限不足！'
+    });
   }
   return Promise.reject(error);
 });

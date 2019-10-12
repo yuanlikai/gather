@@ -111,7 +111,6 @@
             skuInfoId: this.$route.query.id
           }
         }).then(res => {
-          console.log(res.data)
           _this.data = res.data.data.content;
           _this.total = Number(res.data.data.totalElements)
           _this.loading = false;

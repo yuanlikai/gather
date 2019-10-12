@@ -121,7 +121,6 @@
               filename: res.data.data.imgUrl
             });
           }
-          console.log(res.data.data)
         })
 
       }

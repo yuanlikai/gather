@@ -26,7 +26,7 @@
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="状态：" prop="locked">
-              <Select v-model="formValidate.locked" :clearable="true" @on-change="resetPage();getList()" clearable>
+              <Select v-model="formValidate.locked" @on-change="resetPage();getList()" clearable>
                 <Option value="false">启用</Option>
                 <Option value="true">停用</Option>
               </Select>
@@ -290,8 +290,6 @@
 
       //排序
       sortData(i) {
-        console.log(i)
-
         const _this = this;
         _this.loading1 = true;
         _this.formValidate.productCountAsc='normal';

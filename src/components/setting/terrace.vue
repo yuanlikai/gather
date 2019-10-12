@@ -153,7 +153,6 @@
           }
         }).then(res => {
           if (res.data.code === 0) {
-            console.log(res.data.data.content)
             _this.data = res.data.data.content;
             _this.total = res.data.data.totalElements;
           } else {

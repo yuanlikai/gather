@@ -124,7 +124,6 @@
           localStorage.removeItem('menu1');
           localStorage.removeItem('menuList');
           _this.$router.push('/');
-          _this.$Message.success('退出登录')
         });
       },
 

@@ -28,6 +28,7 @@
   export default {
     data() {
       return {
+        loading:false,
         formInline: {
           user: '',
           password: ''
@@ -53,8 +54,6 @@
               password: _this.formInline.password
             })).then(res => {
               if (res.data.code === 0) {
-                console.log(res.data.data.sort(function(a,b){
-                }));
                 localStorage.setItem('menuList',JSON.stringify(res.data.data.sort(function(a,b){
                   return Number(a.numb)-Number(b.numb)
                 })));
