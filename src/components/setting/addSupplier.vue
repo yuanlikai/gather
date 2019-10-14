@@ -15,13 +15,14 @@
               <Input :disabled="$route.query.id" :maxlength="10" v-model="formValidate.abbrSupplierName"
                      placeholder="请输入"></Input>
             </FormItem>
-
             <FormItem label="字母编号" prop="supplierNo">
               <Input :disabled="$route.query.id" :maxlength="5" v-model="formValidate.supplierNo"
                      placeholder="请输入"
                      @on-keyup="formValidate.supplierNo = formValidate.supplierNo.replace(/[^a-zA-Z]/g,'').toUpperCase()"></Input>
             </FormItem>
-
+            <FormItem label="logo" prop="logoUrl">
+              <upImg ref="logoUrl"></upImg>
+            </FormItem>
             <FormItem label="SKU数量限制" prop="productLim">
               <Input :disabled="$route.query.disabled" :maxlength="4" v-model="formValidate.productLim"
                      @on-keyup="formValidate.productLim=formValidate.productLim.replace(/[^\d]/g,'');"
@@ -54,6 +55,13 @@
       upImg
     },
     data() {
+      const validate = (rule, value, callback) => {
+        if (this.$refs.logoUrl.uploadList < 1) {
+          callback(new Error('请上传品牌logo'));
+        } else {
+          callback();
+        }
+      };
       const validate1 = (rule, value, callback) => {
         const _this = this;
         _this.Axios.get('/Manage/Supplier/valid/supplierName', {
@@ -108,6 +116,7 @@
           abbrSupplierName: '',   //简称10
           supplierNo: '',   //代码5
           productLim: '',   //4
+          logoUrl:'',
         },
         ruleValidate: {
           supplierName: [
@@ -121,7 +130,10 @@
           ],
           productLim: [
             {required: true, message: '请输入SKU限制数量', trigger: 'blur'}
-          ]
+          ],
+          logoUrl: [
+            {validator: validate, required: true, trigger: 'change'}
+          ],
         },
       }
     },
@@ -138,9 +150,11 @@
               abbrSupplierName: _this.formValidate.abbrSupplierName,   //简称10
               supplierNo: _this.formValidate.supplierNo,   //代码5
               productLim: _this.formValidate.productLim,   //4
+              supplierLogo: _this.$refs.logoUrl.uploadList[0].filename,  //品牌LOGO路径160
             })).then(res => {
               if (res.data.code === 0) {
                 _this.status = false;
+                _this.$refs.logoUrl.uploadList=[];
                 _this.$Message.success(_this.$route.query.id ? '修改成功！' : '添加成功！')
               } else {
                 _this.$Message.warning(res.data.message)
@@ -176,6 +190,9 @@
               filename: res.data.data.imgUrl
             });
           }
+          _this.$refs.logoUrl.defaultList.push({
+            filename: res.data.data.supplierLogo
+          });
         })
 
       }

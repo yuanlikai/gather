@@ -27,7 +27,9 @@
       <p slot="title">
         数据列表
       </p>
-      <Button to="/#/addBrand" target="_blank" type="dashed" style="width: 100%;margin-bottom: 16px;">添加</Button>
+      <router-link target="_blank" to="/addBrand">
+        <Button type="dashed" style="width: 100%;margin-bottom: 16px;">添加</Button>
+      </router-link>
       <Table @on-selection-change="choice" @on-sort-change="sorts" :loading="loading1" :show-header="true"
              :columns="columns"
              :data="data"></Table>
