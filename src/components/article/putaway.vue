@@ -52,7 +52,7 @@
               :data="data"
               :target-keys="targetKeys"
               :list-style="{
-                    width: '400px',
+                    width: '380px',
                     height: '400px',
                     textAlign: 'left',
                     marginTop:'32px'

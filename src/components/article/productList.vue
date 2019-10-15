@@ -293,7 +293,7 @@
             title: '操作',
             tooltip: true,
             key: 'ProductName',
-            width: 120,
+            width: 150,
             align: "center",
             render: (h, params) => {
               return h('div', [
@@ -350,6 +350,24 @@
                       type: 'vertical'
                     }
                   }),
+                  h('a', {
+                    on:{
+                      click:()=>{
+                        let href = this.$router.resolve({
+                          path: '/productLog',
+                          query: {
+                            id: params.row.id
+                          }
+                        });
+                        window.open(href.href, '_blank')
+                      }
+                    }
+                  }, '日志'),
+                  h('Divider', {
+                    props: {
+                      type: 'vertical'
+                    }
+                  }),
                   h('Poptip', {
                     props: {
                       confirm: true,
@@ -393,7 +411,6 @@
       }
     },
     methods: {
-
 
       //赛选
       screen(i) {

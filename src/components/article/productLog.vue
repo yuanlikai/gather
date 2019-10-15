@@ -10,11 +10,11 @@
       <p slot="extra">
         <Icon type="ios-loop-strong"></Icon>
         <!--<span article="users" style="margin: 3px 4px 0 0">操作日期:</span>-->
-        <span style="margin: 3px 4px 0 0">操作人员:</span>
-        <Select v-model="username" @on-change="start=0;getLog()" style="width:120px;margin-right: 16px">
-          <Option value="全部">全部</Option>
-          <Option v-for="item in userList" :value="item.username" :key="item.username">{{item.username}}</Option>
-        </Select>
+        <!--<span style="margin: 3px 4px 0 0">操作人员:</span>-->
+        <!--<Select v-model="username" @on-change="start=0;getLog()" style="width:120px;margin-right: 16px">-->
+          <!--<Option value="全部">全部</Option>-->
+          <!--<Option v-for="item in userList" :value="item.username" :key="item.username">{{item.username}}</Option>-->
+        <!--</Select>-->
       </p>
 
 
@@ -45,10 +45,9 @@
           {
             title: '销售价格',
             key: 'location',
-            align: "center",
             render: (h, params) => {
               return h('div', [
-                h('div', `原：${params.row.marketPriceB}`),
+                h('div', `原：${params.row.marketPriceB?params.row.marketPriceB:'无'}`),
                 h('div', `现：${params.row.marketPriceN}`)
               ])
             }
@@ -56,10 +55,9 @@
           {
             title: '促销价格',
             key: 'timeCreated',
-            align: "center",
             render: (h, params) => {
               return h('div', [
-                h('div', `原：${params.row.priceB}`),
+                h('div', `原：${params.row.priceB?params.row.priceB:'无'}`),
                 h('div', `现：${params.row.priceN}`)
               ])
             }
@@ -67,10 +65,9 @@
           {
             title: '上下架',
             key: 'operation',
-            align: "center",
             render: (h, params) => {
               return h('div', [
-                h('div', `原：${params.row.onSaleB}`),
+                h('div', `原：${params.row.onSaleB?params.row.onSaleB:'无'}`),
                 h('div', `现：${params.row.onSaleN}`)
               ])
             }
@@ -78,22 +75,22 @@
           {
             title: '审核状态',
             key: 'ip',
-            align: "center",
             render: (h, params) => {
+              console.log(params.row.approvalStatusB)
+              // console.log(params.row.approvalStatusN)
               return h('div', [
-                h('div', `原：${params.row.approvalStatusB}`),
-                h('div', `现：${params.row.approvalStatusN.name}`)
+                h('div', `原：${params.row.approvalStatusB?params.row.approvalStatusB.name:'无'}`),
+                h('div', `现：${params.row.approvalStatusN?params.row.approvalStatusN.name:'无'}`)
               ])
             }
           },
           {
             title: '操作信息',
             key: 'ip',
-            align: "center",
             render: (h, params) => {
               return h('div', [
                 h('div', `${params.row.operatorName}`),
-                h('div', `${params.row.operationTime}`)
+                h('div', this.riqi(params.row.operationTime))
               ])
             }
           },
