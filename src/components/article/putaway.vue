@@ -21,7 +21,7 @@
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="品牌：" prop="brandNameLike">
-              <Select v-model="formValidate.brandId" @on-change="dataList()" clearable>
+              <Select v-model="formValidate.brandId" @on-change="rePage(),dataList()" clearable>
                 <Option v-for="(item,index) in brandList" :value="item.id" :key="index">{{item.brandName}}</Option>
               </Select>
             </FormItem>
@@ -33,8 +33,8 @@
           </Col>
           <Col :xs="24" :md="24" :lg="8" style="">
             <FormItem>
-              <Button type="primary" style="margin-right: 6px" @click="dataList()">查询</Button>
-              <Button style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
+              <Button type="primary" style="margin-right: 6px" @click="rePage(),dataList()">查询</Button>
+              <Button style="margin-right: 6px" @click="rePage(),handleReset('formValidate')">重置</Button>
             </FormItem>
           </Col>
         </Row>
@@ -62,12 +62,12 @@
                     textAlign: 'left',
                     marginTop:'32px'
                 }"
-              :titles="['全部商品','已选中商品']"
+              :titles="titles"
               :operations="['取消','选择']"
               :render-format="renders"
               @on-change="handleChange"></Transfer>
           </Col>
-          <Button @click="fillIn();current=1" :disabled="!targetKeys.length>0" type="primary" style="margin: 32px 0">
+          <Button @click="fillIn()" :disabled="!targetKeys.length>0" type="primary" style="margin: 32px 0">
             下一步，填写销售信息
           </Button>
         </Row>
@@ -115,6 +115,7 @@
           classify: [],
           brandId: '',
         },
+        titles: ['全部商品', '已选中商品'],
         treeData: [],
         brandList: [],
         current: this.$route.query.ids ? 1 : 0,
@@ -122,6 +123,7 @@
         data: [],
         targetKeys: [],
         fillInList: [],
+        start: 1,
         columns: [
           {
             title: '商品名',
@@ -225,6 +227,7 @@
     methods: {
       //筛选
       screen(i) {
+        this.rePage();
         this.formValidate.classify = i;
         this.dataList()
       },
@@ -254,16 +257,21 @@
       //填写销售信息
       fillIn() {
         const _this = this;
-        _this.Axios.post('/Manage/SkuInfo/readyOnsaleList', _this.Qs.stringify({
-          ids: _this.$route.query.ids ? _this.$route.query.ids : _this.targetKeys,
-        }, {indices: false})).then(res => {
-          _this.fillInList = res.data.data
-          if (!res.data.data) {
-            _this.show = false;
-            _this.$Message.warning('该商品分类未绑定平台')
-          }
-        })
+        if (_this.targetKeys.length > 20) {
+          _this.$Message.warning('最多选择20个商品')
 
+        } else {
+          _this.current = 1;
+          _this.Axios.post('/Manage/SkuInfo/readyOnsaleList', _this.Qs.stringify({
+            ids: _this.$route.query.ids ? _this.$route.query.ids : _this.targetKeys,
+          }, {indices: false})).then(res => {
+            _this.fillInList = res.data.data;
+            if (!res.data.data) {
+              _this.show = false;
+              _this.$Message.warning('该商品分类未绑定平台')
+            }
+          })
+        }
       },
 
       renders(item) {
@@ -276,11 +284,10 @@
       //获取可上架产品列表
       dataList() {
         const _this = this;
-        _this.loading = true;
-        _this.data = [];
+        _this.titles[0] = '全部商品'
         _this.Axios.get('/Manage/SkuInfo/readyOnsaleProducts', {
           params: {
-            start: 0,
+            start: _this.start - 1,
             size: 50,
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,    //商品名模糊搜索
             skuInfoNoLike: _this.formValidate.skuInfoNoLike,    //商品编号模糊搜索
@@ -296,9 +303,14 @@
               "key": res.data.data.content[i].id,
               "label": res.data.data.content[i].abbrPlatformNames ? res.data.data.content[i].skuInfoName + " - " + res.data.data.content[i].abbrPlatformNames : res.data.data.content[i].skuInfoName,
               // "label": '<a>123</a>',
-              "disabled": !res.data.data.content[i].abbrPlatformNames
+              "disabled": !res.data.data.content[i].abbrPlatformNames,
+              render:(h,params)=>{
+                console.log(params.row)
+                return h('p','123')
+              },
             })
           }
+          _this.titles[0] = _this.titles[0] + '(' + res.data.data.totalElements + ')';
           _this.loading = false;
         })
       },
@@ -314,7 +326,7 @@
       //获取品牌列表
       getBrand() {
         const _this = this;
-        _this.Axios.get('/Manage/Brand/pageList').then(res => {
+        _this.Axios.get('/Manage/Brand/selectBrand').then(res => {
           _this.brandList = res.data.data.content
         })
       },
@@ -325,6 +337,11 @@
         this.formValidate.brandId = '';
         this.dataList()
       },
+
+      rePage() {
+        this.start = 1;
+        this.data = [];
+      }
     },
     watch: {
       '$route'(to, from) {
@@ -335,11 +352,13 @@
       }
     },
     mounted() {
-
+      const _this = this;
       document.getElementsByClassName('ivu-transfer-list-content')[0].onscroll = function () {
-        console.log(document.getElementsByClassName('ivu-transfer-list-content')[0].scrollTop)
-      }
-
+        if (document.getElementsByClassName('ivu-transfer-list-content')[0].scrollTop + 365 > document.getElementsByClassName('ivu-transfer-list-content')[0].scrollHeight) {
+          _this.start = _this.start + 1;
+          _this.dataList();
+        }
+      };
 
       if (this.$route.query.ids) {
         this.fillIn()

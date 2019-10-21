@@ -28,7 +28,7 @@
             <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidate1" :label-width="70">
               <Col span="24">
                 <FormItem label="商品名称" prop="skuInfoName">
-                  <Input :maxlength="60" v-model="formValidate1.skuInfoName" placeholder="请输入"></Input>
+                  <Input :maxlength="200" v-model="formValidate1.skuInfoName" placeholder="请输入"></Input>
                 </FormItem>
                 <FormItem label="副标题" prop="subTitle">
                   <Input :maxlength="60" v-model="formValidate1.subTitle" placeholder="请输入"></Input>
@@ -38,10 +38,6 @@
                     <Option v-for="(item,index) in brandList" :value="item.id" :key="index">{{item.brandName}}</Option>
                   </Select>
                 </FormItem>
-                <!--<FormItem label="折扣" prop="discount">-->
-                <!--<Input @on-keyup="formValidate1.discount= formValidate1.discount.match(/\d+(\.\d{0,1})?/) ? formValidate1.discount.match(/\d+(\.\d{0,1})?/)[0] : ''" :maxlength="15" v-model="formValidate1.discount" placeholder="折扣为（0.1~9.9）之间"></Input>-->
-                <!--</FormItem>-->
-
                 <FormItem label="商品介绍" prop="description">
                   <Input :rows="3" :maxlength="80" type="textarea" v-model="formValidate1.description"
                          placeholder="请输入"></Input>
@@ -190,12 +186,6 @@
         ruleValidate1: {
           skuInfoName: [
             {required: true, message: '请填写名称', trigger: 'blur'}
-          ],
-          subTitle: [
-            {required: true, message: '请填写副标题', trigger: 'blur'}
-          ],
-          description: [
-            {required: true, message: '请填写商品介绍', trigger: 'blur'}
           ],
           pics1: [
             {validator: validate1, required: true, trigger: 'change'}

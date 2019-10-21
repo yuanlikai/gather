@@ -444,8 +444,8 @@
       //获取品牌列表
       getBrand() {
         const _this = this;
-        _this.Axios.get('/Manage/Brand/pageList').then(res => {
-          _this.brandList = res.data.data.content
+        _this.Axios.get('/Manage/Brand/list').then(res => {
+          _this.brandList = res.data.data
         })
       },
 
