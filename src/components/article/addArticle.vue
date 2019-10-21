@@ -133,6 +133,7 @@
         this.handleReset('formValidate2');
       }
     },
+    props: ['supplier'],
     data() {
       const validate1 = (rule, value, callback) => {
         this.$refs.pics1.uploadList < 1 ? callback(new Error('请上传商品题图')) : callback();
@@ -155,9 +156,6 @@
           }
         });
       };
-
-
-      // validate3
       return {
         detail: {},
         current: 0,
@@ -263,6 +261,8 @@
                 discount: _this.formValidate2.discount,         //折扣 15
                 price: _this.formValidate2.price,               //实付价格整数7位小数2位
                 skuInfoNo: _this.formValidate2.skuInfoNo,       //sku编号10
+
+                fullSkuInfoNo: _this.supplier.supplierNo + _this.formValidate2.skuInfoNo,
               }).then(res => {
                 if (res.data.code === 0) {
                   _this.current = 3;
@@ -357,6 +357,7 @@
       },
     },
     mounted() {
+      console.log(this.supplier)
       this.getTree();
       this.getBrand();
       this.$route.query.id ? this.getDetail() : '';

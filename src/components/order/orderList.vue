@@ -470,7 +470,6 @@
               ])
             }
           }
-
         ],
         data: [],
         formValidate: {
@@ -540,8 +539,8 @@
             pagesize: '10',
           }
         }).then(res => {
+          _this.getOrderNum();
           if (res.data.error === 0) {
-            _this.getOrderNum();
             _this.data = res.data.data;
             _this.total = res.data.total;
           } else {
