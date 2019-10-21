@@ -92,19 +92,22 @@
         数据列表
       </p>
       <p slot="extra">
-        <ButtonGroup>
-          <!--state: _this.formValidate.state,-->
-          <!--supplierid: _this.formValidate.supplierid,-->
-          <!--ordernumber: _this.formValidate.ordernumber,-->
-          <!--proname: _this.formValidate.proname,-->
-          <!--stockno: _this.formValidate.stockno,-->
-          <!--consignee: _this.formValidate.consignee,-->
-          <!--phone: _this.formValidate.phone,-->
-          <!--price1: _this.formValidate.price1,-->
-          <!--price2: _this.formValidate.price2,-->
-          <!--begintime: _this.formValidate.time[0],-->
-          <!--endtime: _this.formValidate.time[1],-->
-          <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
+
+
+        <Tooltip content="默认导出近90天内订单" placement="top">
+          <ButtonGroup>
+            <!--state: _this.formValidate.state,-->
+            <!--supplierid: _this.formValidate.supplierid,-->
+            <!--ordernumber: _this.formValidate.ordernumber,-->
+            <!--proname: _this.formValidate.proname,-->
+            <!--stockno: _this.formValidate.stockno,-->
+            <!--consignee: _this.formValidate.consignee,-->
+            <!--phone: _this.formValidate.phone,-->
+            <!--price1: _this.formValidate.price1,-->
+            <!--price2: _this.formValidate.price2,-->
+            <!--begintime: _this.formValidate.time[0],-->
+            <!--endtime: _this.formValidate.time[1],-->
+            <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
           '&supplierid='+formValidate.supplierid+
           '&ordernumber='+formValidate.ordernumber+
           '&proname='+formValidate.proname+
@@ -115,10 +118,12 @@
           '&price2='+formValidate.price2+
           '&begintime='+formValidate.time[0]+
           '&endtime='+formValidate.time[1]" target="_blank">
-            <Button type="dashed">批量导出订单</Button>
-          </a>
+              <Button type="dashed">批量导出订单</Button>
+            </a>
+          </ButtonGroup>
+        </Tooltip>
 
-        </ButtonGroup>
+
         <ButtonGroup>
           <a style="float: right" href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban.xls" download="muban">
             <Button type="dashed">下载发货模板</Button>
@@ -133,7 +138,7 @@
         <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
-    <express ref="express" @getOrder="getOrder(formValidate.state>8?'yc':'')" @getOrderNum="getOrderNum"></express>
+    <express ref="express" @getOrder="getOrder(formValidate.state>8?'yc':'')"></express>
     <Modal v-model="modal2" width="660">
       <p slot="header">
         <Icon type="ios-information-circle"></Icon>
@@ -351,7 +356,9 @@
             width: 130,
             render: (h, params) => {
               let a;
-              if (params.row.State === 1) {
+              if(this.formValidate.state == 9){
+                a=''
+              }else if (params.row.State === 1) {
                 a = h('a', {
                   on: {
                     click: () => {
@@ -387,7 +394,6 @@
                         if (res.data.error === 0) {
                           _this.$Message.success('审核成功');
                           _this.getOrder();
-                          _this.getOrderNum();
                           _this.modal1 = false;
                         } else {
                           _this.$Message.error(res.data.errorMsg);
@@ -426,7 +432,6 @@
                       })).then(res => {
                         if (res.data.code === 0) {
                           _this.getOrder();
-                          _this.getOrderNum();
                           _this.$Message.success('退单成功！')
                         } else {
                           _this.$Message.error(res.data.errorMsg)
@@ -443,7 +448,7 @@
 
                 h('Divider', {
                   style: {
-                    display: params.row.State === 6 ? 'none' : 'inline-block'
+                    display:this.formValidate.state==9?'none':(params.row.State === 6 ? 'none' : 'inline-block')
                   },
                   props: {
                     type: 'vertical'
@@ -542,7 +547,6 @@
           } else {
             _this.data = [];
             _this.total = 0;
-            _this.$Message.warning(res.data.errorMsg)
           }
           _this.loading1 = false;
         })
@@ -596,7 +600,6 @@
           if (res.data.code === 0) {
             _this.$Message.success('已提交申请退单');
             _this.getOrder(_this.formValidate.state > 8 ? 'yc' : '');
-            _this.getOrderNum();
             _this.modal2 = false;
           } else {
             _this.$Message.warning(res.data.errorMsg)
@@ -661,7 +664,6 @@
       this.getOrder();
       this.getSupplier();
       this.getStatus();
-      this.getOrderNum();
     }
   }
 </script>

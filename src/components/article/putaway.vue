@@ -26,6 +26,11 @@
               </Select>
             </FormItem>
           </Col>
+          <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="编号：" prop="skuInfoNoLike">
+              <Input v-model="formValidate.skuInfoNoLike" placeholder="请输入"/>
+            </FormItem>
+          </Col>
           <Col :xs="24" :md="24" :lg="8" style="">
             <FormItem>
               <Button type="primary" style="margin-right: 6px" @click="dataList()">查询</Button>
@@ -77,7 +82,9 @@
                 <Table :columns="columns" :data="item"></Table>
               </Col>
             </Row>
-            <Button type="primary" ghost style="margin: 32px 16px 32px 0" @click="current=0" v-show="!$route.query.ids">上一步，选择商品平台</Button>
+            <Button type="primary" ghost style="margin: 32px 16px 32px 0" @click="current=0" v-show="!$route.query.ids">
+              上一步，选择商品平台
+            </Button>
             <Button type="primary" v-show="show" style="margin: 32px 0" @click="putaway" :loading="sjLoding">上架</Button>
           </Col>
         </Row>
@@ -100,16 +107,17 @@
   export default {
     data() {
       return {
-        show:true,
+        show: true,
         loading: true,
         formValidate: {
           skuInfoNameLike: '',
+          skuInfoNoLike: '',
           classify: [],
           brandId: '',
         },
         treeData: [],
         brandList: [],
-        current: this.$route.query.ids?1:0,
+        current: this.$route.query.ids ? 1 : 0,
         sjLoding: false,
         data: [],
         targetKeys: [],
@@ -121,34 +129,34 @@
           },
           {
             title: 'SKU编号',
-            maxWidth:100,
+            maxWidth: 100,
             key: 'skuInfoNo'
           },
           {
             title: '市场价 (必填)',
-            maxWidth:170,
+            maxWidth: 170,
             key: 'marketPrice',
             render: (h, params) => {
               return h('input', {
-                style:{
+                style: {
                   width: '100px',
-                  border:'1px solid #dcdee2',
-                  padding:'0 4px'
+                  border: '1px solid #dcdee2',
+                  padding: '0 4px'
                 },
-                attrs:{
-                  value:params.row.marketPrice,
-                  type:"text",
-                  maxlength:'7'
+                attrs: {
+                  value: params.row.marketPrice,
+                  type: "text",
+                  maxlength: '7'
                 },
                 on: {
                   'input': (event) => {
                     if (event.target.value.length < 1) {
                       event.target.value = 1
                     }
-                    event.target.value= event.target.value.match(/\d+(\.\d{0,2})?/) ? event.target.value.match(/\d+(\.\d{0,2})?/)[0] : ''
+                    event.target.value = event.target.value.match(/\d+(\.\d{0,2})?/) ? event.target.value.match(/\d+(\.\d{0,2})?/)[0] : ''
                   },
                   'blur': (event) => {
-                    this.fillInList[params.row.platformName][params.index].marketPrice=event.target.value;
+                    this.fillInList[params.row.platformName][params.index].marketPrice = event.target.value;
                   }
                 }
               })
@@ -156,29 +164,29 @@
           },
           {
             title: '售价 (必填)',
-            maxWidth:170,
+            maxWidth: 170,
             key: 'price',
             render: (h, params) => {
               return h('input', {
-                style:{
+                style: {
                   width: '100px',
-                  border:'1px solid #dcdee2',
-                  padding:'0 4px'
+                  border: '1px solid #dcdee2',
+                  padding: '0 4px'
                 },
-                attrs:{
-                  value:params.row.price,
-                  type:"text",
-                  maxlength:'7'
+                attrs: {
+                  value: params.row.price,
+                  type: "text",
+                  maxlength: '7'
                 },
                 on: {
                   'input': (event) => {
                     if (event.target.value.length < 1) {
                       event.target.value = 1
                     }
-                    event.target.value= event.target.value.match(/\d+(\.\d{0,2})?/) ? event.target.value.match(/\d+(\.\d{0,2})?/)[0] : ''
+                    event.target.value = event.target.value.match(/\d+(\.\d{0,2})?/) ? event.target.value.match(/\d+(\.\d{0,2})?/)[0] : ''
                   },
                   'blur': (event) => {
-                    this.fillInList[params.row.platformName][params.index].price=event.target.value;
+                    this.fillInList[params.row.platformName][params.index].price = event.target.value;
                   }
                 }
               })
@@ -186,26 +194,26 @@
           },
           {
             title: '折扣（0.1~9.9）',
-            maxWidth:170,
+            maxWidth: 170,
             key: 'discount',
             render: (h, params) => {
               return h('input', {
-                style:{
+                style: {
                   width: '100px',
-                  border:'1px solid #dcdee2',
-                  padding:'0 4px'
+                  border: '1px solid #dcdee2',
+                  padding: '0 4px'
                 },
-                attrs:{
-                  value:params.row.discount,
-                  type:"text",
-                  maxlength:'7'
+                attrs: {
+                  value: params.row.discount,
+                  type: "text",
+                  maxlength: '7'
                 },
                 on: {
                   'input': (event) => {
-                    event.target.value= event.target.value.match(/\d+(\.\d{0,1})?/) ? event.target.value.match(/\d+(\.\d{0,1})?/)[0] : ''
+                    event.target.value = event.target.value.match(/\d+(\.\d{0,1})?/) ? event.target.value.match(/\d+(\.\d{0,1})?/)[0] : ''
                   },
                   'blur': (event) => {
-                    this.fillInList[params.row.platformName][params.index].discount=event.target.value;
+                    this.fillInList[params.row.platformName][params.index].discount = event.target.value;
                   }
                 }
               })
@@ -247,11 +255,11 @@
       fillIn() {
         const _this = this;
         _this.Axios.post('/Manage/SkuInfo/readyOnsaleList', _this.Qs.stringify({
-          ids: _this.$route.query.ids?_this.$route.query.ids:_this.targetKeys,
+          ids: _this.$route.query.ids ? _this.$route.query.ids : _this.targetKeys,
         }, {indices: false})).then(res => {
           _this.fillInList = res.data.data
-          if(!res.data.data){
-            _this.show=false;
+          if (!res.data.data) {
+            _this.show = false;
             _this.$Message.warning('该商品分类未绑定平台')
           }
         })
@@ -272,8 +280,10 @@
         _this.data = [];
         _this.Axios.get('/Manage/SkuInfo/readyOnsaleProducts', {
           params: {
+            start: 0,
+            size: 50,
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,    //商品名模糊搜索
-            skuInfoNoLike: '',    //商品编号模糊搜索
+            skuInfoNoLike: _this.formValidate.skuInfoNoLike,    //商品编号模糊搜索
             category1: _this.formValidate.classify[0],
             category2: _this.formValidate.classify[1],
             category3: _this.formValidate.classify[2],
@@ -281,12 +291,12 @@
             seed: '',    //true为未上架商品
           }
         }).then(res => {
-          for (let i in res.data.data) {
+          for (let i in res.data.data.content) {
             _this.data.push({
-              "key": res.data.data[i].id,
-              "label": res.data.data[i].abbrPlatformNames ? res.data.data[i].skuInfoName + " - " + res.data.data[i].abbrPlatformNames : res.data.data[i].skuInfoName,
+              "key": res.data.data.content[i].id,
+              "label": res.data.data.content[i].abbrPlatformNames ? res.data.data.content[i].skuInfoName + " - " + res.data.data.content[i].abbrPlatformNames : res.data.data.content[i].skuInfoName,
               // "label": '<a>123</a>',
-              "disabled": !res.data.data[i].abbrPlatformNames
+              "disabled": !res.data.data.content[i].abbrPlatformNames
             })
           }
           _this.loading = false;
@@ -316,24 +326,28 @@
         this.dataList()
       },
     },
-    watch:{
+    watch: {
       '$route'(to, from) {
-        this.current=0;
+        this.current = 0;
         this.getTree();
         this.getBrand();
         this.dataList();
       }
     },
     mounted() {
-      if(this.$route.query.ids){
+
+      document.getElementsByClassName('ivu-transfer-list-content')[0].onscroll = function () {
+        console.log(document.getElementsByClassName('ivu-transfer-list-content')[0].scrollTop)
+      }
+
+
+      if (this.$route.query.ids) {
         this.fillIn()
-      }else{
+      } else {
         this.getTree();
         this.getBrand();
         this.dataList();
       }
-
-
     }
   }
 </script>

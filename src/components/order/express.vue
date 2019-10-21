@@ -17,7 +17,7 @@
             <Input :maxlength="20" type="text" v-model="item.ExpressNo" placeholder="请输入物流单号"></Input>
           </Col>
           <Col span="4" offset="1">
-            <Button @click="handleRemove(index)">Delete</Button>
+            <Button @click="handleRemove(index)" size="small">删除</Button>
           </Col>
         </Row>
       </FormItem>
@@ -33,7 +33,7 @@
       </FormItem>
     </Form>
     <div slot="footer">
-      <Button type="primary" @click="handleSubmit('formDynamic')">发货</Button>
+      <Button type="primary" @click="handleSubmit('formDynamic')">{{$route.query.idstr?'修改':'发货'}}</Button>
     </div>
   </Modal>
 </template>
@@ -86,7 +86,6 @@
               if (res.data.error === 0) {
                 _this.$Message.success('发货成功');
                 _this.$emit('getOrder');
-                _this.$emit('getOrderNum')
                 _this.model = false;
               } else {
                 _this.$Message.error(res.data.errorMsg);

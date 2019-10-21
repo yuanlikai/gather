@@ -19,7 +19,8 @@ module.exports = {
         }
       },
       '/': {
-        target: 'http://106.14.136.7:8091',
+        target: 'http://192.168.1.73:8088',
+        // target: 'http://106.14.136.7:8091',
         changeOrigin: true,
         pathRewrite: {
           '^/': ''

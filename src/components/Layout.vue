@@ -35,9 +35,10 @@
           <Menu mode="horizontal" type="light" style="margin-left: auto;margin-right: 20px;">
             <div class="layout-logo"></div>
             <div class="layout-nav">
+              <span style="font-size: 12px;font-weight: 600;color: #333;">{{supplier.supplierName}}</span>
               <router-link to="/log" v-show="supplier.userType==='SUPER'">
                 <Tooltip content="日志" placement="bottom">
-                  <Icon size="18" color="#555555" type="md-ionic"/>
+                  <Icon style="margin-left: 20px" size="18" color="#555555" type="md-ionic"/>
                 </Tooltip>
               </router-link>
               <Dropdown trigger="click" style="margin-left: 20px;cursor: pointer;" @on-click="out">
@@ -67,10 +68,7 @@
         tab: '',
         menuList: [],
         menuLeft: [],
-        supplier: {
-          supplierId: '',
-          userType: '',
-        },
+        supplier: {},
         menu: localStorage.getItem('menu'),
         menu1: localStorage.getItem('menu1'),
         isCollapsed: false,
@@ -131,8 +129,7 @@
       getCurrentUser() {
         const _this = this;
         _this.Axios.get('/Manage/UserInfo/getCurrentUser').then(res => {
-          _this.supplier.supplierId = res.data.data.supplierId;
-          _this.supplier.userType = res.data.data.userType;
+          _this.supplier = res.data.data;
         })
       },
 

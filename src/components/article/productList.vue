@@ -46,6 +46,12 @@
           <!--</Select>-->
           <!--</FormItem>-->
           <!--</Col>-->
+
+          <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="编号：" prop="skuInfoNoLike">
+              <Input v-model="formValidate.skuInfoNoLike" placeholder="请输入"/>
+            </FormItem>
+          </Col>
           <Col :xs="24" :md="24" :lg="8" style="">
             <FormItem>
               <Button type="primary" style="margin-right: 6px" @click="resetPage();getList()">查询</Button>
@@ -91,6 +97,7 @@
         countList: {},
         formValidate: {
           skuInfoNameLike: '',
+          skuInfoNoLike:'',
           classify: [],
           brandId: '',
           supplierId: '',
@@ -430,6 +437,7 @@
             approvalStatus: 'PASS',
             supplierId: _this.formValidate.supplierId,
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,
+            skuInfoNoLike: _this.formValidate.skuInfoNoLike,
             category1: _this.formValidate.classify[0],
             category2: _this.formValidate.classify[1],
             category3: _this.formValidate.classify[2],
