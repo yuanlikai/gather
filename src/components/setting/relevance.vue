@@ -33,41 +33,59 @@
                     width: '250px',
                     height: '300px'
                 }"
-          :titles="['全部平台','已关联品牌']"
+          :titles="['全部品牌','已关联品牌']"
           :operations="['取消','关联']"
           :render-format="renders1"
           @on-change="handleChange1"></Transfer>
       </div>
     </Card>
+    <Modal
+      v-model="modal5"
+      title="提示"
+      width="300"
+      @on-ok="ok">
+      <p>选中平台下的商品将全部{{direction === 'right'?'上架':'下架'}}，是否确认？</p>
+    </Modal>
   </div>
 </template>
 <script>
   export default {
     data() {
       return {
+        modal5: false,
         targetKeys: [],
         data: [],
         targetKeys1: [],
-        data1: []
+        data1: [],
+        newTargetKeys: '',
+        direction: '',
+        moveKeys: ''
       }
     },
     methods: {
       renders(item) {
         return item.label;
       },
-      handleChange(newTargetKeys, direction, moveKeys) {
+      ok() {
         const _this = this;
-        _this.Axios.post(direction === 'right' ? '/Manage/Supplier/relevancePlatform' : '/Manage/SkuInfo/cancelRelevancPlatform', {
+        _this.Axios.post(_this.direction === 'right' ? '/Manage/Supplier/relevancePlatform' : '/Manage/SkuInfo/cancelRelevancPlatform', {
           supplierId: _this.$route.query.id,
-          platFormIds: direction === 'right' ? newTargetKeys : moveKeys
+          platFormIds: _this.direction === 'right' ? _this.newTargetKeys : _this.moveKeys
         }).then(res => {
           if (res.data.code === 0) {
+            _this.targetKeys = _this.newTargetKeys;
             _this.$Message.success('成功')
           } else {
             _this.$Message.warning(res.data.message)
           }
         });
-        this.targetKeys = newTargetKeys;
+      },
+      handleChange(newTargetKeys, direction, moveKeys) {
+        const _this = this;
+        _this.newTargetKeys = newTargetKeys;
+        _this.direction = direction;
+        _this.moveKeys = moveKeys;
+        _this.modal5 = true;
       },
       renders1(item) {
         return item.label;
@@ -79,12 +97,12 @@
           brandIds: direction === 'right' ? newTargetKeys : moveKeys
         }).then(res => {
           if (res.data.code === 0) {
+            _this.targetKeys1 = newTargetKeys;
             _this.$Message.success('成功')
           } else {
             _this.$Message.warning(res.data.message)
           }
         });
-        this.targetKeys1 = newTargetKeys;
       },
 
 
@@ -123,6 +141,7 @@
       brandList() {
         const _this = this;
         _this.Axios.get('/Manage/Brand/list').then(res => {
+          console.log(res.data)
           for (let i in res.data.data) {
             _this.data1.push({
               "key": res.data.data[i].id,
@@ -140,7 +159,7 @@
             supplierId: _this.$route.query.id
           }
         }).then(res => {
-          _this.targetKeys1=[];
+          _this.targetKeys1 = [];
           for (let i in res.data.data) {
             _this.targetKeys1.push(res.data.data[i].id)
           }

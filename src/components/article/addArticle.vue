@@ -38,6 +38,20 @@
                     <Option v-for="(item,index) in brandList" :value="item.id" :key="index">{{item.brandName}}</Option>
                   </Select>
                 </FormItem>
+                <FormItem label="维护" prop="updMethod" v-if="supplier.supplierId==='1'">
+                  <Select :disabled="$route.query.id?true:false" v-model="formValidate1.updMethod" :clearable="true">
+                    <Option value="AUTO">自动更新</Option>
+                    <Option value="MANUAL">手动维护</Option>
+                    <Option value="BATCH">自动回滚</Option>
+                  </Select>
+                </FormItem>
+                <FormItem label="仓位" prop="stockType" v-if="supplier.supplierId==='1'&&formValidate1.updMethod">
+                  <Select :disabled="$route.query.id?true:false" v-model="formValidate1.stockType" :clearable="true">
+                    <Option value="DF" v-if="formValidate1.updMethod==='MANUAL'">代发</Option>
+                    <Option value="NHJ" v-if="formValidate1.updMethod==='BATCH'">南华街</Option>
+                    <Option value="JS" v-if="formValidate1.updMethod==='AUTO'">嘉善</Option>
+                  </Select>
+                </FormItem>
                 <FormItem label="商品介绍" prop="description">
                   <Input :rows="3" :maxlength="80" type="textarea" v-model="formValidate1.description"
                          placeholder="请输入"></Input>
@@ -143,18 +157,23 @@
       };
       const validate3 = (rule, value, callback) => {
         const _this = this;
-        _this.Axios.get('/Manage/SkuInfo/validSkuInfoNo', {
-          params: {
-            id: _this.$route.query.id ? _this.$route.query.id : '',
-            skuInfoNo: value
-          }
-        }).then(res => {
-          if (res.data.code === 0) {
-            callback();
-          } else {
-            callback(new Error('商品编号重复'))
-          }
-        });
+        if (value) {
+          _this.Axios.get('/Manage/SkuInfo/validSkuInfoNo', {
+            params: {
+              id: _this.$route.query.id ? _this.$route.query.id : '',
+              skuInfoNo: value
+            }
+          }).then(res => {
+            if (res.data.code === 0) {
+              callback();
+            } else {
+              callback(new Error('商品编号重复'))
+            }
+          });
+
+        } else {
+          callback(new Error('请输入商品编号'))
+        }
       };
       return {
         detail: {},
@@ -167,6 +186,8 @@
           subTitle: '',     //副标题
           brandId: '',      //品牌ID
           description: '',  //描述
+          stockType: '',     //仓位
+          updMethod: '',      //维护方式
           keyWords: '',     //关键词50
           pics: [],         //图片集合
         },
@@ -184,6 +205,12 @@
         ruleValidate1: {
           skuInfoName: [
             {required: true, message: '请填写名称', trigger: 'blur'}
+          ],
+          updMethod: [
+            {required: true, message: '请选择维护方式', trigger: 'change'}
+          ],
+          stockType: [
+            {required: true, message: '请选择仓位', trigger: 'change'}
           ],
           pics1: [
             {validator: validate1, required: true, trigger: 'change'}
@@ -256,6 +283,8 @@
                 keyWords: _this.tag.join(' '),                  //关键词50
                 description: _this.formValidate1.description,   //描述80
                 pics: _this.formValidate1.pics,   //图片集合
+                stockType: _this.supplier.supplierId === '1' ? _this.formValidate1.stockType : 'GYS',  //仓位
+                updMethod: _this.supplier.supplierId === '1' ? _this.formValidate1.updMethod : 'MANUAL', //维护方式
 
                 marketPrice: _this.formValidate2.marketPrice,   //市场价整数7位小数2位
                 discount: _this.formValidate2.discount,         //折扣 15
@@ -294,6 +323,7 @@
             id: _this.$route.query.id
           }
         }).then(res => {
+          console.log(res.data)
           _this.formValidate = {
             classify: [res.data.data.category1, res.data.data.category2, res.data.data.category3],  //分类数组
           };
@@ -302,6 +332,8 @@
             subTitle: res.data.data.subTitle,     //副标题
             brandId: res.data.data.brandId,      //品牌ID
             description: res.data.data.description,  //描述
+            stockType: res.data.data.stockType,  //仓位
+            updMethod:res.data.data.updMethod
           };
 
           for (let i in res.data.data.mianPics) {
@@ -357,7 +389,6 @@
       },
     },
     mounted() {
-      console.log(this.supplier)
       this.getTree();
       this.getBrand();
       this.$route.query.id ? this.getDetail() : '';

@@ -31,6 +31,7 @@
               <Input v-model="formValidate.skuInfoNoLike" placeholder="请输入"/>
             </FormItem>
           </Col>
+
           <Col :xs="24" :md="24" :lg="8" style="">
             <FormItem>
               <Button type="primary" style="margin-right: 6px" @click="rePage(),dataList()">查询</Button>
@@ -44,6 +45,9 @@
       <p slot="title" style="text-align: left">
         选择商品
       </p>
+      <a href="#" slot="extra">
+        <Checkbox v-model="seed" @on-change="rePage(),dataList()">新建未上架</Checkbox>
+      </a>
       <div style="margin: 0 auto;max-width: 900px;">
         <Steps v-show="current!==2" :current="current" style="margin: 16px 0 0 0">
           <Step v-show="!$route.query.ids" title="选择商品" style="width: 70%;"></Step>
@@ -108,6 +112,7 @@
     data() {
       return {
         show: true,
+        seed:false,
         loading: true,
         formValidate: {
           skuInfoNameLike: '',
@@ -289,13 +294,14 @@
           params: {
             start: _this.start - 1,
             size: 50,
+
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,    //商品名模糊搜索
             skuInfoNoLike: _this.formValidate.skuInfoNoLike,    //商品编号模糊搜索
             category1: _this.formValidate.classify[0],
             category2: _this.formValidate.classify[1],
             category3: _this.formValidate.classify[2],
             brandId: _this.formValidate.brandId,    //品牌id
-            seed: '',    //true为未上架商品
+            seed: _this.seed,    //true为未上架商品
           }
         }).then(res => {
           for (let i in res.data.data.content) {
@@ -335,6 +341,7 @@
       handleReset(name) {
         this.$refs[name].resetFields();
         this.formValidate.brandId = '';
+        this.seed=false;
         this.dataList()
       },
 

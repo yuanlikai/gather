@@ -3,23 +3,15 @@
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">平台列表</div>
     </Card>
-    <RadioGroup @on-change="start=1;total=0;getTerrace()" v-model="status" :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large"
-                type="button">
-      <Radio style="padding:0 20px" label="全部">
-        全部平台
-      </Radio>
-      <Radio style="padding:0 20px" label="true">
-        启用
-      </Radio>
-      <Radio style="padding:0 20px" label="false">
-        停用
-      </Radio>
-    </RadioGroup>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
         数据列表
       </p>
-      <Button type="dashed" style="width: 100%;margin-bottom: 16px;" to="/#/addTerrace" target="_blank">添加平台</Button>
+      <router-link target="_blank" :to="{
+        path:'/addTerrace',
+      }">
+        <Button type="dashed" style="width: 100%;margin-bottom: 16px;">添加平台</Button>
+      </router-link>
       <Table :loading="loading" :show-header="true" :columns="columns" :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
       <div style="width: 100%;text-align: center;margin-top: 15px">

@@ -64,48 +64,60 @@
       };
       const validate1 = (rule, value, callback) => {
         const _this = this;
-        _this.Axios.get('/Manage/Platform/valid/platformName', {
-          params: {
-            id: _this.$route.query.id ? _this.$route.query.id : '',
-            value: value
-          }
-        }).then(res => {
-          if (res.data.code === 0) {
-            callback();
-          } else {
-            callback(new Error('平台名称重复'))
-          }
-        });
+        if (value) {
+          _this.Axios.get('/Manage/Platform/valid/platformName', {
+            params: {
+              id: _this.$route.query.id ? _this.$route.query.id : '',
+              value: value
+            }
+          }).then(res => {
+            if (res.data.code === 0) {
+              callback();
+            } else {
+              callback(new Error('平台名称重复'))
+            }
+          });
+        } else {
+          callback(new Error('请输入平台名称'))
+        }
       };
       const validate2 = (rule, value, callback) => {
         const _this = this;
-        _this.Axios.get('/Manage/Platform/valid/abbrPlatformName', {
-          params: {
-            id: _this.$route.query.id ? _this.$route.query.id : '',
-            value: value
-          }
-        }).then(res => {
-          if (res.data.code === 0) {
-            callback();
-          } else {
-            callback(new Error('平台简称重复'))
-          }
-        });
+        if (value) {
+          _this.Axios.get('/Manage/Platform/valid/abbrPlatformName', {
+            params: {
+              id: _this.$route.query.id ? _this.$route.query.id : '',
+              value: value
+            }
+          }).then(res => {
+            if (res.data.code === 0) {
+              callback();
+            } else {
+              callback(new Error('平台简称重复'))
+            }
+          });
+        } else {
+          callback(new Error('请输入平台简称'))
+        }
       };
       const validate3 = (rule, value, callback) => {
         const _this = this;
-        _this.Axios.get('/Manage/Platform/valid/platformNo', {
-          params: {
-            id: _this.$route.query.id ? _this.$route.query.id : '',
-            value: value
-          }
-        }).then(res => {
-          if (res.data.code === 0) {
-            callback();
-          } else {
-            callback(new Error('平台编号重复'))
-          }
-        });
+        if (value) {
+          _this.Axios.get('/Manage/Platform/valid/platformNo', {
+            params: {
+              id: _this.$route.query.id ? _this.$route.query.id : '',
+              value: value
+            }
+          }).then(res => {
+            if (res.data.code === 0) {
+              callback();
+            } else {
+              callback(new Error('平台编号重复'))
+            }
+          });
+        } else {
+          callback(new Error('请输入平台编号'))
+        }
       };
 
       return {

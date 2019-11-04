@@ -67,8 +67,8 @@
             key: 'operation',
             render: (h, params) => {
               return h('div', [
-                h('div', `原：${params.row.onSaleB?params.row.onSaleB:'无'}`),
-                h('div', `现：${params.row.onSaleN}`)
+                h('div', `原：${params.row.onSaleB===false?'下架':'上架'}`),
+                h('div', `现：${params.row.onSaleN===false?'下架':'上架'}`)
               ])
             }
           },

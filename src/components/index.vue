@@ -72,6 +72,7 @@
       },
     },
     mounted() {
+      console.log()
     }
   }
 </script>

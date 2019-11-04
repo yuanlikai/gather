@@ -178,7 +178,7 @@
             title: '操作',
             tooltip: true,
             key: 'ProductName',
-            width: 100,
+            width: 120,
             align: "center",
             render: (h, params) => {
               return h('div',[
@@ -204,7 +204,41 @@
                   }
                 }, [
                   h('a', '还原')
-                ])
+                ]),
+                h('Divider', {
+                  props: {
+                    type: 'vertical'
+                  }
+                }),
+                h('Poptip', {
+                  props: {
+                    confirm: true,
+                    transfer: true,
+                    placement:"top-end",
+                    offset:10,
+                    title: '删除后将不可恢复，确定删除该商品？',
+                  },
+                  on: {
+                    'on-ok': () => {
+                      if (params.row.onSale === true) {
+                        this.$Message.warning('不能删除已上架产品')
+                      } else {
+                        this.Axios.post('/Manage/SkuInfo/delete', this.Qs.stringify({
+                          id: params.row.id
+                        })).then(res => {
+                          if (res.data.code === 0) {
+                            this.getList();
+                            this.$Message.success('删除成功！')
+                          } else {
+                            this.$Message.warning(res.data.message)
+                          }
+                        })
+                      }
+                    }
+                  }
+                }, [
+                  h('a', '删除')
+                ]),
               ])
             }
           }

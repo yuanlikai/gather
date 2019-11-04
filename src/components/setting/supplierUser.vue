@@ -175,7 +175,7 @@ margin-right: 16px">
         supplierList: '',
         ruleValidate: {
           username: [
-            {validator: ctionUser, required: true, trigger: 'change'}
+            {validator: ctionUser, required: true, trigger: 'blur'}
           ],
           password: [
             {required: true, message: '请输入', trigger: 'blur'}
@@ -187,7 +187,7 @@ margin-right: 16px">
             {validator: juese, required: true, trigger: 'change'}
           ],
           name: [
-            {required: true, message: '请输入', trigger: 'change'}
+            {required: true, message: '请输入', trigger: 'blur'}
           ],
           supplierId: [
             {required: true, message: '请输入', trigger: 'change'}

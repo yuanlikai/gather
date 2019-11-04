@@ -64,33 +64,41 @@
       };
       const validate1 = (rule, value, callback) => {
         const _this = this;
-        _this.Axios.get('/Manage/Supplier/valid/supplierName', {
-          params: {
-            id: _this.$route.query.id ? _this.$route.query.id : '',
-            value: value
-          }
-        }).then(res => {
-          if (res.data.code === 0) {
-            callback();
-          } else {
-            callback(new Error('名称重复'))
-          }
-        });
+        if (value) {
+          _this.Axios.get('/Manage/Supplier/valid/supplierName', {
+            params: {
+              id: _this.$route.query.id ? _this.$route.query.id : '',
+              value: value
+            }
+          }).then(res => {
+            if (res.data.code === 0) {
+              callback();
+            } else {
+              callback(new Error('企业名称重复'))
+            }
+          });
+        } else {
+          callback(new Error('请输入企业名称'))
+        }
       };
       const validate2 = (rule, value, callback) => {
         const _this = this;
-        _this.Axios.get('/Manage/Supplier/valid/abbrSupplierName', {
-          params: {
-            id: _this.$route.query.id ? _this.$route.query.id : '',
-            value: value
-          }
-        }).then(res => {
-          if (res.data.code === 0) {
-            callback();
-          } else {
-            callback(new Error('简称重复'))
-          }
-        });
+        if (value) {
+          _this.Axios.get('/Manage/Supplier/valid/abbrSupplierName', {
+            params: {
+              id: _this.$route.query.id ? _this.$route.query.id : '',
+              value: value
+            }
+          }).then(res => {
+            if (res.data.code === 0) {
+              callback();
+            } else {
+              callback(new Error('企业简称重复'))
+            }
+          });
+        } else {
+          callback(new Error('请输入企业简称'))
+        }
       };
       const validate3 = (rule, value, callback) => {
         const _this = this;

@@ -74,18 +74,22 @@
       };
       const validate1 = (rule, value, callback) => {
         const _this = this;
-        _this.Axios.get('/Manage/Brand/validBrandName', {
-          params: {
-            id: _this.$route.query.id ? _this.$route.query.id : '',
-            brandName: value
-          }
-        }).then(res => {
-          if (res.data.code === 0) {
-            callback();
-          } else {
-            callback(new Error('品牌名称重复'))
-          }
-        });
+        if(value){
+          _this.Axios.get('/Manage/Brand/validBrandName', {
+            params: {
+              id: _this.$route.query.id ? _this.$route.query.id : '',
+              brandName: value
+            }
+          }).then(res => {
+            if (res.data.code === 0) {
+              callback();
+            } else {
+              callback(new Error('品牌名称重复'))
+            }
+          });
+        }else {
+          callback(new Error('请输入品牌名称'))
+        }
       };
       return {
         current:0,
@@ -102,7 +106,10 @@
         },
         ruleValidate: {
           brandName: [
-            {validator: validate1,required: true, trigger: 'blur'}
+            {validator: validate1,min: 6,required: true, trigger: 'blur'}
+          ],
+          abbrBrandName:[
+            {required: true, message: '请填写品牌简称', trigger: 'blur'}
           ],
           logoUrl: [
             {validator: validate, required: true, trigger: 'change'}

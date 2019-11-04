@@ -32,7 +32,6 @@
                 <FormItem label="折扣：" prop="discount">
                   <span style="color: #000;">{{formValidate1.discount}}</span>
                 </FormItem>
-
                 <FormItem label="商品介绍：" prop="description">
                   <span style="color: #000;">{{formValidate1.description}}</span>
                 </FormItem>
@@ -121,12 +120,6 @@
         ruleValidate1: {
           skuInfoName: [
             {required: true, message: '请填写名称', trigger: 'blur'}
-          ],
-          subTitle: [
-            {required: true, message: '请填写副标题', trigger: 'blur'}
-          ],
-          description: [
-            {required: true, message: '请填写商品介绍', trigger: 'blur'}
           ],
           pics1: [
             {validator: validate1, required: true, trigger: 'change'}

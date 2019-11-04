@@ -97,7 +97,7 @@
         countList: {},
         formValidate: {
           skuInfoNameLike: '',
-          skuInfoNoLike:'',
+          skuInfoNoLike: '',
           classify: [],
           brandId: '',
           supplierId: '',
@@ -117,13 +117,13 @@
             render: (h, params) => {
               return h('Poptip', {
                 props: {
-                  trigger:'hover',
+                  trigger: 'hover',
                   placement: 'right'
                 }
               }, [
                 h('img', {
                   style: {
-                    cursor:'pointer',
+                    cursor: 'pointer',
                     height: '30px'
                   },
                   attrs: {
@@ -151,7 +151,7 @@
           {
             title: '商品名称',
             tooltip: true,
-            minWidth: 70,
+            minWidth: 150,
             key: 'skuInfoName',
             render: (h, params) => {
               return h('div', [
@@ -186,6 +186,7 @@
           {
             title: '编号',
             tooltip: true,
+            minWidth: 70,
             key: 'skuInfoNo',
             align: "center",
           },
@@ -193,6 +194,7 @@
             title: '价格',
             tooltip: true,
             key: 'price',
+            minWidth: 70,
             sortable: "custom",
             align: "center",
             render: (h, params) => {
@@ -225,19 +227,56 @@
           },
           {
             title: '上架平台',
+            minWidth: 70,
             tooltip: true,
             key: 'onsalePlatformNames',
             align: "center",
           },
           {
             title: '供应商',
+            minWidth: 70,
             tooltip: true,
             key: 'supplierName',
             align: "center",
           },
           {
+            title: '仓位',
+            tooltip: true,
+            minWidth: 70,
+            key: 'stockType',
+            align: "center",
+            render:(h,params)=>{
+              if(params.row.stockType==="DF"){
+                return h('p','代发')
+              }else if(params.row.stockType==="NHJ"){
+                return h('p','南华街')
+              }else if(params.row.stockType==="JS"){
+                return h('p','嘉善')
+              }else if(params.row.stockType==="GYS"){
+                return h('p','供应商')
+              }
+            }
+          },
+          {
+            title: '维护方式',
+            tooltip: true,
+            minWidth: 70,
+            key: 'updMethod',
+            align: "center",
+            render:(h,params)=>{
+              if(params.row.updMethod==="MANUAL"){
+                return h('p','手动')
+              }else if(params.row.updMethod==="AUTO"){
+                return h('p','自动')
+              }else if(params.row.updMethod==="BATCH"){
+                return h('p','回滚')
+              }
+            }
+          },
+          {
             title: 'SKU库存',
             tooltip: true,
+            minWidth: 70,
             align: "center",
             render: (h, params) => {
               return h('div', [
@@ -268,6 +307,7 @@
           {
             title: '状态',
             tooltip: true,
+            minWidth: 70,
             align: "center",
             render: (h, params) => {
               return h('div', [
@@ -300,7 +340,7 @@
             title: '操作',
             tooltip: true,
             key: 'ProductName',
-            width: 150,
+            width: 146,
             align: "center",
             render: (h, params) => {
               return h('div', [
@@ -358,8 +398,8 @@
                     }
                   }),
                   h('a', {
-                    on:{
-                      click:()=>{
+                    on: {
+                      click: () => {
                         let href = this.$router.resolve({
                           path: '/productLog',
                           query: {
@@ -386,12 +426,12 @@
                         if (params.row.onSale === true) {
                           this.$Message.warning('不能删除已上架产品')
                         } else {
-                          this.Axios.post('/Manage/SkuInfo/delete', this.Qs.stringify({
-                            id: params.row.id
-                          })).then(res => {
+                          this.Axios.post('/Manage/SkuInfo/recycleBin', this.Qs.stringify({
+                            skuInfoIds: [params.row.id]
+                          }, {indices: false})).then(res => {
                             if (res.data.code === 0) {
                               this.getList();
-                              this.$Message.success('删除成功！')
+                              this.$Message.success('成功加入回收站')
                             } else {
                               this.$Message.warning(res.data.message)
                             }

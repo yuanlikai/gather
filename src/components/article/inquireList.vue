@@ -169,7 +169,38 @@
               return h('p', `${params.row.category1Name} > ${params.row.category2Name} > ${params.row.category3Name}`)
             }
           },
-
+          {
+            title: '仓位',
+            tooltip: true,
+            key: 'stockType',
+            align: "center",
+            render:(h,params)=>{
+              if(params.row.stockType==="DF"){
+                return h('p','代发')
+              }else if(params.row.stockType==="NHJ"){
+                return h('p','南华街')
+              }else if(params.row.stockType==="JS"){
+                return h('p','嘉善')
+              }else if(params.row.stockType==="GYS"){
+                return h('p','供应商')
+              }
+            }
+          },
+          {
+            title: '维护方式',
+            tooltip: true,
+            key: 'updMethod',
+            align: "center",
+            render:(h,params)=>{
+              if(params.row.updMethod==="MANUAL"){
+                return h('p','手动')
+              }else if(params.row.updMethod==="AUTO"){
+                return h('p','自动')
+              }else if(params.row.updMethod==="BATCH"){
+                return h('p','回滚')
+              }
+            }
+          },
           {
             title: '供应商',
             tooltip: true,
@@ -180,7 +211,7 @@
             title: '操作',
             tooltip: true,
             key: 'ProductName',
-            width: 150,
+            width: 120,
             align: "center",
             render: (h, params) => {
               return h('div', [
@@ -223,7 +254,7 @@
                     }
                   }
                 }, [
-                  h('a', '加入回收站')
+                  h('a', '删除')
                 ])
               ])
             }

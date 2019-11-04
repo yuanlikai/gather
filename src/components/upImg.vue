@@ -124,6 +124,10 @@
       this.uploadList = this.$refs.upload.fileList;
       this.upload();
       this.policy();
+      const _this = this;
+      setInterval(function(){
+        _this.policy()
+      },180000)
     }
   }
 </script>
