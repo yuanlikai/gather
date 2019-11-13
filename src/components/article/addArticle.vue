@@ -71,10 +71,10 @@
                     </Col>
                   </Row>
                 </FormItem>
-                <FormItem label="题图" prop="pics1">
+                <FormItem label="题图 (大小1MB)" prop="pics1">
                   <upImg ref="pics1" :num="6"></upImg>
                 </FormItem>
-                <FormItem label="详情图" prop="pics2">
+                <FormItem label="详情图 (大小1MB)" prop="pics2">
                   <upImg ref="pics2" :num="6"></upImg>
                 </FormItem>
                 <FormItem>
@@ -270,6 +270,7 @@
 
               _this.Axios.post(_this.$route.query.id ? '/Manage/SkuInfo/update' : '/Manage/SkuInfo/insert', {
                 id: _this.$route.query.id ? _this.$route.query.id : '',    //修改时传入
+                approvalStatusStr: _this.$route.query.id ? 'AUDITING' : 'UNCOMMIT',    //UNCOMMIT为保存AUDITING为保存并提交审核
 
                 categoryId: _this.formValidate.classify[2],   //第三季分类id
                 category1: _this.formValidate.classify[0],   //第一级分类id
@@ -333,7 +334,7 @@
             brandId: res.data.data.brandId,      //品牌ID
             description: res.data.data.description,  //描述
             stockType: res.data.data.stockType,  //仓位
-            updMethod:res.data.data.updMethod
+            updMethod: res.data.data.updMethod
           };
 
           for (let i in res.data.data.mianPics) {

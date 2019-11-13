@@ -240,20 +240,20 @@
             align: "center",
           },
           {
-            title: '仓位',
+            title: '发货',
             tooltip: true,
             minWidth: 70,
             key: 'stockType',
             align: "center",
-            render:(h,params)=>{
-              if(params.row.stockType==="DF"){
-                return h('p','代发')
-              }else if(params.row.stockType==="NHJ"){
-                return h('p','南华街')
-              }else if(params.row.stockType==="JS"){
-                return h('p','嘉善')
-              }else if(params.row.stockType==="GYS"){
-                return h('p','供应商')
+            render: (h, params) => {
+              if (params.row.stockType === "DF") {
+                return h('p', '代发')
+              } else if (params.row.stockType === "NHJ") {
+                return h('p', '南华街')
+              } else if (params.row.stockType === "JS") {
+                return h('p', '嘉善')
+              } else if (params.row.stockType === "GYS") {
+                return h('p', '供应商')
               }
             }
           },
@@ -263,13 +263,13 @@
             minWidth: 70,
             key: 'updMethod',
             align: "center",
-            render:(h,params)=>{
-              if(params.row.updMethod==="MANUAL"){
-                return h('p','手动')
-              }else if(params.row.updMethod==="AUTO"){
-                return h('p','自动')
-              }else if(params.row.updMethod==="BATCH"){
-                return h('p','回滚')
+            render: (h, params) => {
+              if (params.row.updMethod === "MANUAL") {
+                return h('p', '手动')
+              } else if (params.row.updMethod === "AUTO") {
+                return h('p', '自动')
+              } else if (params.row.updMethod === "BATCH") {
+                return h('p', '回滚')
               }
             }
           },
@@ -340,58 +340,78 @@
             title: '操作',
             tooltip: true,
             key: 'ProductName',
-            width: 146,
+            width: 188,
             align: "center",
             render: (h, params) => {
-              return h('div', [
-                h('div', [
-                  h('Poptip', {
-                    props: {
-                      confirm: true,
-                      transfer: true,
-                      title: '确定下架该商品？',
-                    },
-                    on: {
-                      'on-ok': () => {
-                        const _this = this;
-                        _this.Axios.post('/Manage/SkuInfo/batchUnSold', _this.Qs.stringify({
-                          skuInfoIds: [params.row.id]
-                        }, {indices: false})).then(res => {
-                          if (res.data.code === 0) {
-                            this.getList();
-                            _this.$Message.success('下架成功！')
-                          } else {
-                            _this.$Message.warning(res.data.message)
-                          }
-                        })
-                      }
+              let a;
+              if(params.row.onSale === true){
+                a = h('Poptip', {
+                  props: {
+                    confirm: true,
+                    transfer: true,
+                    title: '确定下架该商品？',
+                  },
+                  on: {
+                    'on-ok': () => {
+                      const _this = this;
+                      _this.Axios.post('/Manage/SkuInfo/batchUnSold', _this.Qs.stringify({
+                        skuInfoIds: [params.row.id]
+                      }, {indices: false})).then(res => {
+                        if (res.data.code === 0) {
+                          _this.getList();
+                          _this.$Message.success('下架成功！')
+                        } else {
+                          _this.$Message.warning(res.data.message)
+                        }
+                      })
                     }
-                  }, [
-                    h('a', {
-                      style: {
-                        display: params.row.onSale !== false ? 'inner-block' : 'none',
-                        color: '#ed4014'
-                      }
-                    }, '下架')
-                  ]),
-
+                  }
+                }, [
                   h('a', {
                     style: {
-                      display: params.row.onSale !== true ? 'inner-block' : 'none',
-                      color: '#19be6b'
-                    },
+                      color: '#ed4014'
+                    }
+                  }, '下架')
+                ])
+              }else {
+                a = h('a', {
+                  style: {
+                    color: '#19be6b',
+                  },
+                  on: {
+                    click: () => {
+                      let href = this.$router.resolve({
+                        path: '/putaway',
+                        query: {
+                          ids: [params.row.id]
+                        }
+                      });
+                      window.open(href.href, '_blank')
+                    }
+                  }
+                }, '上架')
+              }
+              return h('div', [
+                h('div', [
+                  a,
+                  h('Divider', {
+                    props: {
+                      type: 'vertical'
+                    }
+                  }),
+                  h('a', {
                     on: {
                       click: () => {
                         let href = this.$router.resolve({
-                          path: '/putaway',
+                          path: '/addArticle',
                           query: {
-                            ids: [params.row.id]
+                            id: params.row.id
                           }
                         });
                         window.open(href.href, '_blank')
                       }
                     }
-                  }, '上架'),
+                  }, '编辑'),
                   h('Divider', {
                     props: {
                       type: 'vertical'
@@ -487,6 +507,7 @@
             onSale: _this.state === 'all' ? '' : _this.state,
           }
         }).then(res => {
+          console.log(res.data)
           if (res.data.code === 0) {
             _this.data = res.data.data.content;
             _this.total = res.data.data.totalElements

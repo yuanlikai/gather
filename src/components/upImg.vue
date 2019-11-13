@@ -18,11 +18,11 @@
       :default-file-list="defaultList"
       :on-success="handleSuccess"
       :format="['jpg','jpeg','png']"
-      :max-size="20480"
+      :max-size="1024"
       :on-format-error="handleFormatError"
       :on-exceeded-size="handleMaxSize"
       :before-upload="handleBeforeUpload"
-      multiple
+      :multiple="true"
       :data="{
         callback:policyData.callback,
         policy:policyData.policy,
@@ -88,7 +88,7 @@
       handleMaxSize(file) {
         this.$Notice.warning({
           title: 'Exceeding file size limit',
-          desc: 'File  ' + file.name + ' is too large, no more than 20M.'
+          desc: '图片大小不能超过1MB'
         });
       },
       handleBeforeUpload() {

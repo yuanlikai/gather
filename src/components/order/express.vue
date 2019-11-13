@@ -13,7 +13,13 @@
         :rules="{ validator: validatePass,required: true, index: index, trigger: 'change'}">
         <Row>
           <Col span="18">
-            <Input :maxlength="20" type="text" v-model="item.Express" placeholder="请输入快递公司"></Input>
+            <Select v-model="item.Express" placeholder="请输入快递公司">
+              <Option v-for="item in cityList3" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+
+            <!--<Input :maxlength="20" type="text" v-model="item.Express" placeholder="请输入快递公司"></Input>-->
+
+
             <Input :maxlength="20" type="text" v-model="item.ExpressNo" placeholder="请输入物流单号"></Input>
           </Col>
           <Col span="4" offset="1">
@@ -28,9 +34,11 @@
           </Col>
         </Row>
       </FormItem>
+
       <FormItem label="备注信息" prop="Description">
         <Input type="textarea" v-model="formDynamic.Description" placeholder="请输入"></Input>
       </FormItem>
+
     </Form>
     <div slot="footer">
       <Button type="primary" @click="handleSubmit('formDynamic')">{{$route.query.idstr?'修改':'发货'}}</Button>
@@ -54,7 +62,51 @@
           Express: [],
           ExpressNo: [],
           Description: '',
-        }
+        },
+        ruleValidate: {
+
+          Description: [
+            {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+          ],
+        },
+        cityList3: [
+          {
+            value: '顺丰速运',
+            label: '顺丰速运'
+          },
+          {
+            value: '韵达快递',
+            label: '韵达快递'
+          },
+          {
+            value: '天天快递',
+            label: '天天快递'
+          },
+          {
+            value: '申通快递',
+            label: '申通快递'
+          },
+          {
+            value: '圆通速递',
+            label: '圆通速递'
+          },
+          {
+            value: '中通速递',
+            label: '中通速递'
+          },
+          {
+            value: '百世汇通',
+            label: '百世汇通'
+          },
+          {
+            value: 'EMS',
+            label: 'EMS'
+          },
+          {
+            value: '自提',
+            label: '自提'
+          },
+        ],
       }
     },
     methods: {

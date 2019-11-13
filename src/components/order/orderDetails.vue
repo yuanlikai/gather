@@ -1,10 +1,13 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">当前订单状态：<span style="color: red;">{{data.StateStr}}</span></div>
+      <div class="ivu-page-header-title">当前订单状态：
+        <span v-if="$route.query.abnormal=='true'" style="color: red;">异常</span>
+        <span v-else style="color: red;">{{data.StateStr}}</span>
+      </div>
       <ButtonGroup style="float: right;">
-        <Button type="dashed" @click="model=true">转为异常订单</Button>
-
+        <Button v-if="$route.query.abnormal!='true'" type="dashed" @click="model=true">转为异常订单</Button>
+        <Button v-else type="dashed">取消异常订单</Button>
       </ButtonGroup>
     </Card>
     <Content

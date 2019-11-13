@@ -1,3 +1,9 @@
+<style>
+  .ivu-table .demo-table-info-row td {
+    /*background-color: #2db7f5;*/
+    color: red;
+  }
+</style>
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
@@ -58,7 +64,7 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="下单时间：" prop="time">
+            <FormItem label="时间：" prop="time">
               <DatePicker @on-change="getTime" style="width: 100%;cursor: pointer;"
                           v-model="formValidate.time"
                           format="yyyy/MM/dd" type="daterange"
@@ -94,20 +100,8 @@
       <p slot="extra">
 
 
-        <Tooltip content="默认导出近90天内订单" placement="top">
-          <ButtonGroup>
-            <!--state: _this.formValidate.state,-->
-            <!--supplierid: _this.formValidate.supplierid,-->
-            <!--ordernumber: _this.formValidate.ordernumber,-->
-            <!--proname: _this.formValidate.proname,-->
-            <!--stockno: _this.formValidate.stockno,-->
-            <!--consignee: _this.formValidate.consignee,-->
-            <!--phone: _this.formValidate.phone,-->
-            <!--price1: _this.formValidate.price1,-->
-            <!--price2: _this.formValidate.price2,-->
-            <!--begintime: _this.formValidate.time[0],-->
-            <!--endtime: _this.formValidate.time[1],-->
-            <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
+        <ButtonGroup v-if="formValidate.time[0].length>0">
+          <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
           '&supplierid='+formValidate.supplierid+
           '&ordernumber='+formValidate.ordernumber+
           '&proname='+formValidate.proname+
@@ -118,21 +112,26 @@
           '&price2='+formValidate.price2+
           '&begintime='+formValidate.time[0]+
           '&endtime='+formValidate.time[1]" target="_blank">
-              <Button type="dashed">批量导出订单</Button>
-            </a>
-          </ButtonGroup>
+            <Button type="dashed">批量导出订单</Button>
+          </a>
+        </ButtonGroup>
+
+        <Tooltip v-else content="请选择导出时间" placement="top">
+          <Button :disabled="true" type="dashed">批量导出订单</Button>
         </Tooltip>
 
 
         <ButtonGroup>
-          <a style="float: right" href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban.xls" download="muban">
+          <a v-if="formValidate.state==='1'" style="float: right"
+             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban.xls" download="muban">
             <Button type="dashed">下载发货模板</Button>
           </a>
           <Upload style="float: right" v-if="formValidate.state==='1'"></Upload>
         </ButtonGroup>
 
       </p>
-      <Table @on-sort-change="sorts" :loading="loading1" :show-header="true" :columns="columns" :data="data"></Table>
+      <Table :row-class-name="rowClassName" @on-sort-change="sorts" :loading="loading1" :show-header="true"
+             :columns="columns" :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
       <div style="width: 100%;text-align: center;margin-top: 15px">
         <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
@@ -293,6 +292,13 @@
             tooltip: true,
             align: "center",
           },
+          // {
+          //   title: '提货平台',
+          //   // key: 'OrderNumber',
+          //   minWidth: 100,
+          //   tooltip: true,
+          //   align: "center",
+          // },
           {
             title: '下单时间',
             key: 'AddTime',
@@ -356,9 +362,9 @@
             width: 130,
             render: (h, params) => {
               let a;
-              if(this.formValidate.state == 9){
-                a=''
-              }else if (params.row.State === 1) {
+              if (this.formValidate.state == 9) {
+                a = ''
+              } else if (params.row.State === 1) {
                 a = h('a', {
                   on: {
                     click: () => {
@@ -448,7 +454,7 @@
 
                 h('Divider', {
                   style: {
-                    display:this.formValidate.state==9?'none':(params.row.State === 6 ? 'none' : 'inline-block')
+                    display: this.formValidate.state == 9 ? 'none' : (params.row.State === 6 ? 'none' : 'inline-block')
                   },
                   props: {
                     type: 'vertical'
@@ -457,10 +463,12 @@
                 h('a', {
                   on: {
                     click: () => {
+                      const _this = this;
                       let href = this.$router.resolve({
                         path: '/orderDetails',
                         query: {
                           idstr: params.row.ID,
+                          abnormal: _this.formValidate.state == 9 ? true : false,
                         }
                       });
                       window.open(href.href, '_blank')
@@ -653,10 +661,14 @@
         });
       },
 
-      getTime(i){
-        this.formValidate.time=[i[0],i[1]];
-        this.start=1;
+      getTime(i) {
+        this.formValidate.time = [i[0], i[1]];
+        this.start = 1;
         this.getOrder()
+      },
+
+      rowClassName(row, index) {
+        return this.formValidate.state == '9' ? 'demo-table-info-row' : '';
       }
     },
     mounted() {

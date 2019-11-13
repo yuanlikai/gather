@@ -153,7 +153,7 @@
                     confirm: true,
                     transfer: true,
                     placement: "top",
-                    title: '确定删除该角色？',
+                    title: '确定删除该菜单？',
                   },
                   on: {
                     'on-ok': () => {
