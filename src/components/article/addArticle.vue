@@ -24,6 +24,7 @@
               </Form>
             </Col>
           </Row>
+          [{}]
           <Row v-show="current===1">
             <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidate1" :label-width="70">
               <Col span="24">
@@ -111,8 +112,16 @@
                 </FormItem>
                 <FormItem>
                   <Button type="primary" @click="current=1" ghost style="margin-right: 16px">上一步，填写商品信息</Button>
-                  <Button type="primary" @click="handleSubmit('formValidate2')">{{!$route.query.id?'提交审核':'提交修改'}}
-                  </Button>
+                  <Poptip
+                    v-if="$route.query.id"
+                    confirm
+                    title="修改后将会在所有平台下架，是否确定？"
+                    @on-ok="handleSubmit('formValidate2')">
+                    <Button type="primary">提交修改</Button>
+                  </Poptip>
+
+                  <Button v-else type="primary" @click="handleSubmit('formValidate2')">提交审核</Button>
+
                 </FormItem>
               </Col>
             </Form>

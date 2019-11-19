@@ -62,6 +62,10 @@
 
         <Button @click="amend" type="primary" style="margin-left: 16px">{{data.ExpressNo?'修改':'填写'}}物流信息
         </Button>
+        <Button @click="afterSsa" style="margin-left: 16px">修改配送地址
+        </Button>
+
+
       </Row>
       <Divider/>
       <Row :gutter="30">
@@ -93,15 +97,6 @@
         </Col>
       </Row>
       <Divider/>
-      <!--<Row :gutter="30">-->
-        <!--<Col span="24">-->
-          <!--<p class="colClass" style="font-weight: 500;">操作信息</p>-->
-        <!--</Col>-->
-        <!--<Col class="colClass" span="24">-->
-          <!--<Table :show-header="true" :columns="columns1" :data="[]"></Table>-->
-        <!--</Col>-->
-      <!--</Row>-->
-      <!--<Divider/>-->
     </Content>
     <express ref="express" @getOrder="getDetails"></express>
     <Modal v-model="model" width="360">
@@ -119,14 +114,17 @@
       </div>
     </Modal>
 
+    <alterSite ref="alterSite" @getOrder="getDetails"></alterSite>
   </div>
 </template>
 <script>
   import express from './express'
+  import alterSite from './alterSite'
 
   export default {
     components: {
-      express
+      express,
+      alterSite
     },
     data() {
       return {
@@ -214,6 +212,10 @@
       }
     },
     methods: {
+      afterSsa(){
+        this.$refs.alterSite.model=true;
+        console.log(1)
+      },
 
       //异常弹窗
       handleSubmit(name) {

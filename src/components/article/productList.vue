@@ -344,7 +344,7 @@
             align: "center",
             render: (h, params) => {
               let a;
-              if(params.row.onSale === true){
+              if (params.row.onSale === true) {
                 a = h('Poptip', {
                   props: {
                     confirm: true,
@@ -373,7 +373,7 @@
                     }
                   }, '下架')
                 ])
-              }else {
+              } else {
                 a = h('a', {
                   style: {
                     color: '#19be6b',

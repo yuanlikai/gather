@@ -155,6 +155,9 @@
   }
 </script>
 <style>
+  .ivu-menu-horizontal.ivu-menu-light:after {
+    display: none;
+  }
   .swiper-container {
     width: 100%;
   }
