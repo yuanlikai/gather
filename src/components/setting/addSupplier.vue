@@ -15,6 +15,12 @@
               <Input :disabled="$route.query.id" :maxlength="10" v-model="formValidate.abbrSupplierName"
                      placeholder="请输入"></Input>
             </FormItem>
+            <FormItem label="ERP编号" prop="erpSupplierNo">
+              <Input :maxlength="40" v-model="formValidate.erpSupplierNo"
+                     placeholder="请输入"></Input>
+            </FormItem>
+
+
             <FormItem label="字母编号" prop="supplierNo">
               <Input :disabled="$route.query.id" :maxlength="5" v-model="formValidate.supplierNo"
                      placeholder="请输入"
@@ -41,7 +47,8 @@
           <Alert style="width:50%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">
             供应商{{$route.query.id?'修改':'添加'}}成功，请到供应商列表查看
           </Alert>
-          <Button type="primary" @click="handleReset('formValidate');status=true"  v-show="!$route.query.id">继续添加</Button>&nbsp;
+          <Button type="primary" @click="handleReset('formValidate');status=true" v-show="!$route.query.id">继续添加
+          </Button>&nbsp;
         </Col>
       </Row>
     </Card>
@@ -115,6 +122,21 @@
           }
         });
       };
+      const validate4 = (rule, value, callback) => {
+        const _this = this;
+        _this.Axios.get('/Manage/Supplier/valid/erpSupplierNo', {
+          params: {
+            id: _this.$route.query.id ? _this.$route.query.id : '',
+            value: value
+          }
+        }).then(res => {
+          if (res.data.code === 0) {
+            callback();
+          } else {
+            callback(new Error('ERP编号重复'))
+          }
+        });
+      };
       return {
         status: true,
         detail: {},
@@ -124,7 +146,8 @@
           abbrSupplierName: '',   //简称10
           supplierNo: '',   //代码5
           productLim: '',   //4
-          logoUrl:'',
+          logoUrl: '',
+          erpSupplierNo: '',
         },
         ruleValidate: {
           supplierName: [
@@ -142,6 +165,9 @@
           logoUrl: [
             {validator: validate, required: true, trigger: 'change'}
           ],
+          erpSupplierNo: [
+            {validator: validate4, trigger: 'blur'}
+          ],
         },
       }
     },
@@ -158,11 +184,12 @@
               abbrSupplierName: _this.formValidate.abbrSupplierName,   //简称10
               supplierNo: _this.formValidate.supplierNo,   //代码5
               productLim: _this.formValidate.productLim,   //4
+              erpSupplierNo: _this.formValidate.erpSupplierNo,
               supplierLogo: _this.$refs.logoUrl.uploadList[0].filename,  //品牌LOGO路径160
             })).then(res => {
               if (res.data.code === 0) {
                 _this.status = false;
-                _this.$refs.logoUrl.uploadList=[];
+                _this.$refs.logoUrl.uploadList = [];
                 _this.$Message.success(_this.$route.query.id ? '修改成功！' : '添加成功！')
               } else {
                 _this.$Message.warning(res.data.message)
@@ -191,6 +218,7 @@
             supplierName: res.data.data.supplierName,   //名称40
             abbrSupplierName: res.data.data.abbrSupplierName,   //简称10
             supplierNo: res.data.data.supplierNo,   //代码5
+            erpSupplierNo: res.data.data.erpSupplierNo,
             productLim: String(res.data.data.productLim),   //4
           };
           if (res.data.data.imgUrl) {
