@@ -24,7 +24,6 @@
               </Form>
             </Col>
           </Row>
-          [{}]
           <Row v-show="current===1">
             <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidate1" :label-width="70">
               <Col span="24">

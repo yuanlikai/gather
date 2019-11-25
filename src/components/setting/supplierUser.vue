@@ -50,6 +50,13 @@ margin-right: 16px">
             @on-ok="delHandle(item.username,item.id)">
             <Button size="small" type="primary">删除用户</Button>
           </Poptip>
+          <Divider type="vertical"/>
+          <Poptip
+            confirm
+            title="确定重置该用户密码？"
+            @on-ok="resetPass(item.username)">
+            <Button size="small" type="primary">重置密码</Button>
+          </Poptip>
         </Col>
       </Row>
       <div style="width: 100%;text-align: center;margin-top: 15px">
@@ -197,6 +204,20 @@ margin-right: 16px">
       }
     },
     methods: {
+      //重置用户密码
+      resetPass(username){
+        const _this = this;
+        _this.Axios.post('/Manage/UserInfo/resetPassword',_this.Qs.stringify({
+          username:username
+        })).then(res => {
+          if (res.data.code === 0) {
+            _this.$Message.success('成功')
+          } else {
+            _this.$Message.warning(res.data.message)
+          }
+        })
+      },
+
       // 用户名 供应商搜索
       getProduct() {
         const _this = this;

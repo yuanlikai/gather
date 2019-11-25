@@ -47,7 +47,8 @@
                 {{user}}
                 <Icon type="ios-arrow-down"/>
                 <DropdownMenu slot="list">
-                  <DropdownItem name="1">退出登录</DropdownItem>
+                  <DropdownItem name="1">修改密码</DropdownItem>
+                  <DropdownItem name="2">退出登录</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -57,12 +58,32 @@
       </Layout>
     </Layout>
     <div @click="collapsedSider" v-if="!isCollapsed" class="zz-fixed"></div>
+    <Modal v-model="modal" width="360">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>修改密码</span>
+      </p>
+      <div style="text-align:center">
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+          <FormItem label="原密码" prop="oldPassword">
+            <Input :maxlength="25" type="password" v-model="formValidate.oldPassword" placeholder="请输入"></Input>
+          </FormItem>
+          <FormItem label="新密码" prop="newPassword">
+            <Input :maxlength="25" type="password" v-model="formValidate.newPassword" placeholder="请输入"></Input>
+          </FormItem>
+        </Form>
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large" long @click="handleSubmit('formValidate')">确定</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
   export default {
     data() {
       return {
+        modal: false,
         user: localStorage.getItem('user'),
         isMenu: false,
         tab: '',
@@ -72,6 +93,18 @@
         menu: localStorage.getItem('menu'),
         menu1: localStorage.getItem('menu1'),
         isCollapsed: false,
+        formValidate: {
+          oldPassword: '',
+          newPassword: '',
+        },
+        ruleValidate: {
+          oldPassword: [
+            {required: true, message: '请输入', trigger: 'blur'}
+          ],
+          newPassword: [
+            {required: true, message: '请输入', trigger: 'blur'}
+          ],
+        }
       }
     },
     computed: {
@@ -89,6 +122,27 @@
       }
     },
     methods: {
+      handleSubmit(name) {
+        const _this = this;
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            _this.Axios.post('/Manage/UserInfo/updatePassword', _this.Qs.stringify({
+              oldPassword: _this.formValidate.oldPassword,   //原密码
+              newPassword: _this.formValidate.newPassword,   //新密码
+            })).then(res => {
+              if (res.data.code === 0) {
+                _this.$router.push('/');
+                this.$Message.success('修改密码成功，请重新登录！');
+              } else {
+                this.$Message.warning(res.data.message);
+              }
+              console.log(res.data)
+            })
+          } else {
+            this.$Message.error('有必填项未填写!');
+          }
+        })
+      },
       selectMenu(name) {
         this.menu = name;
         localStorage.setItem('menu', name);
@@ -114,15 +168,19 @@
       },
 
       //退出登录
-      out() {
+      out(i) {
         const _this = this;
-        _this.Axios.post('/logout').then(function () {
-        }).catch(err => {
-          localStorage.removeItem('menu');
-          localStorage.removeItem('menu1');
-          localStorage.removeItem('menuList');
-          _this.$router.push('/');
-        });
+        if (i === '1') {
+          _this.modal = true;
+        } else if (i === '2') {
+          _this.Axios.post('/logout').then(function () {
+          }).catch(err => {
+            localStorage.removeItem('menu');
+            localStorage.removeItem('menu1');
+            localStorage.removeItem('menuList');
+            _this.$router.push('/');
+          });
+        }
       },
 
       //获取用户信息
@@ -158,6 +216,7 @@
   .ivu-menu-horizontal.ivu-menu-light:after {
     display: none;
   }
+
   .swiper-container {
     width: 100%;
   }
