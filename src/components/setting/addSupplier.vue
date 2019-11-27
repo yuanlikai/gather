@@ -145,7 +145,7 @@
           supplierName: '',   //名称40
           abbrSupplierName: '',   //简称10
           supplierNo: '',   //代码5
-          productLim: '',   //4
+          productLim: '999',   //4
           logoUrl: '',
           erpSupplierNo: '',
         },
@@ -162,9 +162,9 @@
           productLim: [
             {required: true, message: '请输入SKU限制数量', trigger: 'blur'}
           ],
-          logoUrl: [
-            {validator: validate, required: true, trigger: 'change'}
-          ],
+          // logoUrl: [
+          //   {validator: validate, required: true, trigger: 'change'}
+          // ],
           erpSupplierNo: [
             {validator: validate4, trigger: 'blur'}
           ],

@@ -38,6 +38,17 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="平台：" prop="supplierid">
+              <Select :disabled="supplier.userType==='SUPPLIER'"
+                      v-model="terraceId"
+                      @on-change="start=1,getOrder()">
+                <Option value="-1">全部</Option>
+                <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}
+                </Option>
+              </Select>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="8">
             <FormItem label="订单编号：" prop="ordernumber">
               <Input v-model="formValidate.ordernumber" placeholder="请输入"/>
             </FormItem>
@@ -292,13 +303,6 @@
             tooltip: true,
             align: "center",
           },
-          // {
-          //   title: '提货平台',
-          //   // key: 'OrderNumber',
-          //   minWidth: 100,
-          //   tooltip: true,
-          //   align: "center",
-          // },
           {
             title: '下单时间',
             key: 'AddTime',
@@ -306,6 +310,13 @@
             tooltip: true,
             align: "center",
             sortable: "custom"
+          },
+          {
+            title: '发货时间',
+            key: 'GetTime',
+            minWidth: 110,
+            tooltip: true,
+            align: "center"
           },
           {
             title: '来源平台',
@@ -497,7 +508,9 @@
         start: 1,
         sortid: '',
         orderNum: {},
-        types: ''
+        types: '',
+        terraceList:[],
+        terraceId:'-1'
       }
     },
     methods: {
@@ -621,6 +634,7 @@
           _this.statusList = res.data.data;
         })
       },
+
       //获取状态数量
       getOrderNum() {
         const _this = this;
@@ -634,6 +648,14 @@
         const _this = this;
         _this.Axios.get('/Manage/Supplier/selectList').then(res => {
           _this.supplierList = res.data.data
+        })
+      },
+
+      //获取平台
+      getTerrace() {
+        const _this = this;
+        _this.Axios.get('/Manage/Platform/list').then(res => {
+          _this.terraceList = res.data.data
         })
       },
 
@@ -674,6 +696,7 @@
     mounted() {
       this.getOrder();
       this.getSupplier();
+      this.getTerrace();
       this.getStatus();
     }
   }
