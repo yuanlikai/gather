@@ -38,9 +38,9 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="平台：" prop="supplierid">
+            <FormItem label="平台：" prop="terraceId">
               <Select :disabled="supplier.userType==='SUPPLIER'"
-                      v-model="terraceId"
+                      v-model="formValidate.terraceId"
                       @on-change="start=1,getOrder()">
                 <Option value="-1">全部</Option>
                 <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}
@@ -95,7 +95,7 @@
               </div>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="24" :lg="8" style="text-align: right">
+          <Col :xs="24" :md="24" :lg="8">
             <FormItem>
               <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
               <Button style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
@@ -494,6 +494,7 @@
         formValidate: {
           state: this.$route.params.id ? this.$route.params.id : '0',
           supplierid: '-1',
+          terraceId:'-1',
           ordernumber: '',
           proname: '',
           stockno: '',
@@ -510,7 +511,6 @@
         orderNum: {},
         types: '',
         terraceList:[],
-        terraceId:'-1'
       }
     },
     methods: {
