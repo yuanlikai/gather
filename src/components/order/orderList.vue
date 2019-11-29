@@ -37,17 +37,17 @@
               </Select>
             </FormItem>
           </Col>
-          <!--<Col :xs="24" :md="12" :lg="8">-->
-          <!--<FormItem label="平台：" prop="terraceId">-->
-          <!--<Select :disabled="supplier.userType==='SUPPLIER'"-->
-          <!--v-model="formValidate.terraceId"-->
-          <!--@on-change="start=1,getOrder()">-->
-          <!--<Option value="-1">全部</Option>-->
-          <!--<Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}-->
-          <!--</Option>-->
-          <!--</Select>-->
-          <!--</FormItem>-->
-          <!--</Col>-->
+          <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="来源平台：" prop="terraceId">
+              <Select :disabled="supplier.userType==='SUPPLIER'"
+                      v-model="formValidate.terraceId"
+                      @on-change="start=1,getOrder()">
+                <Option value="-1">全部</Option>
+                <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}
+                </Option>
+              </Select>
+            </FormItem>
+          </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="订单编号：" prop="ordernumber">
               <Input v-model="formValidate.ordernumber" placeholder="请输入"/>
@@ -546,6 +546,7 @@
             sortid: _this.sortid,
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid,
+            platformid: _this.formValidate.terraceId,
             ordernumber: _this.formValidate.ordernumber,
             proname: _this.formValidate.proname,
             stockno: _this.formValidate.stockno,
