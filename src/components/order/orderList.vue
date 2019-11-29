@@ -37,7 +37,7 @@
               </Select>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
+          <Col :xs="24" :md="12" :lg="8" v-if="supplier.userType==='SUPPLIER'">
             <FormItem label="来源平台：" prop="terraceId">
               <Select :disabled="supplier.userType==='SUPPLIER'"
                       v-model="formValidate.terraceId"
