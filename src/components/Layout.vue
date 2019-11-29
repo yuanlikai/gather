@@ -22,17 +22,17 @@
         </Menu>
       </Sider>
       <Layout :class="isCollapsed?'menucls':'menucla'">
-        <Header :style="{padding: 10,display: 'flex'}" class="layout-header-bar">
+        <Header :style="{padding: 10}" class="layout-header-bar">
           <Icon @click.native="collapsedSider" :class="rotateIcon"
-                :style="{margin: '0 24px','line-height':'64px',cursor:'pointer'}"
+                :style="{margin: '0 24px','line-height':'64px',cursor:'pointer',float:'left'}"
                 type="md-menu"
                 size="24"></Icon>
-          <Menu v-if="isMenu" @on-select="selectMenu1" mode="horizontal" :active-name="menu1">
+          <Menu v-if="isMenu" @on-select="selectMenu1" mode="horizontal" :active-name="menu1" style="float: left">
             <MenuItem v-for="(item,index) in menuList" :key="index" :name="item.numb">
               {{item.name}}
             </MenuItem>
           </Menu>
-          <Menu mode="horizontal" type="light" style="margin-left: auto;margin-right: 20px;">
+          <Menu mode="horizontal" type="light" style="float: right;margin-right: 20px">
             <div class="layout-logo"></div>
             <div class="layout-nav">
               <span style="font-size: 12px;font-weight: 600;color: #333;">{{supplier.supplierName}}</span>
