@@ -1,3 +1,8 @@
+<style>
+  .ivu-menu-horizontal.ivu-menu-light:after {
+    display: none;
+  }
+</style>
 <template>
   <div class="layout">
     <Layout class="">
