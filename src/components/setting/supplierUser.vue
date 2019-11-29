@@ -10,17 +10,22 @@
       <p slot="extra">
         <Icon type="ios-loop-strong"></Icon>
         <span class="users" style="margin: 3px 4px 0 0">角色:</span>
-        <Select class="users" v-model="roleId" @on-change="getUser()" style="width:100px;
+        <Select class="users" v-model="roleId" @on-change="start=0;getUser()" style="width:100px;
 margin-right: 16px">
           <Option v-for="item in roleList" :value="item.id" :key="item.id">{{item.roleName}}</Option>
         </Select>
-        <RadioGroup class="users" v-model="status" @on-change="getUser()" type="button">
+        <RadioGroup class="users" v-model="status" @on-change="start=0;getUser()" type="button">
           <Radio label="全部">全部</Radio>
           <Radio label="1">正常</Radio>
           <Radio label="0">禁用</Radio>
         </RadioGroup>
-        <Input @on-enter="getProduct()" v-model="value13" placeholder="用户名搜索" style="width: 150px;margin-left: 16px;">
-          <Icon @click="getProduct" type="ios-search" slot="suffix" style="cursor: pointer"/>
+        <Input @on-enter="start=0;getUser()" v-model="value13" placeholder="用户名搜索"
+               style="width: 150px;margin-left: 16px;">
+          <Icon @click="start=0;getUser()" type="ios-search" slot="suffix" style="cursor: pointer"/>
+        </Input>
+        <Input @on-enter="start=0;getUser()" v-model="value14" placeholder="供应商搜索"
+               style="width: 150px;margin-left: 16px;">
+          <Icon @click="start=0;getUser()" type="ios-search" slot="suffix" style="cursor: pointer"/>
         </Input>
       </p>
       <Button @click="addUser()" type="dashed" style="width: 100%;margin-bottom: 16px;">添加</Button>
@@ -40,8 +45,9 @@ margin-right: 16px">
           <Button @click="Handle(item.id)" size="small" icon="md-list" style="margin-left: 16px;">展开操作</Button>
         </Col>
         <Col span="24" style="margin-top: 16px" v-if="handleId===item.id">
-          <Button @click="amend(item.id,item.userInfoType,item.username,item.name,item.roleIds,item.status)"
-                  size="small" type="primary">修改用户
+          <Button
+            @click="amend(item.id,item.userInfoType,item.username,item.name,item.roleIds,item.status,item.allField)"
+            size="small" type="primary">修改用户
           </Button>
           <Divider type="vertical"/>
           <Poptip
@@ -81,7 +87,8 @@ margin-right: 16px">
           </FormItem>
           <FormItem v-if="id===''" label="供应商" prop="supplierId">
             <Select v-model="formValidate.supplierId" style="width:200px">
-              <Option v-for="item in supplierList" :value="String(item.id)" :key="item.id">{{ item.supplierName }}</Option>
+              <Option v-for="item in supplierList" :value="String(item.id)" :key="item.id">{{ item.supplierName }}
+              </Option>
             </Select>
           </FormItem>
           <FormItem v-if="userInfoType!=='SUPPLIER'" label="角色绑定" prop="roleIds">
@@ -90,14 +97,20 @@ margin-right: 16px">
             </Select>
           </FormItem>
           <FormItem label="用户姓名" prop="name">
-            <Input :maxlength="5" v-model="formValidate.name" placeholder="请确认姓名"></Input>
+            <Input :maxlength="5" v-model="formValidate.name" placeholder="请输入"></Input>
           </FormItem>
           <!--<FormItem label="是否锁定" prop="statuss">-->
-            <!--<i-switch v-model="statuss">-->
-              <!--<span slot="open">是</span>-->
-              <!--<span slot="close">否</span>-->
-            <!--</i-switch>-->
+          <!--<i-switch v-model="statuss">-->
+          <!--<span slot="open">是</span>-->
+          <!--<span slot="close">否</span>-->
+          <!--</i-switch>-->
           <!--</FormItem>-->
+          <FormItem label="所有字段显示" prop="allField">
+            <i-switch v-model="formValidate.allField">
+              <span slot="open">开</span>
+              <span slot="close">关</span>
+            </i-switch>
+          </FormItem>
         </Form>
       </div>
       <div slot="footer">
@@ -153,14 +166,13 @@ margin-right: 16px">
         handleId: '',
         total: 0,
         start: 0,
-        pre: '0',
-        select3: '0',
         cityList: [],
         loading: true,
         statuss: false,
         roleId: '全部',
         status: '全部',
         value13: '',
+        value14: '',
         userInfoType: '',
         addAccount: false,
         modal_loading: false,
@@ -178,6 +190,7 @@ margin-right: 16px">
           affirmPassword: '',
           name: '',            //用户姓名
           supplierId: '',    //供应商id
+          allField: true
         },
         supplierList: '',
         ruleValidate: {
@@ -205,10 +218,10 @@ margin-right: 16px">
     },
     methods: {
       //重置用户密码
-      resetPass(username){
+      resetPass(username) {
         const _this = this;
-        _this.Axios.post('/Manage/UserInfo/resetPassword',_this.Qs.stringify({
-          username:username
+        _this.Axios.post('/Manage/UserInfo/resetPassword', _this.Qs.stringify({
+          username: username
         })).then(res => {
           if (res.data.code === 0) {
             _this.$Message.success('成功')
@@ -216,13 +229,6 @@ margin-right: 16px">
             _this.$Message.warning(res.data.message)
           }
         })
-      },
-
-      // 用户名 供应商搜索
-      getProduct() {
-        const _this = this;
-        this.like = this.value13;
-        this.getUser()
       },
 
       //获取供应商下拉
@@ -254,17 +260,18 @@ margin-right: 16px">
       },
 
       //修改用户信息
-      amend(id, userInfoType, username, name, roleIds, status) {
+      amend(id, userInfoType, username, name, roleIds, status, allField) {
         this.id = id;
         this.addAccount = true;
         this.userInfoType = userInfoType;
         this.formValidate.username = username;
         this.formValidate.name = name;
         this.formValidate.roleIds = roleIds;
+        this.formValidate.allField = allField;
         this.statuss = status === '0' ? true : false;
       },
 
-      // 获取角色列表
+      // 获取角色下拉列表
       getRole() {
         const _this = this;
         _this.Axios.get('/Manage/Role/list', {
@@ -320,8 +327,8 @@ margin-right: 16px">
         _this.Axios.post('/Manage/UserInfo/supplierUsers', _this.Qs.stringify({
           start: _this.start,
           size: 5,
-          usernameLike: _this.pre === '0' ? this.like : '',         //账号模糊查询
-          supplierNameLike: _this.pre === '1' ? this.like : '',     //供应商名称模糊查询
+          usernameLike: _this.value13,         //账号模糊查询
+          supplierNameLike: _this.value14,     //供应商名称模糊查询
           status: _this.status === '全部' ? '' : _this.status,               //是否锁定 "1"为正常 “0”为锁定
           roleId: _this.roleId === '全部' ? '' : _this.roleId,               //角色id
           userInfoType: '',         //用户类型 ADMIN("普通管理员"), SUPPLIER("供应商管理员"),
@@ -350,7 +357,8 @@ margin-right: 16px">
                 name: _this.formValidate.name,   //用户姓名
                 roleIdSet: _this.formValidate.roleIds,  //角色id素组
                 supplierId: _this.formValidate.supplierId,
-                sex:'MALE'
+                allField: _this.formValidate.allField,
+                sex: 'MALE'
               }, {indices: false})).then(res => {
                 if (res.data.code === 0) {
                   _this.addAccount = false;
@@ -369,7 +377,8 @@ margin-right: 16px">
                 name: _this.formValidate.name,   //用户姓名
                 roleIdSet: _this.formValidate.roleIds,  //角色id素组
                 supplierId: _this.formValidate.supplierId,
-                sex:'MALE'
+                allField: _this.formValidate.allField,
+                sex: 'MALE'
               }, {indices: false})).then(res => {
                 if (res.data.code === 0) {
                   _this.addAccount = false;
@@ -389,7 +398,7 @@ margin-right: 16px">
       handleReset(name) {
         this.$refs[name].resetFields();
       },
-      abc(event){
+      abc(event) {
         console.log(event.target.parentElement)
       }
     },

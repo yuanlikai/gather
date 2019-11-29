@@ -50,8 +50,8 @@
         _this.$refs[name].validate((valid) => {
           if (valid) {
             _this.Axios.post('/form/login', _this.Qs.stringify({
-              username: _this.formInline.user,
-              password: _this.formInline.password
+              username: _this.formInline.user.replace(/ /g,''),
+              password: _this.formInline.password.replace(/ /g,'')
             })).then(res => {
               if (res.data.code === 0) {
                 localStorage.setItem('menuList',JSON.stringify(res.data.data.sort(function(a,b){
@@ -59,7 +59,7 @@
                 })));
                 localStorage.setItem('menu1',res.data.data[0].numb);
                 localStorage.setItem('menu',res.data.data[0].children[0].children[0].numb);
-                localStorage.setItem('user',_this.formInline.user);
+                localStorage.setItem('user',_this.formInline.user.replace(/ /g,''));
                 _this.$router.push(res.data.data[0].children[0].children[0].to)
               } else {
                 _this.$Message.error(res.data.message);

@@ -37,17 +37,17 @@
               </Select>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="平台：" prop="terraceId">
-              <Select :disabled="supplier.userType==='SUPPLIER'"
-                      v-model="formValidate.terraceId"
-                      @on-change="start=1,getOrder()">
-                <Option value="-1">全部</Option>
-                <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}
-                </Option>
-              </Select>
-            </FormItem>
-          </Col>
+          <!--<Col :xs="24" :md="12" :lg="8">-->
+          <!--<FormItem label="平台：" prop="terraceId">-->
+          <!--<Select :disabled="supplier.userType==='SUPPLIER'"-->
+          <!--v-model="formValidate.terraceId"-->
+          <!--@on-change="start=1,getOrder()">-->
+          <!--<Option value="-1">全部</Option>-->
+          <!--<Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}-->
+          <!--</Option>-->
+          <!--</Select>-->
+          <!--</FormItem>-->
+          <!--</Col>-->
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="订单编号：" prop="ordernumber">
               <Input v-model="formValidate.ordernumber" placeholder="请输入"/>
@@ -109,11 +109,10 @@
         数据列表
       </p>
       <p slot="extra">
-
-
         <ButtonGroup v-if="formValidate.time[0].length>0">
           <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
-          '&supplierid='+formValidate.supplierid+
+          '&supplierid='+sup()+
+          '&allField='+supplier.allField+
           '&ordernumber='+formValidate.ordernumber+
           '&proname='+formValidate.proname+
           '&stockno='+formValidate.stockno+
@@ -494,7 +493,7 @@
         formValidate: {
           state: this.$route.params.id ? this.$route.params.id : '0',
           supplierid: '-1',
-          terraceId:'-1',
+          terraceId: '-1',
           ordernumber: '',
           proname: '',
           stockno: '',
@@ -510,7 +509,7 @@
         sortid: '',
         orderNum: {},
         types: '',
-        terraceList:[],
+        terraceList: [],
       }
     },
     methods: {
@@ -691,6 +690,10 @@
 
       rowClassName(row, index) {
         return this.formValidate.state == '9' ? 'demo-table-info-row' : '';
+      },
+
+      sup() {
+        return this.supplier.userType === 'SUPPLIER' ? this.supplier.supplierId : this.formValidate.supplierid;
       }
     },
     mounted() {

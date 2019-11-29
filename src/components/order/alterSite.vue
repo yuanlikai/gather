@@ -96,9 +96,8 @@
       },
       getSsq() {
         const _this = this;
-        _this.Axios.get('Manage/Region/region').then(res => {
-          _this.dataSite = res.data.RegionList
-          console.log(res.data.RegionList)
+        _this.Axios.get('/Manage/Region/region').then(res => {
+          _this.dataSite = res.data.RegionList;
         })
 
       }
