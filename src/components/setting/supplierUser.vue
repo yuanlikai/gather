@@ -277,6 +277,7 @@ margin-right: 16px">
         _this.Axios.get('/Manage/Role/list', {
           params: {
             excludeSuper: true,
+            supplierExclusive: true
           }
         }).then(res => {
           _this.roleList = _this.roleList.concat(res.data.data);

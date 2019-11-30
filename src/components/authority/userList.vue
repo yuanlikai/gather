@@ -12,7 +12,7 @@
         <span class="users" style="margin: 3px 4px 0 0">角色:</span>
         <Select class="users" v-model="roleId" @on-change="getUser()" style="width:100px;
 margin-right: 16px">
-          <Option v-for="item in roleList" :value="item.id" :key="item.id">{{item.roleName}}</Option>
+          <Option v-for="item in cityList" :value="item.id" :key="item.id">{{item.roleName}}</Option>
         </Select>
         <RadioGroup class="users" v-model="status" @on-change="getUser()" type="button">
           <Radio label="全部">全部</Radio>
@@ -244,18 +244,6 @@ margin-right: 16px">
       },
 
       // 获取角色列表
-      getRole() {
-        const _this = this;
-        _this.Axios.get('/Manage/Role/list', {
-          params: {
-            excludeSuper: true,
-          }
-        }).then(res => {
-          _this.roleList = _this.roleList.concat(res.data.data);
-        })
-      },
-
-      // 获取角色列表
       cityRole() {
         const _this = this;
         _this.Axios.get('/Manage/Role/list', {
@@ -372,7 +360,6 @@ margin-right: 16px">
     mounted() {
       this.getUser();
       this.cityRole();
-      this.getRole();
       // this.getSupplier();
     }
   }
