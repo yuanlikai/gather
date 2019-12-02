@@ -79,7 +79,7 @@
               <DatePicker @on-change="getTime" style="width: 100%;cursor: pointer;"
                           v-model="formValidate.time"
                           format="yyyy/MM/dd" type="daterange"
-                          placement="bottom-end" placeholder="请选择" :editable="false"></DatePicker>
+                          placement="bottom-start" placeholder="请选择" :editable="false"></DatePicker>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
