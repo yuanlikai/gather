@@ -75,9 +75,17 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="时间：" prop="time">
+            <FormItem label="下单时间：" prop="time">
               <DatePicker @on-change="getTime" style="width: 100%;cursor: pointer;"
                           v-model="formValidate.time"
+                          format="yyyy/MM/dd" type="daterange"
+                          placement="bottom-start" placeholder="请选择" :editable="false"></DatePicker>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="发货时间：" prop="time1">
+              <DatePicker @on-change="getTime1" style="width: 100%;cursor: pointer;"
+                          v-model="formValidate.time1"
                           format="yyyy/MM/dd" type="daterange"
                           placement="bottom-start" placeholder="请选择" :editable="false"></DatePicker>
             </FormItem>
@@ -109,7 +117,7 @@
         数据列表
       </p>
       <p slot="extra">
-        <ButtonGroup v-if="formValidate.time[0].length>0">
+        <ButtonGroup v-if="formValidate.time[0].length>0||formValidate.time1[0].length>0">
           <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
           '&supplierid='+sup()+
           '&allField='+supplier.allField+
@@ -120,6 +128,8 @@
           '&phone='+formValidate.phone+
           '&price1='+formValidate.price1+
           '&price2='+formValidate.price2+
+          '&begintime2='+formValidate.time1[0]+
+          '&endtime2='+formValidate.time1[1]+
           '&begintime='+formValidate.time[0]+
           '&endtime='+formValidate.time[1]" target="_blank">
             <Button type="dashed">批量导出订单</Button>
@@ -500,6 +510,7 @@
           consignee: '',
           phone: '',
           time: ['', ''],
+          time1: ['', ''],
           price1: '',
           price2: '',
         },
@@ -556,6 +567,8 @@
             price2: _this.formValidate.price2,
             begintime: _this.formValidate.time[0],
             endtime: _this.formValidate.time[1],
+            begintime2: _this.formValidate.time1[0],
+            endtime2: _this.formValidate.time1[1],
             page: _this.start,
             pagesize: '10',
           }
@@ -685,6 +698,12 @@
 
       getTime(i) {
         this.formValidate.time = [i[0], i[1]];
+        this.start = 1;
+        this.getOrder()
+      },
+
+      getTime1(i) {
+        this.formValidate.time1 = [i[0], i[1]];
         this.start = 1;
         this.getOrder()
       },
