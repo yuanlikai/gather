@@ -143,7 +143,7 @@
 
         <ButtonGroup>
           <a v-if="formValidate.state==='1'" style="float: right"
-             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban.xls" download="muban">
+             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
             <Button type="dashed">下载发货模板</Button>
           </a>
           <Upload style="float: right" v-if="formValidate.state==='1'"></Upload>
