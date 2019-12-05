@@ -219,7 +219,8 @@
                         let href = this.$router.resolve({
                           path: '/relevance',
                           query: {
-                            id: params.row.id
+                            id: params.row.id,
+                            name: params.row.supplierName
                           }
                         });
                         window.open(href.href, '_blank')

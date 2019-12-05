@@ -254,8 +254,38 @@
                 return h('p', '嘉善')
               } else if (params.row.stockType === "GYS") {
                 return h('p', '供应商')
+              }else {
+                return h('p', '其他')
               }
-            }
+            },
+            filters: [
+              {
+                label: '代发',
+                value: 'DF'
+              },
+              {
+                label: '供应商',
+                value: 'GYS'
+              },
+              {
+                label: '南华街',
+                value: 'NHJ'
+              },
+              {
+                label: '嘉善',
+                value: 'JS'
+              },
+              {
+                label: '其他',
+                value: 'OTHER'
+              }
+            ],
+            filterMultiple: false,
+            filterRemote(value) {
+              this.$parent.resetPage();
+              this.$parent.stockType = value.length > 0 ? value[0] : '';
+              this.$parent.getList()
+            },
           },
           {
             title: '维护方式',
@@ -474,7 +504,8 @@
         brandList: [],
         selection: [],
         supplierList: [],
-        priceAsc: 'normal'
+        priceAsc: 'normal',
+        stockType:''
       }
     },
     methods: {
@@ -486,7 +517,7 @@
         this.getList()
       },
 
-      //获取品牌列表
+      //获取商品列表
       getList() {
         const _this = this;
         _this.loading1 = true;
@@ -495,6 +526,7 @@
             start: _this.start - 1,
             size: 10,
             approvalStatus: 'PASS',
+            stockType:_this.stockType,
             supplierId: _this.formValidate.supplierId,
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,
             skuInfoNoLike: _this.formValidate.skuInfoNoLike,

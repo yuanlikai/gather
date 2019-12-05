@@ -23,16 +23,7 @@
       :on-exceeded-size="handleMaxSize"
       :before-upload="handleBeforeUpload"
       :multiple="true"
-      :data="{
-        callback:policyData.callback,
-        policy:policyData.policy,
-        signature:policyData.signature,
-        key:key(),
-        ossaccessKeyId:policyData.accessKeyId,
-        dir:policyData.dir,
-        host:'http://ylmanager.oss-cn-shanghai.aliyuncs.com',
-        success_action_status:'200',
-      }"
+      :data="data"
       type="drag"
       action="https://ylmanager.oss-cn-shanghai.aliyuncs.com"
       style="display: inline-block;width:58px;" v-show="!$route.query.examineId">
@@ -49,18 +40,28 @@
   </div>
 </template>
 <script>
-  import uuidv1 from 'uuid/v1';
+  import uuid from 'uuid';
 
   export default {
-    props:['num'],
+    props: ['num'],
     data() {
       return {
-        policyData: {},
+        data: {
+          callback: '',
+          policy: '',
+          signature: '',
+          key: '',
+          ossaccessKeyId: '',
+          dir: '',
+          host: 'http://ylmanager.oss-cn-shanghai.aliyuncs.com',
+          success_action_status: '200',
+        },
         defaultList: [],
         imgName: '',
         visible: false,
         uploadList: [],
-        index:1,
+        index: 1,
+        dir: '',
       }
     },
     methods: {
@@ -92,11 +93,12 @@
         });
       },
       handleBeforeUpload() {
-        let num = this.num?this.num:1;
+        this.data.key = this.dir + `/${uuid.v4()}`;
+        let num = this.num ? this.num : 1;
         const check = this.uploadList.length < num;
         if (!check) {
           this.$Notice.warning({
-            title: '最多只能上传'+ num +'张图片'
+            title: '最多只能上传' + num + '张图片'
           });
         }
         return check;
@@ -107,15 +109,22 @@
         }, 800)
       },
 
-      key(){
-        return this.policyData.dir + `/${uuidv1()}`
+      key() {
+        return this.policyData.dir + `/${uuid.v4()}`
       },
 
       //获取上传权限
       policy() {
         const _this = this;
         _this.Axios.get('/aliyun/oss/policy').then(res => {
-          _this.policyData = res.data.data;
+          _this.dir = res.data.data.dir;
+          _this.data.callback = res.data.data.callback;
+          _this.data.policy = res.data.data.policy;
+          _this.data.signature = res.data.data.signature;
+          _this.data.key = res.data.data.dir + `/${uuid.v4()}`;
+          _this.data.ossaccessKeyId = res.data.data.accessKeyId;
+          _this.data.dir = res.data.data.dir;
+          console.log(_this.data)
         })
       }
 
@@ -125,9 +134,9 @@
       this.upload();
       this.policy();
       const _this = this;
-      setInterval(function(){
+      setInterval(function () {
         _this.policy()
-      },180000)
+      }, 180000)
     }
   }
 </script>

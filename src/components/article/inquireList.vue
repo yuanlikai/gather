@@ -72,7 +72,7 @@
         loading1: true,
         formValidate: {
           skuInfoNameLike: '',
-          skuInfoNoLike:'',
+          skuInfoNoLike: '',
           classify: [],
           brandId: '',
         },
@@ -170,34 +170,62 @@
             }
           },
           {
-            title: '仓位',
+            title: '发货',
             tooltip: true,
             key: 'stockType',
             align: "center",
-            render:(h,params)=>{
-              if(params.row.stockType==="DF"){
-                return h('p','代发')
-              }else if(params.row.stockType==="NHJ"){
-                return h('p','南华街')
-              }else if(params.row.stockType==="JS"){
-                return h('p','嘉善')
-              }else if(params.row.stockType==="GYS"){
-                return h('p','供应商')
+            render: (h, params) => {
+              if (params.row.stockType === "DF") {
+                return h('p', '代发')
+              } else if (params.row.stockType === "NHJ") {
+                return h('p', '南华街')
+              } else if (params.row.stockType === "JS") {
+                return h('p', '嘉善')
+              } else if (params.row.stockType === "GYS") {
+                return h('p', '供应商')
               }
-            }
+            },
+            filters: [
+              {
+                label: '代发',
+                value: 'DF'
+              },
+              {
+                label: '供应商',
+                value: 'GYS'
+              },
+              {
+                label: '南华街',
+                value: 'NHJ'
+              },
+              {
+                label: '嘉善',
+                value: 'JS'
+              },
+              {
+                label: '其他',
+                value: 'OTHER'
+              }
+            ],
+            filterMultiple: false,
+            filterRemote(value) {
+              this.$parent.resetPage();
+              this.$parent.stockType = value.length > 0 ? value[0] : '';
+              this.$parent.getList()
+            },
           },
           {
             title: '维护方式',
             tooltip: true,
             key: 'updMethod',
             align: "center",
-            render:(h,params)=>{
-              if(params.row.updMethod==="MANUAL"){
-                return h('p','手动')
-              }else if(params.row.updMethod==="AUTO"){
-                return h('p','自动')
-              }else if(params.row.updMethod==="BATCH"){
-                return h('p','回滚')
+            render: (h, params) => {
+              if (params.row.updMethod === "MANUAL") {
+                return h('p', '手动')
+              } else if (params.row.updMethod === "AUTO") {
+                return h('p', '自动')
+              } else if (params.row.updMethod === "BATCH") {
+                return h('p', '回滚')
               }
             }
           },
@@ -266,6 +294,7 @@
         treeData: [],
         brandList: [],
         selection: [],
+        stockType: ''
       }
     },
     methods: {
@@ -284,6 +313,7 @@
           params: {
             start: _this.start - 1,
             size: 10,
+            stockType: _this.stockType,
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,
             skuInfoNoLike: _this.formValidate.skuInfoNoLike,
             category1: _this.formValidate.classify[0],

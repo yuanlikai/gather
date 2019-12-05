@@ -2,6 +2,7 @@
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">关联设置</div>
+      <span style="font-weight: 700;color: #000;">{{this.$route.query.name}}</span>
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
