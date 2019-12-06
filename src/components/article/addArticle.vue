@@ -118,8 +118,10 @@
                     @on-ok="handleSubmit('formValidate2')">
                     <Button type="primary">提交修改</Button>
                   </Poptip>
-
-                  <Button v-else type="primary" @click="handleSubmit('formValidate2')">提交审核</Button>
+                  <template v-else>
+                    <Button type="primary" @click="approvalStatusStr='UNCOMMIT';handleSubmit('formValidate2')" style="margin-right: 10px">保存</Button>
+                    <Button type="primary" @click="approvalStatusStr='AUDITING';handleSubmit('formValidate2')">保存，并提交审核</Button>
+                  </template>
 
                 </FormItem>
               </Col>
@@ -184,6 +186,7 @@
         }
       };
       return {
+        approvalStatusStr:'',
         detail: {},
         current: 0,
         formValidate: {
@@ -278,7 +281,7 @@
 
               _this.Axios.post(_this.$route.query.id ? '/Manage/SkuInfo/update' : '/Manage/SkuInfo/insert', {
                 id: _this.$route.query.id ? _this.$route.query.id : '',    //修改时传入
-                approvalStatusStr: _this.$route.query.id ? 'AUDITING' : 'UNCOMMIT',    //UNCOMMIT为保存AUDITING为保存并提交审核
+                approvalStatusStr: _this.approvalStatusStr,    //UNCOMMIT为保存AUDITING为保存并提交审核
 
                 categoryId: _this.formValidate.classify[2],   //第三季分类id
                 category1: _this.formValidate.classify[0],   //第一级分类id
