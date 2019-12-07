@@ -2,6 +2,7 @@
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">平台映射</div>
+      <span style="font-weight: 700;color: #000;margin-left: 16px">{{this.$route.query.name}}</span>
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <Tree @on-check-change="check" :data="data" show-checkbox style="margin-left: 50px"></Tree>

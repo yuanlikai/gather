@@ -1,16 +1,20 @@
 <template>
   <div class="content">
-    <div class="demo-upload-list" v-for="item in uploadList">
-      <template v-if="item.status === 'finished'">
-        <img :src="item.filename+'?x-oss-process=image/resize,m_pad,h_100,w_100,color_FFFFFF'">
-        <div class="demo-upload-list-cover">
-          <Icon type="ios-eye-outline" @click.native="handleView(item.filename)"></Icon>
-          <Icon v-show="!$route.query.examineId" type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
-        </div>
-      </template>
-      <template v-else>
-        <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
-      </template>
+    <div v-for="(item,index) in uploadList" class="demo-upload-list-box">
+      <div class="demo-upload-list">
+        <template v-if="item.status === 'finished'">
+          <img :src="item.filename+'?x-oss-process=image/resize,m_pad,h_100,w_100,color_FFFFFF'">
+          <div class="demo-upload-list-cover">
+            <Icon type="ios-eye-outline" @click.native="handleView(item.filename)"></Icon>
+            <Icon v-show="!$route.query.examineId" type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+          </div>
+        </template>
+        <template v-else>
+          <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+        </template>
+      </div>
+      <br>
+      <span class="demo-upload-list-box-index">{{index+1}}</span>
     </div>
     <Upload
       ref="upload"
@@ -141,6 +145,18 @@
   }
 </script>
 <style>
+  .demo-upload-list-box{
+    float: left;
+  }
+  .demo-upload-list-box-index {
+    float: left;
+    width: 100%;
+    line-height: 20px;
+    color: red;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+  }
   .demo-upload-list {
     display: inline-block;
     width: 60px;

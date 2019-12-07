@@ -99,6 +99,7 @@
                         path: '/terraceClassify',
                         query: {
                           id: params.row.id,
+                          name: params.row.platformName
                         }
                       });
                       window.open(href.href, '_blank')

@@ -119,10 +119,9 @@
                     <Button type="primary">提交修改</Button>
                   </Poptip>
                   <template v-else>
-                    <Button type="primary" @click="approvalStatusStr='UNCOMMIT';handleSubmit('formValidate2')" style="margin-right: 10px">保存</Button>
+                    <!--<Button type="primary" @click="approvalStatusStr='UNCOMMIT';handleSubmit('formValidate2')" style="margin-right: 10px">保存</Button>-->
                     <Button type="primary" @click="approvalStatusStr='AUDITING';handleSubmit('formValidate2')">保存，并提交审核</Button>
                   </template>
-
                 </FormItem>
               </Col>
             </Form>

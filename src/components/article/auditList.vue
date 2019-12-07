@@ -128,7 +128,7 @@
         formValidate: {
           state: 'AUDITING',
           skuInfoNameLike: '',
-          skuInfoNoLike:'',
+          skuInfoNoLike: '',
           classify: [],
           brandId: '',
           supplierId: '',
@@ -174,13 +174,13 @@
             render: (h, params) => {
               return h('Poptip', {
                 props: {
-                  trigger:'hover',
+                  trigger: 'hover',
                   placement: 'right'
                 }
               }, [
                 h('img', {
                   style: {
-                    cursor:'pointer',
+                    cursor: 'pointer',
                     height: '30px'
                   },
                   attrs: {
@@ -224,7 +224,8 @@
                       let href = this.$router.resolve({
                         path: '/examine',
                         query: {
-                          examineId: params.row.id
+                          examineId: params.row.id,
+                          audit: true
                         }
                       });
                       window.open(href.href, '_blank')
@@ -374,15 +375,14 @@
             _this.modal = false;
             _this.getList();
             _this.count();
-            _this.$Message.success('审核通过')
+            _this.$Message.success('成功')
           } else {
             _this.$Message.warning(res.data.message)
           }
         })
-
       },
 
-      //赛选
+      //筛选
       screen(i) {
         this.formValidate.classify = i;
         this.resetPage();

@@ -157,7 +157,7 @@
             }
           },
           {
-            title: '编号',
+            title: 'SKU编号',
             tooltip: true,
             key: 'skuInfoNo',
             align: "center",

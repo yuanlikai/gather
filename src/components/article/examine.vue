@@ -62,12 +62,44 @@
                 <FormItem label="SKU编号：" prop="skuInfoNo">
                   <span style="color: #000;">{{formValidate2.skuInfoNo}}</span>
                 </FormItem>
+                <FormItem label="状态：">
+                  <span style="color: #000;">{{approvalStatus.name}}</span>
+                </FormItem>
+                <FormItem>
+                  <Button type="primary" v-show="approvalStatus.value==='AUDITING'" @click="modal=true">审核</Button>
+                </FormItem>
               </Col>
             </Form>
           </Row>
         </Col>
       </Row>
     </Card>
+    <Modal v-model="modal" width="360">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>审核商品</span>
+      </p>
+      <div>
+        <Form ref="formValidate3" :model="formValidate3" :label-width="80">
+          <FormItem label="商品名称：" prop="name">
+            {{formValidate1.skuInfoName}}
+          </FormItem>
+          <FormItem label="商品审核：" prop="approvalStatus">
+            <RadioGroup v-model="formValidate3.approvalStatus">
+              <Radio label="PASS">审核通过</Radio>
+              <Radio label="REJECT">审核不通过</Radio>
+            </RadioGroup>
+          </FormItem>
+          <FormItem v-if="formValidate3.approvalStatus!=='PASS'" label="反馈详情：" prop="rejectReason">
+            <Input v-model="formValidate3.rejectReason" type="textarea" :rows="4" placeholder="请输入反馈详情"/>
+          </FormItem>
+        </Form>
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large" @click="audit">确定</Button>
+      </div>
+    </Modal>
+
   </div>
 </template>
 <script>
@@ -93,6 +125,12 @@
         this.$refs.pics2.uploadList < 1 ? callback(new Error('请上传商品详情图')) : callback();
       };
       return {
+        modal: false,
+        formValidate3: {
+          name: '',
+          approvalStatus: 'PASS',
+          rejectReason: '',
+        },
         detail: {},
         current: 0,
         formValidate: {
@@ -143,9 +181,28 @@
         brandList: [],
         tag: [],
         loading: true,
+        approvalStatus:'',
       }
     },
     methods: {
+
+      //审核
+      audit() {
+        const _this = this;
+        _this.Axios.post('/Manage/SkuInfo/examine', _this.Qs.stringify({
+          id: _this.$route.query.examineId,   //id
+          rejectReason: _this.formValidate3.rejectReason,   //拒绝理由
+          approvalStatus: _this.formValidate3.approvalStatus,   //审核状态 PASS("审核通过"), REJECT("拒绝");
+        })).then(res => {
+          if (res.data.code === 0) {
+            _this.modal = false;
+            _this.getDetail();
+            _this.$Message.success('成功')
+          } else {
+            _this.$Message.warning(res.data.message)
+          }
+        })
+      },
 
       handleReset(name) {
         this.$refs[name].resetFields();
@@ -162,6 +219,7 @@
             id: _this.$route.query.examineId
           }
         }).then(res => {
+          _this.approvalStatus = res.data.data.approvalStatus;
           _this.formValidate = {
             namePath: res.data.data.namePath,  //分类数组
           };
@@ -188,7 +246,7 @@
             price: String(res.data.data.price),          //售价
             skuInfoNo: res.data.data.skuInfoNo,      //SKU编号
           };
-          if(res.data.data.keyWords){
+          if (res.data.data.keyWords) {
             _this.tag = res.data.data.keyWords.split(' ')     //关键词50
           }
           _this.loading = false
@@ -233,13 +291,14 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-  .pics1{
+  .pics1 {
     position: absolute;
     width: 100%;
     height: 100%;
     z-index: 10;
   }
-  .pics2{
+
+  .pics2 {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -247,6 +306,7 @@
     left: 65px;
     z-index: 10;
   }
+
   .ivu-tag-border {
     line-height: 22px;
   }

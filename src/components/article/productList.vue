@@ -184,7 +184,7 @@
             }
           },
           {
-            title: '编号',
+            title: 'SKU编号',
             tooltip: true,
             minWidth: 70,
             key: 'skuInfoNo',
