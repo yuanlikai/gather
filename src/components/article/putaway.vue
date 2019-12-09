@@ -46,7 +46,7 @@
         选择商品
       </p>
       <a href="#" slot="extra">
-        <Checkbox v-model="seed" @on-change="rePage(),dataList()">新建未上架</Checkbox>
+        <!--<Checkbox v-model="seed" @on-change="rePage(),dataList()">新建未上架</Checkbox>-->
       </a>
       <div style="margin: 0 auto;max-width: 900px;">
         <Steps v-show="current!==2" :current="current" style="margin: 16px 0 0 0">
@@ -80,7 +80,13 @@
           <Col span="24">
             <Row v-for="(item,index) in fillInList" :key="index">
               <Col span="24" style="margin-top: 32px;font-weight: 700">
-                {{item[0].platformName}}
+                <CheckboxGroup v-model="checId">
+                  <Checkbox :label="item[0].id">
+                    <span>{{item[0].platformName}}</span>
+                  </Checkbox>
+                </CheckboxGroup>
+
+                <!--{{item[0].platformName}}-->
               </Col>
               <Col span="24">
                 <Table :columns="columns" :data="item"></Table>
@@ -111,8 +117,9 @@
   export default {
     data() {
       return {
+        checId: [],
         show: true,
-        seed:false,
+        seed: false,
         loading: true,
         formValidate: {
           skuInfoNameLike: '',
@@ -243,20 +250,27 @@
         _this.sjLoding = true;
         var data = [];
         for (var i in _this.fillInList) {
-          data = data.concat(_this.fillInList[i])
-        }
-        _this.Axios.post('/Manage/SkuInfo/onSale',
-          data
-        ).then(res => {
-          if (res.data.code === 0) {
-            _this.current = 2;
-            _this.targetKeys = [];
-            _this.$Message.success('上架成功！')
-          } else {
-            _this.$Message.warning(res.data.message)
+          if (_this.checId.indexOf(_this.fillInList[i][0].id) !== -1) {
+            data = data.concat(_this.fillInList[i])
           }
+        }
+        if (data.length < 1) {
+          _this.$Message.warning('请选择上架平台！');
           _this.sjLoding = false
-        })
+        } else {
+          _this.Axios.post('/Manage/SkuInfo/onSale',
+            data
+          ).then(res => {
+            if (res.data.code === 0) {
+              _this.current = 2;
+              _this.targetKeys = [];
+              _this.$Message.success('上架成功！')
+            } else {
+              _this.$Message.warning(res.data.message)
+            }
+            _this.sjLoding = false
+          })
+        }
       },
 
       //填写销售信息
@@ -271,6 +285,9 @@
             ids: _this.$route.query.ids ? _this.$route.query.ids : _this.targetKeys,
           }, {indices: false})).then(res => {
             _this.fillInList = res.data.data;
+            for (var i in _this.fillInList) {
+              _this.checId.push(_this.fillInList[i][0].id)
+            }
             if (!res.data.data) {
               _this.show = false;
               _this.$Message.warning('该商品分类未绑定平台')
@@ -310,9 +327,9 @@
               "label": res.data.data.content[i].abbrPlatformNames ? res.data.data.content[i].skuInfoName + " - " + res.data.data.content[i].abbrPlatformNames : res.data.data.content[i].skuInfoName,
               // "label": '<a>123</a>',
               "disabled": !res.data.data.content[i].abbrPlatformNames,
-              render:(h,params)=>{
+              render: (h, params) => {
                 console.log(params.row)
-                return h('p','123')
+                return h('p', '123')
               },
             })
           }
@@ -341,7 +358,7 @@
       handleReset(name) {
         this.$refs[name].resetFields();
         this.formValidate.brandId = '';
-        this.seed=false;
+        this.seed = false;
         this.dataList()
       },
 
