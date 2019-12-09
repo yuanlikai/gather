@@ -29,6 +29,13 @@
             <FormItem label="描述" prop="description">
               <Input :maxlength="80" type="textarea" v-model="formValidate.description" placeholder="请输入"></Input>
             </FormItem>
+
+            <FormItem label="启用" prop="status">
+              <i-switch v-model="formValidate.status">
+                <Icon type="md-checkmark" slot="open"></Icon>
+                <Icon type="md-close" slot="close"></Icon>
+              </i-switch>
+            </FormItem>
             <FormItem prop="description">
               <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
             </FormItem>
@@ -50,18 +57,19 @@
 </template>
 <script>
   import upImg from '../upImg'
+
   export default {
     components: {
       upImg
     },
     data() {
-      const validate = (rule, value, callback) => {
-        if (this.$refs.logo.uploadList < 1) {
-          callback(new Error('请上传logo'));
-        } else {
-          callback();
-        }
-      };
+      // const validate = (rule, value, callback) => {
+      //   if (this.$refs.logo.uploadList < 1) {
+      //     callback(new Error('请上传logo'));
+      //   } else {
+      //     callback();
+      //   }
+      // };
       const validate1 = (rule, value, callback) => {
         const _this = this;
         if (value) {
@@ -131,20 +139,21 @@
           platformNo: '',
           domian: '',
           description: '',
+          status: true,
         },
         ruleValidate: {
           platformName: [
-            {validator: validate1, required: true,  trigger: 'blur'}
+            {validator: validate1, required: true, trigger: 'blur'}
           ],
           abbrPlatformName: [
-            {validator: validate2, required: true,  trigger: 'blur'}
+            {validator: validate2, required: true, trigger: 'blur'}
           ],
           platformNo: [
-            {validator: validate3,required: true, mtrigger: 'blur'}
+            {validator: validate3, required: true, mtrigger: 'blur'}
           ],
-          logoUrl: [
-            {validator: validate, required: true, trigger: 'change'}
-          ],
+          // logoUrl: [
+          //   {validator: validate, required: true, trigger: 'change'}
+          // ],
           domian: [
             {required: true, message: '请输入域名', trigger: 'blur'}
           ],
@@ -153,7 +162,7 @@
     },
     methods: {
 
-      //提交分类
+      //提交平台
       handleSubmit(name) {
         const _this = this;
         _this.$refs[name].validate((valid) => {
@@ -162,8 +171,9 @@
               id: _this.formValidate.id,
               platformName: _this.formValidate.platformName,
               abbrPlatformName: _this.formValidate.abbrPlatformName,
-              logoUrl: _this.$refs.logo.uploadList[0].filename,
+              logoUrl: _this.$refs.logo.uploadList.length>0 ? _this.$refs.logo.uploadList[0].filename : '',
               domian: _this.formValidate.domian,
+              status: _this.formValidate.status,
               platformNo: _this.formValidate.platformNo,
               description: _this.formValidate.description,
             })).then(res => {
@@ -185,7 +195,7 @@
         this.$refs[name].resetFields();
       },
 
-      //获取分类详情
+      //获取平台详情
       getDetail() {
         const _this = this;
         _this.Axios.get('/Manage/Platform/detail', {
@@ -198,6 +208,7 @@
             platformName: res.data.data.platformName,
             abbrPlatformName: res.data.data.abbrPlatformName,
             domian: res.data.data.domian,
+            status: res.data.data.status,
             platformNo: res.data.data.platformNo,
             description: res.data.data.description,
           };

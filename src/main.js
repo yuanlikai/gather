@@ -35,6 +35,15 @@ Vue.prototype.riqi=function(sj){
 
 // 添加响应拦截器
 axios.interceptors.response.use(function (response) {
+  if (response.data.code === 43) {
+    for (let i in response.data.data) {
+      vm.$Notice.warning({
+        title: '错误提示',
+        duration: 10,
+        desc: response.data.data[i]
+      });
+    }
+  }
   return response;
 }, function (error) {
   //无权限，重定向到登录页面

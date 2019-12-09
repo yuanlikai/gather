@@ -81,12 +81,10 @@
             <Row v-for="(item,index) in fillInList" :key="index">
               <Col span="24" style="margin-top: 32px;font-weight: 700">
                 <CheckboxGroup v-model="checId">
-                  <Checkbox :label="item[0].id">
+                  <Checkbox :label="item[0].platformId" :disabled="supplier.userType==='SUPPLIER'">
                     <span>{{item[0].platformName}}</span>
                   </Checkbox>
                 </CheckboxGroup>
-
-                <!--{{item[0].platformName}}-->
               </Col>
               <Col span="24">
                 <Table :columns="columns" :data="item"></Table>
@@ -115,6 +113,7 @@
 </template>
 <script>
   export default {
+    props: ['supplier'],
     data() {
       return {
         checId: [],
@@ -143,7 +142,7 @@
           },
           {
             title: 'SKU编号',
-            maxWidth: 100,
+            maxWidth: 140,
             key: 'skuInfoNo'
           },
           {
@@ -250,7 +249,7 @@
         _this.sjLoding = true;
         var data = [];
         for (var i in _this.fillInList) {
-          if (_this.checId.indexOf(_this.fillInList[i][0].id) !== -1) {
+          if (_this.checId.indexOf(_this.fillInList[i][0].platformId) !== -1) {
             data = data.concat(_this.fillInList[i])
           }
         }
@@ -278,15 +277,14 @@
         const _this = this;
         if (_this.targetKeys.length > 20) {
           _this.$Message.warning('最多选择20个商品')
-
         } else {
           _this.current = 1;
           _this.Axios.post('/Manage/SkuInfo/readyOnsaleList', _this.Qs.stringify({
-            ids: _this.$route.query.ids ? _this.$route.query.ids : _this.targetKeys,
+            ids: _this.$route.query.ids ? _this.$route.query.ids : _this.targetKeys
           }, {indices: false})).then(res => {
             _this.fillInList = res.data.data;
             for (var i in _this.fillInList) {
-              _this.checId.push(_this.fillInList[i][0].id)
+              _this.checId.push(_this.fillInList[i][0].platformId)
             }
             if (!res.data.data) {
               _this.show = false;
@@ -311,7 +309,6 @@
           params: {
             start: _this.start - 1,
             size: 50,
-
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,    //商品名模糊搜索
             skuInfoNoLike: _this.formValidate.skuInfoNoLike,    //商品编号模糊搜索
             category1: _this.formValidate.classify[0],
@@ -325,7 +322,6 @@
             _this.data.push({
               "key": res.data.data.content[i].id,
               "label": res.data.data.content[i].abbrPlatformNames ? res.data.data.content[i].skuInfoName + " - " + res.data.data.content[i].abbrPlatformNames : res.data.data.content[i].skuInfoName,
-              // "label": '<a>123</a>',
               "disabled": !res.data.data.content[i].abbrPlatformNames,
               render: (h, params) => {
                 console.log(params.row)
@@ -398,5 +394,9 @@
 <style scoped lang="less">
   .ivu-btn-small {
     padding: 1px 7px 3px;
+  }
+
+  .ivu-checkbox-disabled + span {
+    color: #515a6e;
   }
 </style>
