@@ -79,6 +79,31 @@
     </Card>
     <editorProduct ref="editor"></editorProduct>
     <repertory @getList="getList" ref="repertory"></repertory>
+    <Modal v-model="modal" width="500">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>上架平台</span>
+      </p>
+      <div>
+        <Row style="background:#eee;padding:10px">
+          <Col span="11">
+            <Card :bordered="false">
+              <p slot="title">已上架平台</p>
+              <p v-for="(item,index) in onsalePlatform.onsalePlatforms" :key="index">{{item}}</p>
+            </Card>
+          </Col>
+          <Col span="11" offset="2">
+            <Card shadow>
+              <p slot="title">可上架平台</p>
+              <p v-for="(item,index) in onsalePlatform.canOnsalePlatforms" :key="index">{{item}}</p>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large" @click="modal=false">确定</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -92,9 +117,11 @@
     },
     data() {
       return {
+        modal: false,
         state: 'all',
         loading1: true,
         countList: {},
+        onsalePlatform: {},
         formValidate: {
           skuInfoNameLike: '',
           skuInfoNoLike: '',
@@ -199,29 +226,19 @@
             align: "center",
             render: (h, params) => {
               return h('div', [
-                h('span', {
+                h(params.row.onSale ? 'a' : 'p', {
                   style: {
                     marginTop: '2px'
-                  }
-                }, params.row.price),
-                h('Icon', {
-                  style: {
-                    display: params.row.onSale === true ? 'inner-block' : 'none',
-                    cursor: 'pointer',
-                    marginLeft: '4px',
-                    color: '#2b85e4'
-                  },
-                  props: {
-                    type: 'ios-create-outline',
-                    size: 22
                   },
                   on: {
                     click: () => {
-                      this.$refs.editor.getList(params.row.id);
-                      this.$refs.editor.modal = true;
+                      if (params.row.onSale) {
+                        this.$refs.editor.getList(params.row.id);
+                        this.$refs.editor.modal = true;
+                      }
                     }
                   }
-                })
+                }, params.row.price),
               ])
             }
           },
@@ -229,8 +246,24 @@
             title: '上架平台',
             minWidth: 70,
             tooltip: true,
-            key: 'onsalePlatformNames',
+            key: 'onsalePCount',
             align: "center",
+            render: (h, params) => {
+              return h('a', {
+                on: {
+                  'click': () => {
+                    this.Axios.get('/Manage/SkuInfo/onsalePlatform', {
+                      params: {
+                        id: params.row.id
+                      }
+                    }).then(res => {
+                      this.onsalePlatform = res.data.data;
+                      this.modal = true
+                    });
+                  }
+                }
+              }, params.row.onsalePCount + ' / ' + params.row.canOnsalePCount)
+            }
           },
           {
             title: '供应商',
@@ -254,7 +287,7 @@
                 return h('p', '嘉善')
               } else if (params.row.stockType === "GYS") {
                 return h('p', '供应商')
-              }else {
+              } else {
                 return h('p', '其他')
               }
             },
@@ -310,16 +343,10 @@
             align: "center",
             render: (h, params) => {
               return h('div', [
-                h('span', params.row.stock),
-                h('Icon', {
+                h('a', {
                   style: {
-                    cursor: 'pointer',
-                    marginLeft: '4px',
-                    color: '#2b85e4'
-                  },
-                  props: {
-                    type: 'ios-create-outline',
-                    size: 22
+                    width: '100%',
+                    display: 'block'
                   },
                   on: {
                     click: () => {
@@ -330,7 +357,7 @@
                       this.$refs.repertory.modal = true;
                     }
                   }
-                })
+                }, params.row.stock),
               ])
             }
           },
@@ -505,7 +532,7 @@
         selection: [],
         supplierList: [],
         priceAsc: 'normal',
-        stockType:''
+        stockType: ''
       }
     },
     methods: {
@@ -526,7 +553,7 @@
             start: _this.start - 1,
             size: 10,
             approvalStatus: 'PASS',
-            stockType:_this.stockType,
+            stockType: _this.stockType,
             supplierId: _this.formValidate.supplierId,
             skuInfoNameLike: _this.formValidate.skuInfoNameLike,
             skuInfoNoLike: _this.formValidate.skuInfoNoLike,
@@ -535,6 +562,7 @@
             category3: _this.formValidate.classify[2],
             brandId: _this.formValidate.brandId,
             recycleBin: false,
+            haveOnsaleCount: true,
             priceAsc: _this.priceAsc === 'normal' ? '' : (_this.priceAsc === 'asc' ? true : false),
             onSale: _this.state === 'all' ? '' : _this.state,
           }
