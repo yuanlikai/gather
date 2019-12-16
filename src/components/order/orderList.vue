@@ -30,11 +30,12 @@
             <FormItem label="供应商：" prop="supplierid">
               <Select :disabled="supplier.userType==='SUPPLIER'"
                       v-model="supplier.userType==='SUPPLIER'?supplier.supplierId:formValidate.supplierid"
-                      @on-change="start=1,getOrder()"
+                      @on-change="start=1,total=0,getOrder()"
                       clearable
                       filterable>
                 <!--<Option value="-1">全部</Option>-->
-                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}</Option>
+                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}
+                </Option>
               </Select>
             </FormItem>
           </Col>
@@ -42,7 +43,7 @@
             <FormItem label="来源平台：" prop="terraceId">
               <Select :disabled="supplier.userType==='SUPPLIER'"
                       v-model="formValidate.terraceId"
-                      @on-change="start=1,getOrder()">
+                      @on-change="start=1,total=0,getOrder()">
                 <Option value="-1">全部</Option>
                 <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}
                 </Option>
@@ -557,7 +558,7 @@
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             sortid: _this.sortid,
             state: _this.formValidate.state,
-            supplierid: _this.formValidate.supplierid?_this.formValidate.supplierid:'-1',
+            supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
             platformid: _this.formValidate.terraceId,
             ordernumber: _this.formValidate.ordernumber,
             proname: _this.formValidate.proname,
@@ -700,12 +701,14 @@
       getTime(i) {
         this.formValidate.time = [i[0], i[1]];
         this.start = 1;
+        this.total = 0;
         this.getOrder()
       },
 
       getTime1(i) {
         this.formValidate.time1 = [i[0], i[1]];
         this.start = 1;
+        this.total = 0;
         this.getOrder()
       },
 
