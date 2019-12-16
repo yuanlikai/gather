@@ -30,10 +30,11 @@
             <FormItem label="供应商：" prop="supplierid">
               <Select :disabled="supplier.userType==='SUPPLIER'"
                       v-model="supplier.userType==='SUPPLIER'?supplier.supplierId:formValidate.supplierid"
-                      @on-change="start=1,getOrder()">
-                <Option value="-1">全部</Option>
-                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}
-                </Option>
+                      @on-change="start=1,getOrder()"
+                      clearable
+                      filterable>
+                <!--<Option value="-1">全部</Option>-->
+                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}</Option>
               </Select>
             </FormItem>
           </Col>
@@ -502,7 +503,7 @@
         data: [],
         formValidate: {
           state: this.$route.params.id ? this.$route.params.id : '0',
-          supplierid: '-1',
+          supplierid: '',
           terraceId: '-1',
           ordernumber: '',
           proname: '',
@@ -556,7 +557,7 @@
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             sortid: _this.sortid,
             state: _this.formValidate.state,
-            supplierid: _this.formValidate.supplierid,
+            supplierid: _this.formValidate.supplierid?_this.formValidate.supplierid:'-1',
             platformid: _this.formValidate.terraceId,
             ordernumber: _this.formValidate.ordernumber,
             proname: _this.formValidate.proname,
