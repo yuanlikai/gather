@@ -34,8 +34,7 @@
                       clearable
                       filterable>
                 <!--<Option value="-1">全部</Option>-->
-                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}
-                </Option>
+                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}</Option>
               </Select>
             </FormItem>
           </Col>
