@@ -42,7 +42,7 @@
                   <Icon style="margin-left: 20px" size="18" color="#555555" type="md-ionic"/>
                 </Tooltip>
               </router-link>
-              <Dropdown trigger="click" style="margin-left: 20px;cursor: pointer;" @on-click="out">
+              <Dropdown trigger="click" style="margin-left: 20px;cursor: pointer;">
                 <Avatar style="margin-right: 8px"
                         src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/touxiang.jpg"/>
                 {{user}}
