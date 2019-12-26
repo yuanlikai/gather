@@ -104,6 +104,11 @@
               </div>
             </FormItem>
           </Col>
+          <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="券号：" prop="ticketnumber">
+              <Input v-model="formValidate.ticketnumber" placeholder="请输入"/>
+            </FormItem>
+          </Col>
           <Col :xs="24" :md="24" :lg="8">
             <FormItem>
               <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
@@ -118,11 +123,12 @@
         数据列表
       </p>
       <p slot="extra">
-        <ButtonGroup v-if="formValidate.time[0].length>0||formValidate.time1[0].length>0">
+        <ButtonGroup v-if="formValidate.time[0].length>0&&formValidate.time1[0].length>0">
           <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
           '&supplierid='+sup()+
           '&allField='+supplier.allField+
           '&ordernumber='+formValidate.ordernumber+
+          '&ticketnumber='+formValidate.ticketnumber+
           '&proname='+formValidate.proname+
           '&stockno='+formValidate.stockno+
           '&consignee='+formValidate.consignee+
@@ -137,7 +143,7 @@
           </a>
         </ButtonGroup>
 
-        <Tooltip v-else content="请选择导出时间" placement="top">
+        <Tooltip v-else content="请选择 下单时间 和 发货时间" placement="top">
           <Button :disabled="true" type="dashed">批量导出订单</Button>
         </Tooltip>
 
@@ -504,6 +510,7 @@
         formValidate: {
           state: this.$route.params.id ? this.$route.params.id : '0',
           supplierid: '',
+          ticketnumber:'',
           terraceId: '-1',
           ordernumber: '',
           proname: '',
@@ -556,6 +563,7 @@
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             sortid: _this.sortid,
+            ticketnumber:_this.formValidate.ticketnumber,
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
             platformid: _this.formValidate.terraceId,
