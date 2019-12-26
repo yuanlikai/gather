@@ -123,7 +123,7 @@
         数据列表
       </p>
       <p slot="extra">
-        <ButtonGroup v-if="formValidate.time[0].length>0&&formValidate.time1[0].length>0">
+        <ButtonGroup>
           <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
           '&supplierid='+sup()+
           '&allField='+supplier.allField+
@@ -139,13 +139,12 @@
           '&endtime2='+formValidate.time1[1]+
           '&begintime='+formValidate.time[0]+
           '&endtime='+formValidate.time[1]" target="_blank">
+            <Tooltip content="默认导出进30天数据" placement="top">
             <Button type="dashed">批量导出订单</Button>
+            </Tooltip>
           </a>
         </ButtonGroup>
 
-        <Tooltip v-else content="请选择 下单时间 和 发货时间" placement="top">
-          <Button :disabled="true" type="dashed">批量导出订单</Button>
-        </Tooltip>
 
 
         <ButtonGroup>
