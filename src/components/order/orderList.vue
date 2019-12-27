@@ -144,9 +144,6 @@
             </Tooltip>
           </a>
         </ButtonGroup>
-
-
-
         <ButtonGroup>
           <a v-if="formValidate.state==='1'" style="float: right"
              href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
