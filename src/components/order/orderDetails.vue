@@ -62,7 +62,7 @@
 
         <Button @click="amend" type="primary" style="margin-left: 16px">{{data.ExpressNo?'修改':'填写'}}物流信息
         </Button>
-        <Button @click="afterSsa" style="margin-left: 16px">修改配送地址
+        <Button @click="afterSsa" style="margin-left: 16px">修改配送信息
         </Button>
 
 
@@ -114,7 +114,11 @@
       </div>
     </Modal>
 
-    <alterSite ref="alterSite" @getOrder="getDetails"></alterSite>
+    <alterSite ref="alterSite" @getOrder="getDetails" :site="{
+    consignee:data.Consignee,
+    phone:data.Phone,
+    address:data.address
+    }"></alterSite>
   </div>
 </template>
 <script>
@@ -213,8 +217,13 @@
     },
     methods: {
       afterSsa(){
-        this.$refs.alterSite.model=true;
-        console.log(1)
+        const _this = this;
+        _this.$refs.alterSite.model=true;
+        this.$refs.alterSite.getSite({
+          consignee:_this.data.Consignee,
+          phone:_this.data.Phone,
+          address:_this.data.Address,
+        });
       },
 
       //异常弹窗

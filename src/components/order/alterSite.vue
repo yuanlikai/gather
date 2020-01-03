@@ -61,6 +61,11 @@
       }
     },
     methods: {
+      getSite(site){
+        this.formValidate.consignee = site.consignee;
+        this.formValidate.phone = site.phone;
+        this.formValidate.address = site.address
+      },
       dzjhs(i,b){
         this.ssq=b
 
