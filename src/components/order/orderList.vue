@@ -1,7 +1,6 @@
 <style>
-  .ivu-table .demo-table-info-row td {
-    /*background-color: #2db7f5;*/
-    color: red;
+  .ivu-table .demo-table-info-row td{
+    color: red
   }
 </style>
 <template>
@@ -339,11 +338,18 @@
             align: "center",
           },
           {
+            title: '礼包编号',
+            key: 'Remarks',
+            minWidth: 88,
+            maxWidth: 120,
+            tooltip: true,
+            align: "center",
+          },
+          {
             title: '订单状态',
             key: 'StateStr',
             maxWidth: 120,
             minWidth: 88,
-            tooltip: true,
             align: "center",
           },
           {
@@ -351,7 +357,6 @@
             key: 'Total',
             minWidth: 110,
             maxWidth: 120,
-            tooltip: true,
             align: "center",
             sortable: "custom"
           },
@@ -716,7 +721,7 @@
       },
 
       rowClassName(row, index) {
-        return this.formValidate.state == '9' ? 'demo-table-info-row' : '';
+        return row.IsAbnormal === 1?'demo-table-info-row':''
       },
 
       sup() {
