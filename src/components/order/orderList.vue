@@ -122,8 +122,8 @@
         数据列表
       </p>
       <p slot="extra">
-        <ButtonGroup v-if="!formValidate.state=='0'">
-          <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
+        <ButtonGroup>
+          <a v-if="formValidate.state!=='0'" :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
           '&supplierid='+sup()+
           '&allField='+supplier.allField+
           '&ordernumber='+formValidate.ordernumber+
@@ -139,7 +139,7 @@
           '&begintime='+formValidate.time[0]+
           '&endtime='+formValidate.time[1]" target="_blank">
             <Tooltip content="默认导出进30天数据" placement="top">
-            <Button v-if="!formValidate.state=='0'" type="dashed">批量导出订单`</Button>
+            <Button type="dashed">批量导出订单`1</Button>
             </Tooltip>
           </a>
         </ButtonGroup>
