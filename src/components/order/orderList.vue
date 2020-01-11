@@ -139,7 +139,7 @@
           '&begintime='+formValidate.time[0]+
           '&endtime='+formValidate.time[1]" target="_blank">
             <Tooltip content="默认导出进30天数据" placement="top">
-            <Button type="dashed">批量导出订单`1</Button>
+            <Button type="dashed">批量导出订单</Button>
             </Tooltip>
           </a>
         </ButtonGroup>
