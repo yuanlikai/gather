@@ -122,7 +122,7 @@
         数据列表
       </p>
       <p slot="extra">
-        <ButtonGroup>
+        <ButtonGroup v-if="!formValidate.state=='0'">
           <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
           '&supplierid='+sup()+
           '&allField='+supplier.allField+
