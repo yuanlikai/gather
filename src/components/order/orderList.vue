@@ -395,7 +395,8 @@
               return h('Tooltip', {
                 props: {
                   placement: 'left',
-                  'max-width': 320
+                  'max-width': 320,
+                  transfer:true,
                 },
                 style: {
                   width: '100%'
