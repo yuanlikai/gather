@@ -2,6 +2,12 @@
   .ivu-table .demo-table-info-row td {
     color: red
   }
+  .ivu-table-wrapper {
+    overflow: auto;
+  }
+  .ivu-table{
+    overflow: auto;
+  }
 </style>
 <template>
   <div class="content">
