@@ -1,5 +1,5 @@
 <style>
-  .ivu-table .demo-table-info-row td{
+  .ivu-table .demo-table-info-row td {
     color: red
   }
 </style>
@@ -33,7 +33,8 @@
                       clearable
                       filterable>
                 <!--<Option value="-1">全部</Option>-->
-                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}</Option>
+                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}
+                </Option>
               </Select>
             </FormItem>
           </Col>
@@ -139,7 +140,7 @@
           '&begintime='+formValidate.time[0]+
           '&endtime='+formValidate.time[1]" target="_blank">
             <Tooltip content="默认导出进30天数据" placement="top">
-            <Button type="dashed">批量导出订单</Button>
+              <Button type="dashed">批量导出订单</Button>
             </Tooltip>
           </a>
         </ButtonGroup>
@@ -387,10 +388,39 @@
           {
             title: '订单产品',
             key: 'ProName',
-            tooltip: true,
             minWidth: 88,
             maxWidth: 120,
             align: "center",
+            render: (h, params) => {
+              return h('Tooltip', {
+                props: {
+                  placement: 'left'
+                },
+                style: {
+                  width: '100%'
+                }
+              }, [
+                h('p', {
+                  style: {
+                    'overflow': 'hidden',
+                    'text-overflow': 'ellipsis',
+                    'white-space': 'nowrap',
+                  }
+                }, params.row.ProName),
+                h('div', {
+                  slot: 'content'
+                }, params.row.ProName.split('、').map(function (item, index) {
+                  return h('div', {
+                    style: {
+                      width: '100%',
+                      'overflow': 'hidden',
+                      'text-overflow': 'ellipsis',
+                      'white-space': 'nowrap',
+                    }
+                  }, item)
+                }))
+              ])
+            }
           },
           {
             title: '操作',
@@ -519,7 +549,7 @@
         formValidate: {
           state: this.$route.params.id ? this.$route.params.id : '0',
           supplierid: '',
-          ticketnumber:'',
+          ticketnumber: '',
           terraceId: '-1',
           ordernumber: '',
           proname: '',
@@ -572,7 +602,7 @@
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             sortid: _this.sortid,
-            ticketnumber:_this.formValidate.ticketnumber,
+            ticketnumber: _this.formValidate.ticketnumber,
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
             platformid: _this.formValidate.terraceId,
@@ -729,7 +759,7 @@
       },
 
       rowClassName(row, index) {
-        return row.IsAbnormal === 1?'demo-table-info-row':''
+        return row.IsAbnormal === 1 ? 'demo-table-info-row' : ''
       },
 
       sup() {
