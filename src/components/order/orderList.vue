@@ -385,6 +385,14 @@
             align: "center",
           },
           {
+            title: '订单产品',
+            key: 'ProName',
+            tooltip: true,
+            minWidth: 88,
+            maxWidth: 120,
+            align: "center",
+          },
+          {
             title: '操作',
             align: 'center',
             width: 130,
