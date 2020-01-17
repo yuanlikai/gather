@@ -394,7 +394,8 @@
             render: (h, params) => {
               return h('Tooltip', {
                 props: {
-                  placement: 'left'
+                  placement: 'left',
+                  'max-width': 320
                 },
                 style: {
                   width: '100%'
