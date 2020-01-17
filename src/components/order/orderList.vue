@@ -779,6 +779,6 @@
 <style scoped lang="less">
 
   .ivu-table-wrapper {
-    overflow-y: inherit;
+    overflow: inherit;
   }
 </style>
