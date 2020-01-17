@@ -2,12 +2,6 @@
   .ivu-table .demo-table-info-row td {
     color: red
   }
-  .ivu-table-wrapper {
-    overflow-y: auto;
-  }
-  .ivu-table{
-    overflow-y: auto;
-  }
 </style>
 <template>
   <div class="content">
@@ -785,9 +779,6 @@
 <style scoped lang="less">
 
   .ivu-table-wrapper {
-    overflow-y: auto;
-  }
-  .ivu-table{
-    overflow-y: auto;
+    overflow-y: inherit;
   }
 </style>
