@@ -395,6 +395,7 @@
               return h('Tooltip', {
                 props: {
                   placement: 'left-end',
+                  offset:6,
                   'max-width': 320,
                 },
                 style: {
