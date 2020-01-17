@@ -3,10 +3,10 @@
     color: red
   }
   .ivu-table-wrapper {
-    overflow: auto;
+    overflow-y: auto;
   }
   .ivu-table{
-    overflow: auto;
+    overflow-y: auto;
   }
 </style>
 <template>
@@ -783,4 +783,11 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+
+  .ivu-table-wrapper {
+    overflow-y: auto;
+  }
+  .ivu-table{
+    overflow-y: auto;
+  }
 </style>
