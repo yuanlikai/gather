@@ -777,7 +777,6 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-
   .ivu-table-wrapper {
     overflow: inherit;
   }
