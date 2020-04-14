@@ -12,23 +12,21 @@
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">订单列表</div>
     </Card>
-    <transition name="fade">
-      <div v-show="statusList.length>1">
-        <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}"
-                    size="large" type="button"
-                    v-model="formValidate.state" @on-change="types='',start=1;total=0;getOrder()">
-          <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
-            {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
-          </Radio>
-        </RadioGroup>
-        <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}"
-                    size="large" type="button"
-                    v-model="formValidate.state" @on-change="types='yc',start=1,getOrder('yc')">
-          <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
-          <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
-        </RadioGroup>
-      </div>
-    </transition>
+    <div v-show="statusList.length>1">
+      <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}"
+                  size="large" type="button"
+                  v-model="formValidate.state" @on-change="types='',start=1;total=0;getOrder()">
+        <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
+          {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
+        </Radio>
+      </RadioGroup>
+      <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}"
+                  size="large" type="button"
+                  v-model="formValidate.state" @on-change="types='yc',start=1,getOrder('yc')">
+        <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
+        <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
+      </RadioGroup>
+    </div>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
         筛选查询
@@ -599,7 +597,7 @@
       },
 
       //获取状态数量
-      statusNum(){
+      statusNum() {
         const _this = this;
         _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
           _this.orderNum = resa.data
