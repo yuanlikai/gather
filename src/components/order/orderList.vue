@@ -244,7 +244,7 @@
         <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
-    <express ref="express" @getOrder="getOrder(formValidate.state>8?'yc':'')"></express>
+    <express ref="express" @statusNum="statusNum" @getOrder="getOrder(formValidate.state>8?'yc':'')"></express>
     <Modal v-model="modal2" width="660">
       <p slot="header">
         <Icon type="ios-information-circle"></Icon>
@@ -416,6 +416,7 @@
         })).then(res => {
           if (res.data.code === 0) {
             _this.getOrder();
+            _this.statusNum();
             _this.$Message.success('退单成功！')
           } else {
             _this.$Message.error(res.data.errorMsg)
@@ -430,7 +431,6 @@
         this.ReOrder.idstr = id;
         this.OrderNumber = num;
         this.getDetails(id)
-
       },
 
       //发货
@@ -462,6 +462,7 @@
           if (res.data.error === 0) {
             this.$Message.success('审核成功');
             this.getOrder();
+            this.statusNum();
           } else {
             this.$Message.error(res.data.errorMsg)
           }
@@ -580,6 +581,7 @@
           if (res.data.code === 0) {
             _this.$Message.success('已提交申请退单');
             _this.getOrder(_this.formValidate.state > 8 ? 'yc' : '');
+            _this.statusNum();
             _this.modal2 = false;
           } else {
             _this.$Message.warning(res.data.errorMsg)
@@ -590,12 +592,18 @@
       //获取状态
       getStatus() {
         const _this = this;
+        _this.statusNum();
         _this.Axios.get('/Manage/Order/getStateStr').then(res => {
-          _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
-            _this.statusList = res.data.data;
-            _this.orderNum = resa.data
-          });
+          _this.statusList = res.data.data;
         })
+      },
+
+      //获取状态数量
+      statusNum(){
+        const _this = this;
+        _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
+          _this.orderNum = resa.data
+        });
       },
 
       //获取状态数量

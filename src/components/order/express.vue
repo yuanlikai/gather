@@ -108,6 +108,7 @@
               if (res.data.error === 0) {
                 _this.$Message.success('发货成功');
                 _this.$emit('getOrder');
+                _this.$emit('statusNum');
                 _this.model = false;
               } else {
                 _this.$Message.error(res.data.errorMsg);
