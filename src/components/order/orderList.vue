@@ -180,7 +180,7 @@
             <li class="card-warp-li">{{item.AddTime}}</li>
             <li class="card-warp-li">订单编号：{{item.OrderNumber}}</li>
             <li class="card-warp-li">总金额：<span style="color: #ed4014;">{{item.Total}}元</span></li>
-            <li class="card-warp-li">售后状态：暂无</li>
+            <li class="card-warp-li">售后状态：无</li>
           </ul>
           <Row style="padding: 16px 16px 16px 50px;">
             <Col span="11">
