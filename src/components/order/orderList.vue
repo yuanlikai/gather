@@ -435,6 +435,7 @@
       ship(i) {
         this.$refs.express.model = true;
         this.$refs.express.formDynamic.idstr = i;
+        this.$refs.express.formDynamic.Description = '';
         this.$refs.express.formDynamic.items = [
           {
             Express: '',
