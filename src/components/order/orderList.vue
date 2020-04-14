@@ -2,23 +2,33 @@
   .ivu-table .demo-table-info-row td {
     color: red
   }
+
+  .card-warp .ivu-card-body {
+    padding: 0;
+  }
 </style>
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
       <div class="ivu-page-header-title">订单列表</div>
     </Card>
-    <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
-                v-model="formValidate.state" @on-change="types='',start=1;total=0;getOrder()">
-      <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
-        {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
-      </Radio>
-    </RadioGroup>
-    <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}" size="large" type="button"
-                v-model="formValidate.state" @on-change="types='yc',start=1,getOrder('yc')">
-      <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
-      <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
-    </RadioGroup>
+    <transition name="fade">
+      <div v-show="statusList.length>1">
+        <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}"
+                    size="large" type="button"
+                    v-model="formValidate.state" @on-change="types='',start=1;total=0;getOrder()">
+          <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
+            {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
+          </Radio>
+        </RadioGroup>
+        <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}"
+                    size="large" type="button"
+                    v-model="formValidate.state" @on-change="types='yc',start=1,getOrder('yc')">
+          <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
+          <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
+        </RadioGroup>
+      </div>
+    </transition>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
         筛选查询
@@ -118,48 +128,143 @@
         </Row>
       </Form>
     </Card>
-    <Card :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto'}">
+    <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
       <p slot="title">
         数据列表
       </p>
       <p slot="extra">
+        <transition name="fade">
+          <span v-show="formValidate.state==='0'">
+            <Checkbox
+              :indeterminate="indeterminate"
+              :value="checkAll"
+              @click.prevent.native="handleCheckAll">全选
+            </Checkbox>
+
+            <Poptip
+              confirm
+              title="是否确定批量审核订单？"
+              @on-ok="batchReview">
+              <Button type="text" icon="md-list-box" @click="">批量审核</Button>
+            </Poptip>
+            <Divider type="vertical"/>
+          </span>
+        </transition>
         <ButtonGroup>
           <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
-          '&supplierid='+sup()+
-          '&allField='+supplier.allField+
-          '&ordernumber='+formValidate.ordernumber+
-          '&ticketnumber='+formValidate.ticketnumber+
-          '&proname='+formValidate.proname+
-          '&stockno='+formValidate.stockno+
-          '&consignee='+formValidate.consignee+
-          '&phone='+formValidate.phone+
-          '&price1='+formValidate.price1+
-          '&price2='+formValidate.price2+
-          '&begintime2='+formValidate.time1[0]+
-          '&endtime2='+formValidate.time1[1]+
-          '&begintime='+formValidate.time[0]+
-          '&endtime='+formValidate.time[1]" target="_blank">
-            <Tooltip content="默认导出进30天数据" placement="top">
-              <Button type="dashed">批量导出订单</Button>
+        '&supplierid='+sup()+
+        '&allField='+supplier.allField+
+        '&ordernumber='+formValidate.ordernumber+
+        '&ticketnumber='+formValidate.ticketnumber+
+        '&proname='+formValidate.proname+
+        '&stockno='+formValidate.stockno+
+        '&consignee='+formValidate.consignee+
+        '&phone='+formValidate.phone+
+        '&price1='+formValidate.price1+
+        '&price2='+formValidate.price2+
+        '&begintime2='+formValidate.time1[0]+
+        '&endtime2='+formValidate.time1[1]+
+        '&begintime='+formValidate.time[0]+
+        '&endtime='+formValidate.time[1]" target="_blank">
+            <Tooltip content="默认导出近30天数据" placement="top">
+              <Button type="text" icon="md-cloud-download">导出订单</Button>
             </Tooltip>
           </a>
         </ButtonGroup>
-        <ButtonGroup>
-          <a v-if="formValidate.state==='1'" style="float: right"
-             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
-            <Button type="dashed">下载发货模板</Button>
-          </a>
-          <Upload style="float: right" v-if="formValidate.state==='1'"></Upload>
-        </ButtonGroup>
-
       </p>
-      <Table :row-class-name="rowClassName" @on-sort-change="sorts" :loading="loading1" :show-header="true"
-             :columns="columns" :data="data"></Table>
-      <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
-      <div style="width: 100%;text-align: center;margin-top: 15px">
+      <Spin fix v-if="loading1"></Spin>
+      <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+        <div v-for="(item,index) in data" :key="item.index">
+          <Alert>{{item.PlatformStr}} - 【{{item.Supplier}}】 - {{item.ErpOrderNumber}} - 平台订单</Alert>
+          <ul class="card-warp-ul">
+            <li class="card-warp-li">{{item.AddTime}}</li>
+            <li class="card-warp-li">订单编号：{{item.OrderNumber}}</li>
+            <li class="card-warp-li">总金额：<span style="color: #ed4014;">{{item.Total}}元</span></li>
+            <li class="card-warp-li">售后状态：暂无</li>
+          </ul>
+          <Row style="padding: 16px 16px 16px 50px;">
+            <Col span="11">
+              <Row class="row-wrap">
+                <Checkbox v-show="formValidate.state==='0'" :label="item.ID" class="row-wrap-checkbox">&nbsp;</Checkbox>
+                <Col span="24" v-for="(itema,indexa) in item.ProList" :key="itema.index" style="margin-bottom: 16px">
+                  <Avatar style="float:left;width: 50px;height: 50px;" size="large"
+                          :src="itema.ProductImg" shape="square" icon="ios-person"/>
+                  <p style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</p>
+                  <p><span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span><span>×1</span></p>
+                </Col>
+              </Row>
+            </Col>
+            <Col span="5" class="card-warp-col3">
+              <p>应付：<span style="color: #ed4014;">{{item.Total}}元</span></p>
+              <p>积分：{{item.YlCoin}}</p>
+              <p>运费：{{item.Freight}}</p>
+            </Col>
+            <Col span="5" class="card-warp-col3">
+              <p>收货人：{{item.Consignee}}</p>
+              <p>{{item.Phone}}</p>
+              <p>{{item.Address.split(' ')[0]}}</p>
+            </Col>
+            <Col span="3" class="card-warp-col3">
+              <p>{{item.StateStr}}</p>
+              <p v-if="item.State===0">
+                <Poptip
+                  confirm
+                  title="是否确定审核该订单？"
+                  @on-ok="review(item.ID)">
+                  <a>审核</a>
+                </Poptip>
+              </p>
+              <p v-if="item.State===1&&formValidate.state != 9">
+                <a @click="ship(item.ID)">发货</a>
+              </p>
+              <p v-if="item.State===2&&formValidate.state != 9">
+                <a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>
+              </p>
+              <p v-if="item.State===5&&formValidate.state != 9">
+                <Poptip
+                  confirm
+                  title="是否确认该退单申请？"
+                  @on-ok="affirm(item.ID)">
+                  <a>确认退单</a>
+                </Poptip>
+              </p>
+              <p>
+                <router-link target="_blank" :to="{path:'/orderDetails',query:{
+                          idstr: item.ID,
+                          abnormal: formValidate.state == 9 ? true : false,
+            }}">订单详情
+                </router-link>
+              </p>
+            </Col>
+          </Row>
+        </div>
+
+      </CheckboxGroup>
+      <div class="Page-wrap">
         <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
+    <!--<Card :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto'}">-->
+    <!--<p slot="title">-->
+    <!--数据列表-->
+    <!--</p>-->
+    <!--<p slot="extra">-->
+    <!--<ButtonGroup>-->
+    <!--<a v-if="formValidate.state==='1'" style="float: right"-->
+    <!--href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">-->
+    <!--<Button type="dashed">下载发货模板</Button>-->
+    <!--</a>-->
+    <!--<Upload style="float: right" v-if="formValidate.state==='1'"></Upload>-->
+    <!--</ButtonGroup>-->
+
+    <!--</p>-->
+    <!--<Table :row-class-name="rowClassName" @on-sort-change="sorts" :loading="loading1" :show-header="true"-->
+    <!--:columns="columns" :data="data"></Table>-->
+    <!--<div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>-->
+    <!--<div style="width: 100%;text-align: center;margin-top: 15px">-->
+    <!--<Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>-->
+    <!--</div>-->
+    <!--</Card>-->
     <express ref="express" @getOrder="getOrder(formValidate.state>8?'yc':'')"></express>
     <Modal v-model="modal2" width="660">
       <p slot="header">
@@ -206,6 +311,9 @@
     props: ['supplier'],
     data() {
       return {
+        indeterminate: true,
+        checkAll: false,
+        checkAllGroup: [],
         total: 0,
         modal2: false,
         loading1: false,
@@ -395,7 +503,7 @@
               return h('Tooltip', {
                 props: {
                   placement: 'left-end',
-                  offset:6,
+                  offset: 6,
                   'max-width': 320,
                 },
                 style: {
@@ -573,6 +681,65 @@
       }
     },
     methods: {
+      //确认退单
+      affirm(id) {
+        const _this = this;
+        _this.Axios.post('/Manage/Order/comfirmReOrder', _this.Qs.stringify({
+          idstr: id
+        })).then(res => {
+          if (res.data.code === 0) {
+            _this.getOrder();
+            _this.$Message.success('退单成功！')
+          } else {
+            _this.$Message.error(res.data.errorMsg)
+          }
+        })
+      },
+
+      //申请退单
+      chargeback(id, num) {
+        this.modal2 = true;
+        this.ReOrder.total = 0;
+        this.ReOrder.idstr = id;
+        this.OrderNumber = num;
+        this.getDetails(id)
+
+      },
+
+      //发货
+      ship(i) {
+        this.$refs.express.model = true;
+        this.$refs.express.formDynamic.idstr = i;
+        this.$refs.express.formDynamic.items = [
+          {
+            Express: '',
+            ExpressNo: ''
+          }
+        ]
+      },
+
+      //批量审核
+      batchReview() {
+        if (this.checkAllGroup.length < 1) {
+          this.$Message.warning('请选择要审核的订单')
+        } else {
+          this.review(this.checkAllGroup.join(','))
+        }
+      },
+
+      //审核订单
+      review(i) {
+        this.Axios.post('/Manage/Order/batchAudit', this.Qs.stringify({
+          idstr: i
+        })).then(res => {
+          if (res.data.error === 0) {
+            this.$Message.success('审核成功');
+            this.getOrder();
+          } else {
+            this.$Message.error(res.data.errorMsg)
+          }
+        })
+      },
 
       //订单时间金额升序降序
       sorts(i) {
@@ -587,13 +754,13 @@
             this.sortid = '';
             break
         }
-        this.getOrder(this.formValidate.state > 8 ? 'yc' : '');
+        this.getOrder();
       },
 
       // 分页
       paging(i) {
         this.start = i;
-        this.getOrder(this.formValidate.state > 8 ? 'yc' : '');
+        this.getOrder();
       },
 
       //获取订单列表
@@ -624,6 +791,9 @@
           }
         }).then(res => {
           _this.getOrderNum();
+          _this.indeterminate = false;
+          _this.checkAll = false;
+          _this.checkAllGroup = [];
           if (res.data.error === 0) {
             _this.data = res.data.data;
             _this.total = res.data.total;
@@ -694,16 +864,16 @@
       getStatus() {
         const _this = this;
         _this.Axios.get('/Manage/Order/getStateStr').then(res => {
-          _this.statusList = res.data.data;
+          _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
+            _this.statusList = res.data.data;
+            _this.orderNum = resa.data
+          });
         })
       },
 
       //获取状态数量
       getOrderNum() {
         const _this = this;
-        _this.Axios.get('/Manage/Order/getOrderNum').then(res => {
-          _this.orderNum = res.data
-        });
       },
 
       //获取供应商
@@ -766,7 +936,37 @@
 
       sup() {
         return this.supplier.userType === 'SUPPLIER' ? this.supplier.supplierId : this.formValidate.supplierid;
-      }
+      },
+
+      handleCheckAll() {
+        if (this.indeterminate) {
+          this.checkAll = false;
+        } else {
+          this.checkAll = !this.checkAll;
+        }
+        this.indeterminate = false;
+
+        if (this.checkAll) {
+          this.checkAllGroup = [];
+          for (let i = 0; i < this.data.length; i++) {
+            this.checkAllGroup.push(this.data[i].ID)
+          }
+        } else {
+          this.checkAllGroup = [];
+        }
+      },
+      checkAllGroupChange(data) {
+        if (data.length === this.data.length) {
+          this.indeterminate = false;
+          this.checkAll = true;
+        } else if (data.length > 0) {
+          this.indeterminate = true;
+          this.checkAll = false;
+        } else {
+          this.indeterminate = false;
+          this.checkAll = false;
+        }
+      },
     },
     mounted() {
       this.getOrder();
@@ -778,6 +978,66 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+  .Page-wrap {
+    width: 100%;
+    text-align: center;
+    padding: 16px 0;
+  }
+
+  .row-wrap p {
+    float: left;
+    font-size: 12px;
+    width: calc(100% - 55px);
+    line-height: 24px;
+    padding-left: 16px;
+  }
+
+  .row-wrap-checkbox {
+    margin: auto;
+    position: absolute;
+    left: -30px;
+    bottom: 0;
+    top: 0;
+    width: 16px;
+    height: 32px;
+  }
+
+  .row-wrap {
+    position: relative;
+  }
+
+  .card-warp-col3 {
+    font-size: 12px;
+  }
+
+  .card-warp-col3 p {
+    line-height: 24px;
+  }
+
+  .card-warp-li {
+    flex-direction: column-reverse;
+    margin-right: 16px;
+  }
+
+  .card-warp-ul {
+    width: 100%;
+    display: flex;
+    border-bottom: 1px solid #dcdee2;
+    font-size: 12px;
+    line-height: 16px;
+    padding: 8px 48px 8px 16px;
+  }
+
+  .ivu-alert {
+    font-weight: 700;
+    border: none;
+    background: #e8eaec;
+    margin-bottom: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+  }
+
   .ivu-table-wrapper {
     overflow: inherit;
   }
