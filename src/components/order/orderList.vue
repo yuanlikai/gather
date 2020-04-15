@@ -138,7 +138,7 @@
             <Checkbox
               :indeterminate="indeterminate"
               :value="checkAll"
-              @click.prevent.native="handleCheckAll">全选
+              @click.prevent.native="handleCheckAll">全选本页
             </Checkbox>
 
             <Poptip
@@ -187,10 +187,10 @@
               <Row class="row-wrap">
                 <Checkbox v-show="formValidate.state==='0'" :label="item.ID" class="row-wrap-checkbox">&nbsp;</Checkbox>
                 <Col span="24" v-for="(itema,indexa) in item.ProList" :key="itema.index" style="margin-bottom: 16px">
-                  <Avatar style="float:left;width: 50px;height: 50px;" size="large"
-                          :src="itema.ProductImg" shape="square" icon="ios-person"/>
+                  <img style="float:left;"
+                       src="https://ylticket.oss-cn-shanghai.aliyuncs.com/upload/20191119104820.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF" alt="">
                   <p style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</p>
-                  <p><span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span><span>×1</span></p>
+                  <p><span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span><span>×{{itema.Num}}</span></p>
                 </Col>
               </Row>
             </Col>
