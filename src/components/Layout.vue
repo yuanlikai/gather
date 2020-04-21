@@ -1,4 +1,8 @@
-
+<style>
+  .ivu-menu-horizontal.ivu-menu-light:after {
+    display: none;
+  }
+</style>
 <template>
   <div class="layout">
     <Layout class="">
@@ -214,12 +218,6 @@
   }
 </script>
 <style>
-  .ivu-menu-horizontal.ivu-menu-light:after {
-    height: 0;
-  }
-  .ivu-menu-horizontal.ivu-menu-light:after {
-    display: none;
-  }
 
   .swiper-container {
     width: 100%;
