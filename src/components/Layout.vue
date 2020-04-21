@@ -1,5 +1,5 @@
 <style>
-  .ivu-menu-horizontal.ivu-menu-light:after {
+  .ivu-menu-horizontal:after {
     display: none;
   }
 </style>
@@ -219,6 +219,9 @@
 </script>
 <style>
 
+  .ivu-menu-horizontal:after {
+    display: none;
+  }
   .swiper-container {
     width: 100%;
   }
