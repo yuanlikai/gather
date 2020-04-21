@@ -1,8 +1,3 @@
-<style>
-  .ivu-menu-horizontal:after {
-    display: none;
-  }
-</style>
 <template>
   <div class="layout">
     <Layout class="">
@@ -219,7 +214,7 @@
 </script>
 <style>
 
-  .ivu-menu-horizontal:after {
+  .ivu-layout-header>.ivu-menu-horizontal:after {
     display: none;
   }
   .swiper-container {
