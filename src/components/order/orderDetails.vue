@@ -216,13 +216,13 @@
       }
     },
     methods: {
-      afterSsa(){
+      afterSsa() {
         const _this = this;
-        _this.$refs.alterSite.model=true;
+        _this.$refs.alterSite.model = true;
         this.$refs.alterSite.getSite({
-          consignee:_this.data.Consignee,
-          phone:_this.data.Phone,
-          address:_this.data.Address,
+          consignee: _this.data.Consignee,
+          phone: _this.data.Phone,
+          address: _this.data.Address,
         });
       },
 
@@ -243,7 +243,7 @@
           abnormalstr: _this.formValidate.abnormalstr,  // 异常原因
         })).then(res => {
           if (res.data.error === 0) {
-            _this.model=false;
+            _this.model = false;
             _this.$Message.success('转为异常成功')
           } else {
             _this.$Message.warning(res.data.errorMsg)
@@ -270,6 +270,7 @@
         _this.Axios.get('/Manage/Order/detail', {
           params: {
             idstr: _this.$route.query.idstr,
+            vid: _this.$route.query.vid,
           }
         }).then(res => {
           if (res.data.error === 0) {

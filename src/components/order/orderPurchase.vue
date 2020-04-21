@@ -235,6 +235,7 @@
                 <router-link target="_blank" :to="{path:'/orderDetails',query:{
                           idstr: item.ID,
                           abnormal: formValidate.state == 9 ? true : false,
+                          vid:0,
             }}">订单详情
                 </router-link>
               </p>
@@ -502,6 +503,7 @@
         _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
+            vid:0,
             sortid: _this.sortid,
             ticketnumber: _this.formValidate.ticketnumber,
             state: _this.formValidate.state,
