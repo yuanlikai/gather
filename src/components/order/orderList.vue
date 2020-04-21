@@ -13,7 +13,7 @@
       <div class="ivu-page-header-title">订单列表</div>
     </Card>
     <transition name="fade">
-      <div v-show="statusList.length>1">
+      <div v-show="orderNum.error===0">
         <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}"
                     size="large" type="button"
                     v-model="formValidate.state" @on-change="types='',start=1;total=0;getOrder()">
@@ -604,7 +604,9 @@
       statusNum() {
         const _this = this;
         _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
+          console.log(_this.orderNum.length)
           _this.orderNum = resa.data
+          console.log(_this.orderNum)
         });
       },
 
