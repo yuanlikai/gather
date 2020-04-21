@@ -36,6 +36,11 @@ export default new Router({
           component: resolve => require(['@/components/order/orderList'], resolve),
         },
         {
+          path: '/orderPurchase',
+          name: '订单列表(采购)',
+          component: resolve => require(['@/components/order/orderPurchase'], resolve),
+        },
+        {
           path: '/orderDetails',
           name: '订单详情',
           component: resolve => require(['@/components/order/orderDetails'], resolve),

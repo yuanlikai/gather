@@ -154,8 +154,8 @@
           <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
         '&supplierid='+sup()+
         '&allField='+supplier.allField+
-        '&platformid='+formValidate.terraceId+
         '&ordernumber='+formValidate.ordernumber+
+        '&platformid='+formValidate.terraceId+
         '&ticketnumber='+formValidate.ticketnumber+
         '&proname='+formValidate.proname+
         '&stockno='+formValidate.stockno+
@@ -189,9 +189,11 @@
                 <Checkbox v-show="formValidate.state==='0'" :label="item.ID" class="row-wrap-checkbox">&nbsp;</Checkbox>
                 <Col span="24" v-for="(itema,indexa) in item.ProList" :key="itema.index" style="margin-bottom: 16px">
                   <img style="float:left;"
-                       src="https://ylticket.oss-cn-shanghai.aliyuncs.com/upload/20191119104820.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF" alt="">
+                       src="https://ylticket.oss-cn-shanghai.aliyuncs.com/upload/20191119104820.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF"
+                       alt="">
                   <p style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</p>
-                  <p><span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span><span>×{{itema.Num}}</span></p>
+                  <p><span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span><span>×{{itema.Num}}</span>
+                  </p>
                 </Col>
               </Row>
             </Col>
