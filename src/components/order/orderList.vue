@@ -606,9 +606,7 @@
       statusNum() {
         const _this = this;
         _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
-          console.log(_this.orderNum.length)
           _this.orderNum = resa.data
-          console.log(_this.orderNum)
         });
       },
 
