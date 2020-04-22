@@ -32,7 +32,7 @@
               {{item.name}}
             </MenuItem>
           </Menu>
-          <Menu mode="horizontal" type="light" style="float: right;margin-right: 20px">
+          <Menu mode="horizontal" type="light" id="ivu-menua" style="float: right;margin-right: 20px">
             <div class="layout-logo"></div>
             <div class="layout-nav">
               <span style="font-size: 12px;font-weight: 600;color: #333;">{{supplier.supplierName}}</span>
@@ -213,7 +213,7 @@
   }
 </script>
 <style>
-  #ivu-menu:after {
+  #ivu-menu:after,#ivu-menua:after {
     display: none;
   }
   .swiper-container {
