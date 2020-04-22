@@ -27,7 +27,7 @@
                 :style="{margin: '0 24px','line-height':'64px',cursor:'pointer',float:'left'}"
                 type="md-menu"
                 size="24"></Icon>
-          <Menu v-if="isMenu" @on-select="selectMenu1" mode="horizontal" :active-name="menu1" style="float: left">
+          <Menu v-if="isMenu" @on-select="selectMenu1" mode="horizontal" :active-name="menu1" id="ivu-menu" style="float: left">
             <MenuItem v-for="(item,index) in menuList" :key="index" :name="item.numb">
               {{item.name}}
             </MenuItem>
@@ -213,8 +213,7 @@
   }
 </script>
 <style>
-
-  .ivu-layout-header>.ivu-menu-horizontal:after {
+  #ivu-menu:after {
     display: none;
   }
   .swiper-container {
