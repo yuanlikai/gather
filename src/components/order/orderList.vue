@@ -126,6 +126,7 @@
           <a v-if="formValidate.state!=='0'" :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
           '&supplierid='+sup()+
           '&allField='+supplier.allField+
+          '&platformid='+formValidate.terraceId+
           '&ordernumber='+formValidate.ordernumber+
           '&ticketnumber='+formValidate.ticketnumber+
           '&proname='+formValidate.proname+
@@ -559,6 +560,7 @@
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             sortid: _this.sortid,
+            vid:1,
             ticketnumber:_this.formValidate.ticketnumber,
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
