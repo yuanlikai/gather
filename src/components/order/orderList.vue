@@ -320,8 +320,8 @@
         ReOrder: {
           dstr: '',  //原单Id
           total: 0,  //退款金额
-          remarks: '',  //备注
-          freight: 0,  //运费
+          remarks: '',  //备注1
+          freight: 0,  //运费1
           prolist: [],
         },
         columns1: [
