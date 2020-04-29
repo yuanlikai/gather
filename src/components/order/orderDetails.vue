@@ -33,6 +33,9 @@
           下单时间：{{data.AddTime}}
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
+          发货时间：{{data.GetTime}}
+        </Col>
+        <Col class="colClass" :xs="24" :md="12" :lg="8">
           支付方式：{{data.PayTypeStr}}
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
@@ -94,6 +97,9 @@
         </Col>
         <Col class="colClass" span="24">
           客服备注：{{data.RemarksHt}}
+        </Col>
+        <Col class="colClass" span="24">
+          <Button type="primary">备注</Button>
         </Col>
       </Row>
       <Divider/>
@@ -200,6 +206,13 @@
             title: '单价',
             tooltip: true,
             key: 'Price',
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '成本',
+            tooltip: true,
+            key: '',
             minWidth: 88,
             align: "center",
           },

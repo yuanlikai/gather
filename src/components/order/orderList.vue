@@ -14,15 +14,15 @@
     </Card>
     <transition name="fade">
       <div v-show="orderNum.error===0">
-        <RadioGroup :style="{margin: '0 0 0 20px', background: '#fff',height:'auto'}"
-                    size="large" type="button"
+        <RadioGroup :style="{marginLeft: '20px',}"
+                    type="button"
                     v-model="formValidate.state" @on-change="types='',start=1;total=0;getOrder()">
           <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
             {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
           </Radio>
         </RadioGroup>
         <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}"
-                    size="large" type="button"
+                    type="button"
                     v-model="formValidate.state" @on-change="types='yc',start=1,getOrder('yc')">
           <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
           <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
@@ -142,11 +142,13 @@
             </Checkbox>
 
             <Poptip
+              v-if="checkAllGroup.length>0"
               confirm
               title="是否确定批量审核订单？"
               @on-ok="batchReview">
               <Button type="text" icon="md-list-box" @click="">批量审核</Button>
             </Poptip>
+            <Button v-else type="text" icon="md-list-box" @click="$Message.warning('请选择要审核的订单')">批量审核</Button>
             <Divider type="vertical"/>
           </span>
         </transition>
@@ -174,7 +176,8 @@
         </ButtonGroup>
       </p>
       <Spin fix v-if="loading1"></Spin>
-      <CheckboxGroup v-model="checkAllGroup" @on-change="checkAllGroupChange">
+      <p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>
+      <CheckboxGroup v-else v-model="checkAllGroup" @on-change="checkAllGroupChange">
         <div v-for="(item,index) in data" :key="item.index">
           <Alert>{{item.PlatformStr}} - 【{{item.Supplier}}】 - {{item.ErpOrderNumber}} - 平台订单</Alert>
           <ul class="card-warp-ul">
@@ -187,12 +190,24 @@
             <Col span="11">
               <Row class="row-wrap">
                 <Checkbox v-show="formValidate.state==='0'" :label="item.ID" class="row-wrap-checkbox">&nbsp;</Checkbox>
-                <Col span="24" v-for="(itema,indexa) in item.ProList" :key="itema.index" style="margin-bottom: 16px">
-                  <img style="float:left;"
-                       src="https://ylticket.oss-cn-shanghai.aliyuncs.com/upload/20191119104820.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF" alt="">
-                  <p style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</p>
-                  <p><span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span><span>×{{itema.Num}}</span></p>
-                </Col>
+                <div v-for="(itema,indexa) in item.ProList" :key="itema.index">
+                  <Col span="24" v-if="item.open?true:indexa<3" style="margin-bottom: 16px">
+                    <img style="float:left;"
+                         src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/618/wutu.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF"
+                         alt="">
+                    <p style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</p>
+                    <p><span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span><span>×{{itema.Num}}</span>
+                    </p>
+                  </Col>
+                </div>
+
+                <div style="float: left;margin-left: 66px">共 <span style="color: #000000;font-weight: 700">{{item.ProList.length}}</span>
+                  个产品
+                  <span v-if="item.ProList.length>3">
+                    <Button v-if="item.open" type="text" icon="ios-arrow-up" @click="openPro(index)">收起</Button>
+                    <Button v-else type="text" icon="ios-arrow-down" @click="openPro(index)">展开</Button>
+                  </span>
+                </div>
               </Row>
             </Col>
             <Col span="5" class="card-warp-col3">
@@ -201,7 +216,7 @@
               <p>运费：{{item.Freight}}</p>
             </Col>
             <Col span="5" class="card-warp-col3">
-              <p>发货时间：{{item.Consignee}}</p>
+              <p style="color: #2db7f5;">发货时间：{{item.GetTime}}</p>
               <p>收货人：{{item.Consignee}}</p>
               <p>{{item.Phone}}</p>
               <p>{{item.Address.split(' ')[0]}}</p>
@@ -243,8 +258,9 @@
         </div>
 
       </CheckboxGroup>
-      <div class="Page-wrap">
-        <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
+      <div v-show="!data.length<1" class="Page-wrap">
+        <Page @on-change="paging" placement="top" :total="total" @on-page-size-change="showSizer" :page-size="10"
+              show-elevator show-total show-sizer/>
       </div>
     </Card>
     <express ref="express" @statusNum="statusNum" @getOrder="getOrder(formValidate.state>8?'yc':'')"></express>
@@ -293,6 +309,7 @@
     props: ['supplier'],
     data() {
       return {
+        pageSize: 10,
         indeterminate: true,
         checkAll: false,
         checkAllGroup: [],
@@ -411,6 +428,21 @@
       }
     },
     methods: {
+      //切换每页条数回调
+      showSizer(size) {
+        this.pageSize = size;
+        this.getOrder();
+      },
+
+      //展开更多产品
+      openPro(index) {
+        if (this.data[index].open) {
+          this.$set(this.data[index], 'open', false);
+        } else {
+          this.$set(this.data[index], 'open', true);
+        }
+      },
+
       //确认退单
       affirm(id) {
         const _this = this;
@@ -503,7 +535,7 @@
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             sortid: _this.sortid,
-            vid:1,
+            vid: 1,
             ticketnumber: _this.formValidate.ticketnumber,
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
@@ -520,7 +552,7 @@
             begintime2: _this.formValidate.time1[0],
             endtime2: _this.formValidate.time1[1],
             page: _this.start,
-            pagesize: '10',
+            pagesize: _this.pageSize,
           }
         }).then(res => {
           _this.getOrderNum();
