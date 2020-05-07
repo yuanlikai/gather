@@ -248,7 +248,7 @@
               <p>
                 <router-link target="_blank" :to="{path:'/orderDetails',query:{
                           idstr: item.ID,
-                          abnormal: formValidate.state == 9 ? true : false,
+                          abnormal: formValidate.state === 9 ? true : false,
                           vid:1,
             }}">订单详情
                 </router-link>
@@ -256,7 +256,6 @@
             </Col>
           </Row>
         </div>
-
       </CheckboxGroup>
       <div v-show="!data.length<1" class="Page-wrap">
         <Page @on-change="paging" placement="top" :total="total" @on-page-size-change="showSizer" :page-size="10"
