@@ -195,9 +195,12 @@
                     <img style="float:left;"
                          src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/618/wutu.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF"
                          alt="">
-                    <p style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</p>
-                    <p><span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span><span>×{{itema.Num}}</span>
+                    <p>
+                      <span style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</span>
+                      <Icon type="md-close" /><span>{{itema.Num}}</span>
                     </p>
+                    <p>售价：<span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span><span></span>
+                    <p>成本：0元</p>
                   </Col>
                 </div>
 
@@ -547,9 +550,9 @@
             price1: _this.formValidate.price1,
             price2: _this.formValidate.price2,
             begintime: _this.formValidate.time[0],
-            endtime: _this.formValidate.time[1],
+            endtime: _this.formValidate.time[1]+' 23:59:59',
             begintime2: _this.formValidate.time1[0],
-            endtime2: _this.formValidate.time1[1],
+            endtime2: _this.formValidate.time1[1]+' 23:59:59',
             page: _this.start,
             pagesize: _this.pageSize,
           }
