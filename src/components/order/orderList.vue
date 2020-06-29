@@ -550,9 +550,9 @@
             price1: _this.formValidate.price1,
             price2: _this.formValidate.price2,
             begintime: _this.formValidate.time[0],
-            endtime: _this.formValidate.time[1]+' 23:59:59',
+            endtime: _this.formValidate.time[1],
             begintime2: _this.formValidate.time1[0],
-            endtime2: _this.formValidate.time1[1]+' 23:59:59',
+            endtime2: _this.formValidate.time1[1],
             page: _this.start,
             pagesize: _this.pageSize,
           }
@@ -691,14 +691,14 @@
       },
 
       getTime(i) {
-        this.formValidate.time = [i[0], i[1]];
+        this.formValidate.time = [i[0], i[1]+' 23:59:59'];
         this.start = 1;
         this.total = 0;
         this.getOrder()
       },
 
       getTime1(i) {
-        this.formValidate.time1 = [i[0], i[1]];
+        this.formValidate.time1 = [i[0], i[1]+' 23:59:59'];
         this.start = 1;
         this.total = 0;
         this.getOrder()
