@@ -64,7 +64,7 @@ axios.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = true;
 
 /* eslint-disable no-new */
 var vm = new Vue({
