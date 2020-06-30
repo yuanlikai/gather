@@ -334,8 +334,6 @@
         })
       }else if(this.$route.query.vid==='1'){
         this.columns.splice(4,2);
-        this.columns.splice(4,2);
-        console.log(this.columns)
       }
       this.getDetails();
     }
