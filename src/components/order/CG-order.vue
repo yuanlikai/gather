@@ -10,7 +10,7 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">客服模式</div>
+      <div class="ivu-page-header-title">采购模式</div>
     </Card>
     <div style="min-height: 32px;">
       <transition name="fade">
@@ -186,6 +186,7 @@
             <li class="card-warp-li">{{item.AddTime}}</li>
             <li class="card-warp-li">订单编号：{{item.OrderNumber}}</li>
             <li class="card-warp-li">售价总金额：<span style="color: #ed4014;">{{item.Total}}元</span></li>
+            <li class="card-warp-li">采购价总金额：<span style="color: #ed4014;">{{item.CostTotal}}元</span></li>
             <li class="card-warp-li">售后状态：无</li>
           </ul>
           <Row style="padding: 16px 16px 16px 50px;">
@@ -205,6 +206,10 @@
                     <p>
                       售价：
                       <span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span>
+                    </p>
+                    <p>
+                      采购价：
+                      <span style="color: #ed4014;margin-right: 8px">{{itema.CostPrice}}元</span>
                     </p>
                   </Col>
                 </div>

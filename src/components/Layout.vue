@@ -27,7 +27,8 @@
                 :style="{margin: '0 24px','line-height':'64px',cursor:'pointer',float:'left'}"
                 type="md-menu"
                 size="24"></Icon>
-          <Menu v-if="isMenu" @on-select="selectMenu1" mode="horizontal" :active-name="menu1" id="ivu-menu" style="float: left">
+          <Menu v-if="isMenu" @on-select="selectMenu1" mode="horizontal" :active-name="menu1" id="ivu-menu"
+                style="float: left">
             <MenuItem v-for="(item,index) in menuList" :key="index" :name="item.numb">
               {{item.name}}
             </MenuItem>
@@ -153,8 +154,10 @@
         for (let i = 0; i < menuList.length; i++) {
           if (name === menuList[i].numb) {
             _this.menuLeft = _this.menuList[i];
-            // _this.menu = _this.menuLeft.children[0].children[0].numb;
-            localStorage.setItem('menu', _this.menuLeft.children[0].children[0].numb);
+            let menuLeft = _this.menuLeft.children[0].children[0];
+            localStorage.setItem('menu', menuLeft.numb);
+            _this.menu = menuLeft.numb;
+            _this.$router.push(menuLeft.to);
           }
         }
         _this.menu1 = name;
@@ -213,9 +216,10 @@
   }
 </script>
 <style>
-  #ivu-menu:after,#ivu-menua:after {
+  #ivu-menu:after, #ivu-menua:after {
     display: none;
   }
+
   .swiper-container {
     width: 100%;
   }

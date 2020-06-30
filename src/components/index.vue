@@ -65,11 +65,12 @@
                 localStorage.setItem('menu1', res.data.data[0].numb);
                 localStorage.setItem('menu', res.data.data[0].children[0].children[0].numb);
                 localStorage.setItem('user', _this.formInline.user.replace(/ /g, ''));
-                _this.$router.push(res.data.data[0].children[0].children[0].to)
+                _this.$router.push(res.data.data[0].children[0].children[0].to);
+                _this.loading = false;
               } else {
                 _this.$Message.error(res.data.message);
+                _this.loading = false;
               }
-              _this.loading = false;
             });
           } else {
             _this.$Message.warning('请输入账号密码！');

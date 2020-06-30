@@ -1,3 +1,26 @@
+<style>
+  .demo-spin-icon-load {
+    animation: ani-demo-spin 1s linear infinite;
+  }
+
+  @keyframes ani-demo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .demo-spin-col {
+    height: 100px;
+    position: relative;
+    border: 1px solid #eee;
+  }
+</style>
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
@@ -7,7 +30,11 @@
       <p slot="title">
         待处理事务
       </p>
-      <Row>
+      <Row style="min-height: 105px;">
+        <Spin fix v-if="loading">
+          <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+          <div>Loading</div>
+        </Spin>
         <Col span="8" style="height: 35px;padding: 0 20px" v-for="(item,index) in statusList" :key="index">
           <a @click="order(item.Id)">{{item.Name}}</a> ({{orderNum["num"+String(index+1)]}})
         </Col>
@@ -20,8 +47,9 @@
   export default {
     data() {
       return {
-        statusList:[],
-        orderNum:{}
+        loading: true,
+        statusList: [],
+        orderNum: {}
       }
     },
     methods: {
@@ -34,22 +62,25 @@
       },
 
       //根据ID 跳转到订单页面
-      order(Id){
+      order(Id) {
         this.menu1 = '3';
-        this.$emit('operateMuen','3','3-1-1');
+        this.$emit('operateMuen', '3', '3-1-1');
         this.$router.push({
-          name:'订单列表',
-          params:{
-            id:Id
+          name: '订单列表',
+          params: {
+            id: Id
           }
         });
       },
 
       //获取状态数量
-      getOrderNum(){
+      getOrderNum() {
         const _this = this;
         _this.Axios.get('/Manage/Order/getOrderNum').then(res => {
-          _this.orderNum=res.data;
+          _this.orderNum = res.data;
+          setTimeout(()=>{
+            _this.loading = false;
+          },100)
         });
       },
     },
@@ -62,10 +93,10 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-  .shiwu{
+  .shiwu {
     float: left;
     margin-right: 4px;
-    margin-top:2px;
+    margin-top: 2px;
     width: 16px
   }
 </style>
