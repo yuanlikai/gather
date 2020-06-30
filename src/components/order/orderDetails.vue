@@ -324,7 +324,7 @@
         this.$set(this.columns[4],'key','SumCostPrice');
         console.log(this.columns[4])
       }else if(this.$route.query.vid==='2'){
-        this.columns.splice(5,1)
+        this.columns.splice(5,1);
         this.columns.push({
           title: '采购价小计',
           tooltip: true,
