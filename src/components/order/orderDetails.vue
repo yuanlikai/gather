@@ -84,7 +84,21 @@
           运费：{{data.Freight}}
         </Col>
         <Col style="margin-top: 16px;text-align: right" :xs="13" :lg="{ span: 11, pull: 0 }">
-          合计：<span style="color: red;font-weight: 700;">{{data.Total}}</span> (不含运费)
+          <div v-if="$route.query.vid==='3'">
+            合计：<span style="color: red;font-weight: 700;">{{data.CostTotal}}</span>
+            (不含运费)
+          </div>
+          <div v-else-if="$route.query.vid==='2'">
+            售价合计：<span style="color: red;font-weight: 700;">{{data.Total}}</span>
+            (不含运费)
+            <br>
+            采购价合计：<span style="color: red;font-weight: 700;">{{data.CostTotal}}</span>
+            (不含运费)
+          </div>
+          <div v-if="$route.query.vid==='1'">
+            合计：<span style="color: red;font-weight: 700;">{{data.Total}}</span>
+            (不含运费)
+          </div>
         </Col>
       </Row>
       <Divider/>
@@ -203,21 +217,28 @@
             align: "center",
           },
           {
-            title: '单价',
+            title: '售价单价',
             tooltip: true,
             key: 'Price',
             minWidth: 88,
             align: "center",
           },
           {
-            title: '成本',
+            title: '采购单价',
             tooltip: true,
-            key: '',
+            key: 'CostPrice',
             minWidth: 88,
             align: "center",
           },
           {
-            title: '小计',
+            title: '供货单价',
+            tooltip: true,
+            key: 'CostPrice',
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '售价小计',
             tooltip: true,
             key: 'SumPrice',
             minWidth: 88,
@@ -289,7 +310,6 @@
           if (res.data.error === 0) {
             _this.OperBtn = res.data.data;
             _this.data = res.data;
-
           } else {
             _this.$Message.error(res.data.errorMsg)
           }
@@ -298,6 +318,25 @@
       }
     },
     mounted() {
+      if(this.$route.query.vid==='3'){
+        this.columns.splice(3,2);
+        this.$set(this.columns[4],'title','供货价小计');
+        this.$set(this.columns[4],'key','SumCostPrice');
+        console.log(this.columns[4])
+      }else if(this.$route.query.vid==='2'){
+        this.columns.splice(5,1)
+        this.columns.push({
+          title: '采购价小计',
+          tooltip: true,
+          key: 'SumCostPrice',
+          minWidth: 88,
+          align: "center",
+        })
+      }else if(this.$route.query.vid==='1'){
+        this.columns.splice(4,2);
+        this.columns.splice(4,2);
+        console.log(this.columns)
+      }
       this.getDetails();
     }
   }
