@@ -64,13 +64,24 @@
       //根据ID 跳转到订单页面
       order(Id) {
         this.menu1 = '3';
-        this.$emit('operateMuen', '3', '3-1-1');
-        this.$router.push({
-          name: '订单列表',
-          params: {
-            id: Id
+        let menuList = JSON.parse(localStorage.getItem('menuList'));
+
+        for(let i in menuList){
+          console.log(menuList[i].numb)
+          if(menuList[i].numb==='3'){
+            this.$emit('operateMuen', '3', menuList[i].children[0].children[0].numb);
+            console.log(menuList[i].children[0].children[0]);
+            this.$router.push({
+              name: menuList[i].children[0].children[0].name,
+              params: {
+                id: Id
+              }
+            });
+            return
           }
-        });
+        }
+        console.log(JSON.parse(localStorage.getItem('menuList')));
+
       },
 
       //获取状态数量
