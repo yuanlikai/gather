@@ -155,6 +155,7 @@
           </span>
         </transition>
         <ButtonGroup>
+
           <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
         '&supplierid='+sup()+
         '&allField='+supplier.allField+
@@ -168,9 +169,9 @@
         '&price1='+formValidate.price1+
         '&price2='+formValidate.price2+
         '&begintime2='+formValidate.time1[0]+
-        '&endtime2='+formValidate.time1[1]+
+        '&endtime2='+setTime(formValidate.time1[1])+
         '&begintime='+formValidate.time[0]+
-        '&endtime='+formValidate.time[1]" target="_blank">
+        '&endtime='+setTime(formValidate.time1[1])" target="_blank">
             <Tooltip content="默认导出近30天数据" placement="top">
               <Button type="text" icon="md-cloud-download">导出订单</Button>
             </Tooltip>
@@ -434,7 +435,18 @@
         terraceList: [],
       }
     },
+    computed:{
+      // setTime:function(time){
+      //   console.log(time)
+      //   return this.riqi(new Date(time).getTime()+86400000).split(' ')[0]
+      // }
+    },
     methods: {
+      setTime(time){
+        return this.riqi(new Date(time).getTime()+86400000).split(' ')[0]
+      },
+
+
       //切换每页条数回调
       showSizer(size) {
         this.pageSize = size;
