@@ -112,9 +112,9 @@
         <Col class="colClass" span="24">
           客服备注：{{data.RemarksHt}}
         </Col>
-        <Col class="colClass" span="24">
-          <Button type="primary">备注</Button>
-        </Col>
+        <!--<Col class="colClass" span="24">-->
+          <!--<Button type="primary">备注</Button>-->
+        <!--</Col>-->
       </Row>
       <Divider/>
     </Content>
