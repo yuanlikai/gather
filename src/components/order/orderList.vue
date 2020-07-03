@@ -171,7 +171,7 @@
         '&begintime2='+formValidate.time1[0]+
         '&endtime2='+setTime(formValidate.time1[1])+
         '&begintime='+formValidate.time[0]+
-        '&endtime='+setTime(formValidate.time1[1])" target="_blank">
+        '&endtime='+setTime(formValidate.time[1])" target="_blank">
             <Tooltip content="默认导出近30天数据" placement="top">
               <Button type="text" icon="md-cloud-download">导出订单</Button>
             </Tooltip>
@@ -435,17 +435,12 @@
         terraceList: [],
       }
     },
-    computed:{
-      // setTime:function(time){
-      //   console.log(time)
-      //   return this.riqi(new Date(time).getTime()+86400000).split(' ')[0]
-      // }
-    },
     methods: {
-      setTime(time){
-        return this.riqi(new Date(time).getTime()+86400000).split(' ')[0]
-      },
 
+      //下单发货结束时间多一天
+      setTime(time){
+        return time?this.riqi(new Date(time).getTime()+86400000).split(' ')[0]:''
+      },
 
       //切换每页条数回调
       showSizer(size) {
@@ -618,6 +613,8 @@
           }
         })
       },
+
+      //重置搜索条件
       handleReset(name) {
         this.$refs[name].resetFields();
         this.formValidate.price2 = '';
