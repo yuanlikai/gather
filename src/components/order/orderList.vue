@@ -562,9 +562,9 @@
             price1: _this.formValidate.price1,
             price2: _this.formValidate.price2,
             begintime: _this.formValidate.time[0],
-            endtime: _this.setTime(formValidate.time[1]),
+            endtime: _this.setTime(_this.formValidate.time[1]),
             begintime2: _this.formValidate.time1[0],
-            endtime2: _this.setTime(formValidate.time1[1]),
+            endtime2: _this.setTime(_this.formValidate.time1[1]),
             page: _this.start,
             pagesize: _this.pageSize,
           }
