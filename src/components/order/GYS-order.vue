@@ -194,7 +194,19 @@
                 <Checkbox v-show="formValidate.state==='0'" :label="item.ID" class="row-wrap-checkbox">&nbsp;</Checkbox>
                 <div v-for="(itema,indexa) in item.ProList" :key="itema.index">
                   <Col span="24" v-if="item.open?true:indexa<3" style="margin-bottom: 16px">
-                    <img style="float:left;"
+                    <div v-if="itema.ProductImg" style="float: left;">
+                      <Poptip  placement="right">
+                        <img style="float:left;width: 50px;cursor: pointer;"
+                             :src="itema.ProductImg"
+                             alt="">
+                        <div slot="content">
+                          <img style="float:left;width: 250px"
+                               :src="itema.ProductImg"
+                               alt="">
+                        </div>
+                      </Poptip>
+                    </div>
+                    <img v-else style="float:left;"
                          src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/618/wutu.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF"
                          alt="">
                     <p>
