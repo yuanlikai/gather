@@ -334,7 +334,7 @@
         checkAllGroup: [],
         total: 0,
         modal2: false,
-        loading1: false,
+        loading1: true,
         OrderNumber: '',
         ReOrder: {
           dstr: '',  //原单Id
