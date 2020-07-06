@@ -319,6 +319,11 @@
         <Button type="error" size="large" long @click="applyReOrder">申请退单</Button>
       </div>
     </Modal>
+    <BackTop :height="30" :bottom="30">
+      <div class="ivu-back-top-inner">
+        <i class="ivu-icon ivu-icon-ios-arrow-up"></i>
+      </div>
+    </BackTop>
   </div>
 </template>
 <script>
