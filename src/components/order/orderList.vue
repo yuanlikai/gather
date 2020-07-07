@@ -132,7 +132,7 @@
     </Card>
     <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
       <p slot="title">
-        数据列表
+        数据列表 <span style="font-weight: 400">【共 {{total}} 条】</span>
       </p>
       <p slot="extra">
         <transition name="fade">
@@ -155,7 +155,6 @@
           </span>
         </transition>
         <ButtonGroup>
-
           <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
         '&supplierid='+sup()+
         '&allField='+supplier.allField+
@@ -176,6 +175,13 @@
               <Button type="text" icon="md-cloud-download">导出订单</Button>
             </Tooltip>
           </a>
+        </ButtonGroup>
+        <ButtonGroup>
+          <a v-if="formValidate.state==='1'" style="float: right"
+             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
+            <Button type="text">下载发货模板</Button>
+          </a>
+          <Upload style="float: right" v-if="formValidate.state==='1'"></Upload>
         </ButtonGroup>
       </p>
       <Spin fix v-if="loading1"></Spin>
