@@ -128,6 +128,7 @@
           '&allField='+supplier.allField+
           '&ordernumber='+formValidate.ordernumber+
           '&ticketnumber='+formValidate.ticketnumber+
+          '&platformid='+formValidate.terraceId+
           '&proname='+formValidate.proname+
           '&stockno='+formValidate.stockno+
           '&consignee='+formValidate.consignee+
