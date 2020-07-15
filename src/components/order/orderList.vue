@@ -248,7 +248,7 @@
               <p>{{item.Phone}}</p>
               <p>{{item.Address.split(' ')[0]}}</p>
             </Col>
-            <Col span="3" class="card-warp-col3">
+            <Col span="3" class="card-warp-col3" style="text-align: center">
               <p>{{item.StateStr}}</p>
               <p v-if="item.State===0">
                 <Poptip
