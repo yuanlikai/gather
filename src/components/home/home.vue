@@ -65,27 +65,19 @@
       order(Id) {
         this.menu1 = '3';
         let menuList = JSON.parse(localStorage.getItem('menuList'));
-        this.$router.push({
-          name:'客服模式',
-          params: {
-            id: Id
+        for(let i =0;i<menuList.length;i++){
+          if(menuList[i].numb==='3'){
+            this.$emit('operateMuen', '3', menuList[i].children[0].children[0].numb);
+            console.log(menuList[i].children[0].children[0]);
+            this.$router.push({
+              name: menuList[i].children[0].children[0].name,
+              params: {
+                id: Id
+              }
+            });
+            return
           }
-        });
-        // for(let i =0;i<menuList.length;i++){
-        //   if(menuList[i].numb==='3'){
-        //     this.$emit('operateMuen', '3', menuList[i].children[0].children[0].numb);
-        //     console.log(menuList[i].children[0].children[0]);
-        //     this.$router.push({
-        //       name: menuList[i].children[0].children[0].name,
-        //       params: {
-        //         id: Id
-        //       }
-        //     });
-        //     return
-        //   }
-        // }
-        // console.log(JSON.parse(localStorage.getItem('menuList')));
-
+        }
       },
 
       //获取状态数量
