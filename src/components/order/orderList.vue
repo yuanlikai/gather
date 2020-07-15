@@ -123,7 +123,7 @@
       </p>
       <p slot="extra">
         <ButtonGroup>
-          <a v-if="formValidate.state!=='0'" :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
+          <a v-if="formValidate.state!=='0'" :href="'http://omsjk.e6best.com/SupplierAdmin/ExportOrder.aspx?state='+formValidate.state+
           '&supplierid='+sup()+
           '&allField='+supplier.allField+
           '&ordernumber='+formValidate.ordernumber+
@@ -136,9 +136,9 @@
           '&price1='+formValidate.price1+
           '&price2='+formValidate.price2+
           '&begintime2='+formValidate.time1[0]+
-          '&endtime2='+formValidate.time1[1]+
+          '&endtime2='+DCTime(formValidate.time1[1],'2')+
           '&begintime='+formValidate.time[0]+
-          '&endtime='+formValidate.time[1]" target="_blank">
+          '&endtime='+DCTime(formValidate.time[1],'1')" target="_blank">
             <Tooltip content="默认导出进30天数据" placement="top">
               <Button type="dashed">批量导出订单</Button>
             </Tooltip>
