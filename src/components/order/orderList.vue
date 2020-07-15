@@ -150,10 +150,9 @@
               <Button type="text" icon="md-list-box" @click="">批量审核</Button>
             </Poptip>
             <Button v-else type="text" icon="md-list-box" @click="$Message.warning('请选择要审核的订单')">批量审核</Button>
-            <Divider type="vertical"/>
           </span>
         </transition>
-        <ButtonGroup>
+        <ButtonGroup v-if="formValidate.state>0">
           <a :href="'http://omsjk.e6best.com/SupplierAdmin/ExportOrder.aspx?state='+formValidate.state+
         '&supplierid='+sup()+
         '&allField='+supplier.allField+
@@ -175,13 +174,14 @@
             </Tooltip>
           </a>
         </ButtonGroup>
-        <ButtonGroup>
-          <a v-if="formValidate.state==='1'" style="float: right"
+        <span v-if="formValidate.state==='1'">
+          <Divider type="vertical"/>
+          <a style="float: right"
              href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
             <Button type="text">下载发货模板</Button>
           </a>
-          <Upload style="float: right" v-if="formValidate.state==='1'"></Upload>
-        </ButtonGroup>
+          <Upload style="float: right"></Upload>
+        </span>
       </p>
       <Spin fix v-if="loading1"></Spin>
       <p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>
