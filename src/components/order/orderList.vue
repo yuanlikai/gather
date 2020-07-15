@@ -154,7 +154,7 @@
           </span>
         </transition>
         <ButtonGroup>
-          <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
+          <a :href="'http://omsjk.e6best.com/SupplierAdmin/ExportOrder.aspx?state='+formValidate.state+
         '&supplierid='+sup()+
         '&allField='+supplier.allField+
         '&platformid='+formValidate.terraceId+
@@ -167,9 +167,9 @@
         '&price1='+formValidate.price1+
         '&price2='+formValidate.price2+
         '&begintime2='+formValidate.time1[0]+
-        '&endtime2='+setTime(formValidate.time1[1])+
+        '&endtime2='+formValidate.time1[1]+
         '&begintime='+formValidate.time[0]+
-        '&endtime='+setTime(formValidate.time[1])" target="_blank">
+        '&endtime='+formValidate.time[1]" target="_blank">
             <Tooltip content="默认导出近30天数据" placement="top">
               <Button type="text" icon="md-cloud-download">导出订单</Button>
             </Tooltip>

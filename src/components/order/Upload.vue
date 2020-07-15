@@ -5,7 +5,7 @@
     :format="['xls','xlsx']"
     :show-upload-list="false"
     :on-success="uploadsuccess">
-    <Button type="dashed" icon="ios-cloud-upload-outline">批量发货</Button>
+    <Button type="text" icon="ios-cloud-upload-outline">批量发货</Button>
   </Upload>
 </template>
 <script>
