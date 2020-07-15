@@ -136,9 +136,9 @@
           '&price1='+formValidate.price1+
           '&price2='+formValidate.price2+
           '&begintime2='+formValidate.time1[0]+
-          '&endtime2='+DCTime(formValidate.time1[1],'2')+
+          '&endtime2='+formValidate.time1[1]+
           '&begintime='+formValidate.time[0]+
-          '&endtime='+DCTime(formValidate.time[1],'1')" target="_blank">
+          '&endtime='+formValidate.time[1]" target="_blank">
             <Tooltip content="默认导出进30天数据" placement="top">
               <Button type="dashed">批量导出订单</Button>
             </Tooltip>
@@ -532,18 +532,6 @@
       }
     },
     methods: {
-      DCTime(time,type){
-        const _this = this;
-        if(time.length>1){
-          if(type==1){
-            return _this.formValidate.time[1]+' 23:59:59'
-          }else {
-            return _this.formValidate.time1[1]+' 23:59:59'
-          }
-        }else {
-          return''
-        }
-      },
 
       //订单时间金额升序降序
       sorts(i) {

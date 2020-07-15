@@ -123,7 +123,7 @@
       </p>
       <p slot="extra">
         <ButtonGroup>
-          <a v-if="formValidate.state!=='0'" :href="'/Upload/Manage/Order/exprotOrderExcel?state='+formValidate.state+
+          <a v-if="formValidate.state!=='0'" :href="'http://omsjk.e6best.com/SupplierAdmin/ExportOrder.aspx?state='+formValidate.state+
           '&supplierid='+sup()+
           '&allField='+supplier.allField+
           '&ordernumber='+formValidate.ordernumber+
