@@ -56,8 +56,7 @@
                       v-model="formValidate.terraceId"
                       @on-change="start=1,total=0,getOrder()">
                 <Option value="-1">全部</Option>
-                <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}
-                </Option>
+                <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}</Option>
               </Select>
             </FormItem>
           </Col>
