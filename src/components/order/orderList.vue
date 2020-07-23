@@ -2,6 +2,7 @@
   .ivu-table .demo-table-info-row td {
     color: red
   }
+
   .card-warp .ivu-card-body {
     padding: 0;
   }
@@ -141,7 +142,6 @@
               :value="checkAll"
               @click.prevent.native="handleCheckAll">全选本页
             </Checkbox>
-
             <Poptip
               v-if="checkAllGroup.length>0"
               confirm
@@ -153,26 +153,7 @@
           </span>
         </transition>
         <ButtonGroup v-if="formValidate.state>0">
-          <a :href="'http://omsjk.e6best.com/SupplierAdmin/ExportOrder.aspx?state='+formValidate.state+
-        '&supplierid='+sup()+
-        '&allField='+supplier.allField+
-        '&platformid='+formValidate.terraceId+
-        '&ordernumber='+formValidate.ordernumber+
-        '&ticketnumber='+formValidate.ticketnumber+
-        '&proname='+formValidate.proname+
-        '&stockno='+formValidate.stockno+
-        '&consignee='+formValidate.consignee+
-        '&phone='+formValidate.phone+
-        '&price1='+formValidate.price1+
-        '&price2='+formValidate.price2+
-        '&begintime2='+formValidate.time1[0]+
-        '&endtime2='+formValidate.time1[1]+
-        '&begintime='+formValidate.time[0]+
-        '&endtime='+formValidate.time[1]" target="_blank">
-            <Tooltip content="默认导出近30天数据" placement="top">
-              <Button type="text" icon="md-cloud-download">导出订单</Button>
-            </Tooltip>
-          </a>
+          <Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>
         </ButtonGroup>
         <span v-if="formValidate.state==='1'">
           <Divider type="vertical"/>
@@ -201,7 +182,7 @@
                 <div v-for="(itema,indexa) in item.ProList" :key="itema.index">
                   <Col span="24" v-if="item.open?true:indexa<3" style="margin-bottom: 16px">
                     <div v-if="itema.ProductImg" style="float: left;">
-                      <Poptip  placement="right">
+                      <Poptip placement="right">
                         <img style="float:left;width: 50px;cursor: pointer;"
                              :src="itema.ProductImg"
                              alt="">
@@ -326,11 +307,32 @@
         <i class="ivu-icon ivu-icon-ios-arrow-up"></i>
       </div>
     </BackTop>
+
+    <Modal v-model="modal" width="460">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>导出订单</span>
+      </p>
+      <div style="max-height: 400px;overflow: auto">
+        <!--<Icon type="md-checkmark" />-->
+        <div v-for="(item,index) in tagArr" :key="index" @click="download(index+1)" data-v-1af71c2b=""
+             class="tag-dow ivu-tag ivu-tag-default ivu-tag-checked"><!---->
+          <span class="ivu-tag-text">
+          {{item.num1}}-{{item.num2}}条
+          </span>
+        </div>
+
+      </div>
+      <div slot="footer">
+        <Button type="error" size="large" long @click="modal=false">关闭</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
   import express from './express'
   import Upload from './Upload'
+
   export default {
     components: {
       express,
@@ -345,6 +347,8 @@
         checkAllGroup: [],
         total: 0,
         modal2: false,
+        modal: false,
+        tagArr: [],
         loading1: true,
         OrderNumber: '',
         ReOrder: {
@@ -458,10 +462,6 @@
       }
     },
     methods: {
-      //下单发货结束时间多一天
-      setTime(time) {
-        return time ? this.riqi(new Date(time).getTime() + 86400000).split(' ')[0] : ''
-      },
       //切换每页条数回调
       showSizer(size) {
         this.pageSize = size;
@@ -556,6 +556,7 @@
       getOrder(i) {
         const _this = this;
         _this.loading1 = true;
+        _this.tagArr = [];
         _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
@@ -573,9 +574,9 @@
             price1: _this.formValidate.price1,
             price2: _this.formValidate.price2,
             begintime: _this.formValidate.time[0],
-            endtime: _this.setTime(_this.formValidate.time[1]),
+            endtime: _this.formValidate.time[1],
             begintime2: _this.formValidate.time1[0],
-            endtime2: _this.setTime(_this.formValidate.time1[1]),
+            endtime2: _this.formValidate.time1[1],
             page: _this.start,
             pagesize: _this.pageSize,
           }
@@ -593,6 +594,26 @@
           }
           _this.loading1 = false;
         })
+      },
+      //导出订单弹窗
+      dcdd() {
+        const _this = this;
+        _this.modal = true;
+        let tagArr = parseInt(_this.total / 100);
+        let num = 0;
+        for (let i = 0; i < tagArr; i++) {
+          _this.tagArr.push({
+            num1: num + 1,
+            num2: num + 100
+          });
+          num += 100
+        }
+        if (_this.total % 100 !== 0) {
+          _this.tagArr.push({
+            num1: num + 1,
+            num2: num + _this.total % 100
+          });
+        }
       },
       //获取详情
       getDetails(id) {
@@ -703,6 +724,33 @@
           _this.ReOrder.total += item.Price * item.num
         });
       },
+      //导出订单
+      download(page) {
+        const _this = this;
+        let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
+        let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
+        window.open('http://oms.e6best.com/SupplierAdmin/ExportOrderPage.ashx?typeid=' + typeid +
+          '&sortid=' + _this.sortid +
+          '&vid=' + 1 +
+          '&ticketnumber=' + _this.formValidate.ticketnumber +
+          '&state=' + _this.formValidate.state +
+          '&supplierid=' + supplierid +
+          '&platformid=' + _this.formValidate.terraceId +
+          '&ordernumber=' + _this.formValidate.ordernumber +
+          '&proname=' + _this.formValidate.proname +
+          '&stockno=' + _this.formValidate.stockno +
+          '&consignee=' + _this.formValidate.consignee +
+          '&phone=' + _this.formValidate.phone +
+          '&price1=' + _this.formValidate.price1 +
+          '&price2=' + _this.formValidate.price2 +
+          '&begintime=' + _this.formValidate.time[0] +
+          '&endtime=' + _this.formValidate.time[1] +
+          '&begintime2=' + _this.formValidate.time1[0] +
+          '&endtime2=' + _this.formValidate.time1[1] +
+          '&page=' + page +
+          '&pagesize=' + 100
+        )
+      },
       getTime(i) {
         this.formValidate.time = [i[0], i[1]];
         this.start = 1;
@@ -765,6 +813,7 @@
     text-align: center;
     padding: 16px 0;
   }
+
   .row-wrap p {
     float: left;
     font-size: 12px;
@@ -772,6 +821,7 @@
     line-height: 24px;
     padding-left: 16px;
   }
+
   .row-wrap-checkbox {
     margin: auto;
     position: absolute;
@@ -781,19 +831,24 @@
     width: 16px;
     height: 32px;
   }
+
   .row-wrap {
     position: relative;
   }
+
   .card-warp-col3 {
     font-size: 12px;
   }
+
   .card-warp-col3 p {
     line-height: 24px;
   }
+
   .card-warp-li {
     flex-direction: column-reverse;
     margin-right: 16px;
   }
+
   .card-warp-ul {
     width: 100%;
     display: flex;
@@ -802,6 +857,7 @@
     line-height: 16px;
     padding: 8px 48px 8px 16px;
   }
+
   .ivu-alert {
     font-weight: 700;
     border: none;
@@ -811,7 +867,13 @@
     -moz-border-radius: 0px;
     border-radius: 0px;
   }
+
   .ivu-table-wrapper {
     overflow: inherit;
   }
+
+  .tag-dow {
+    text-align: center;
+  }
+
 </style>
