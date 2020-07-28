@@ -132,7 +132,7 @@
     </Card>
     <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
       <p slot="title">
-        数据列表
+        数据列表 <span style="font-weight: 400">【共 {{total}} 条】</span>
       </p>
       <p slot="extra">
         <transition name="fade">
@@ -564,6 +564,7 @@
       getOrder(i) {
         const _this = this;
         _this.loading1 = true;
+        _this.tagArr = [];
         _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
