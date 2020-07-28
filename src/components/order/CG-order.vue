@@ -142,7 +142,6 @@
               :value="checkAll"
               @click.prevent.native="handleCheckAll">全选本页
             </Checkbox>
-
             <Poptip
               v-if="checkAllGroup.length>0"
               confirm
@@ -151,31 +150,19 @@
               <Button type="text" icon="md-list-box" @click="">批量审核</Button>
             </Poptip>
             <Button v-else type="text" icon="md-list-box" @click="$Message.warning('请选择要审核的订单')">批量审核</Button>
-            <Divider type="vertical"/>
           </span>
         </transition>
-        <ButtonGroup>
-          <a :href="'/Manage/Order/exprotOrderExcel?state='+formValidate.state+
-        '&supplierid='+sup()+
-        '&allField='+supplier.allField+
-        '&platformid='+formValidate.terraceId+
-        '&ordernumber='+formValidate.ordernumber+
-        '&ticketnumber='+formValidate.ticketnumber+
-        '&proname='+formValidate.proname+
-        '&stockno='+formValidate.stockno+
-        '&consignee='+formValidate.consignee+
-        '&phone='+formValidate.phone+
-        '&price1='+formValidate.price1+
-        '&price2='+formValidate.price2+
-        '&begintime2='+formValidate.time1[0]+
-        '&endtime2='+formValidate.time1[1]+
-        '&begintime='+formValidate.time[0]+
-        '&endtime='+formValidate.time[1]" target="_blank">
-            <Tooltip content="默认导出近30天数据" placement="top">
-              <Button type="text" icon="md-cloud-download">导出订单</Button>
-            </Tooltip>
-          </a>
+        <ButtonGroup v-if="formValidate.state>0">
+          <Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>
         </ButtonGroup>
+        <span v-if="formValidate.state==='1'">
+          <Divider type="vertical"/>
+          <a style="float: right"
+             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
+            <Button type="text">下载发货模板</Button>
+          </a>
+          <Upload style="float: right"></Upload>
+        </span>
       </p>
       <Spin fix v-if="loading1"></Spin>
       <p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>
@@ -324,6 +311,25 @@
         <i class="ivu-icon ivu-icon-ios-arrow-up"></i>
       </div>
     </BackTop>
+    <Modal v-model="modal" width="460">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>导出订单</span>
+      </p>
+      <div style="max-height: 400px;overflow: auto">
+        <!--<Icon type="md-checkmark" />-->
+        <div v-for="(item,index) in tagArr" :key="index" @click="download(index+1)" data-v-1af71c2b=""
+             class="tag-dow ivu-tag ivu-tag-default ivu-tag-checked"><!---->
+          <span class="ivu-tag-text">
+          {{item.num1}}-{{item.num2}}条
+          </span>
+        </div>
+
+      </div>
+      <div slot="footer">
+        <Button type="error" size="large" long @click="modal=false">关闭</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -343,7 +349,9 @@
         checkAll: false,
         checkAllGroup: [],
         total: 0,
+        modal:false,
         modal2: false,
+        tagArr:[],
         loading1: true,
         OrderNumber: '',
         ReOrder: {
@@ -599,6 +607,27 @@
         })
       },
 
+      //导出订单弹窗
+      dcdd() {
+        const _this = this;
+        _this.modal = true;
+        let tagArr = parseInt(_this.total / 100);
+        let num = 0;
+        for (let i = 0; i < tagArr; i++) {
+          _this.tagArr.push({
+            num1: num + 1,
+            num2: num + 100
+          });
+          num += 100
+        }
+        if (_this.total % 100 !== 0) {
+          _this.tagArr.push({
+            num1: num + 1,
+            num2: num + _this.total % 100
+          });
+        }
+      },
+
       //获取详情
       getDetails(id) {
         const _this = this;
@@ -716,7 +745,33 @@
           _this.ReOrder.total += item.Price * item.num
         });
       },
-
+      //导出订单
+      download(page) {
+        const _this = this;
+        let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
+        let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
+        window.open('http://oms.e6best.com/SupplierAdmin/ExportOrderPageCg.ashx?typeid=' + typeid +
+          '&sortid=' + _this.sortid +
+          '&vid=' + 1 +
+          '&ticketnumber=' + _this.formValidate.ticketnumber +
+          '&state=' + _this.formValidate.state +
+          '&supplierid=' + supplierid +
+          '&platformid=' + _this.formValidate.terraceId +
+          '&ordernumber=' + _this.formValidate.ordernumber +
+          '&proname=' + _this.formValidate.proname +
+          '&stockno=' + _this.formValidate.stockno +
+          '&consignee=' + _this.formValidate.consignee +
+          '&phone=' + _this.formValidate.phone +
+          '&price1=' + _this.formValidate.price1 +
+          '&price2=' + _this.formValidate.price2 +
+          '&begintime=' + _this.formValidate.time[0] +
+          '&endtime=' + _this.formValidate.time[1] +
+          '&begintime2=' + _this.formValidate.time1[0] +
+          '&endtime2=' + _this.formValidate.time1[1] +
+          '&page=' + page +
+          '&pagesize=' + 100
+        )
+      },
       getTime(i) {
         this.formValidate.time = [i[0], i[1]];
         this.start = 1;
