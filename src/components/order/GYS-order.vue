@@ -743,7 +743,7 @@
         });
       },
       //导出订单
-      download(page) {
+      download(page,index) {
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
         let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
