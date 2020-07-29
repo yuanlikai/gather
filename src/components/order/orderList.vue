@@ -313,11 +313,11 @@
         <span>导出订单</span>
       </p>
       <div style="max-height: 400px;overflow: auto">
-        <!--<Icon type="md-checkmark" />-->
-        <div v-for="(item,index) in tagArr" :key="index" @click="download(index+1)" data-v-1af71c2b=""
+        <div v-for="(item,index) in tagArr" :key="index" @click="download(index+1,index)" data-v-1af71c2b=""
              class="tag-dow ivu-tag ivu-tag-default ivu-tag-checked"><!---->
           <span class="ivu-tag-text">
           {{item.num1}}-{{item.num2}}条
+            <Icon type="md-checkmark" v-if="item.download===true" />
           </span>
         </div>
 
@@ -724,7 +724,7 @@
         });
       },
       //导出订单
-      download(page) {
+      download(page,index) {
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
         let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
@@ -748,7 +748,8 @@
           '&endtime2=' + _this.formValidate.time1[1] +
           '&page=' + page +
           '&pagesize=' + 100
-        )
+        );
+        _this.$set(_this.tagArr[index],'download',true);
       },
       getTime(i) {
         this.formValidate.time = [i[0], i[1]];
