@@ -747,7 +747,7 @@
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
         let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
-        window.open('/SupplierAdmin/ExportOrderPageGys.ashx?typeid=' + typeid +
+        window.open('http://oms.e6best.com/SupplierAdmin/ExportOrderPageGys.ashx?typeid=' + typeid +
           '&sortid=' + _this.sortid +
           '&vid=' + 1 +
           '&ticketnumber=' + _this.formValidate.ticketnumber +
