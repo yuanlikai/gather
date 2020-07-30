@@ -18,6 +18,13 @@ module.exports = {
           '^/Upload': ''
         }
       },
+      '/SupplierAdmin': {
+        target: 'http://oms.e6best.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/SupplierAdmin': ''
+        }
+      },
       '/': {
         // target: 'http://192.168.1.73:8088',
         target: 'http://139.196.76.169:8091',
