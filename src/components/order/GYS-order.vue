@@ -196,15 +196,18 @@
                     <img v-else style="float:left;"
                          src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/618/wutu.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF"
                          alt="">
-                    <p>
-                      <span style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</span>
-                      <Icon type="md-close"/>
-                      <span>{{itema.Num}}</span>
-                    </p>
-                    <p>
-                      供货价：
-                      <span style="color: #ed4014;margin-right: 8px">{{itema.CostPrice}}元</span>
-                    </p>
+                    <div style="float: left;width: calc(100% - 60px)">
+                      <p>
+                        <span style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</span>
+                        <Icon type="md-close"/>
+                        <span>{{itema.Num}}</span>
+                      </p>
+                      <p>
+                        供货价：
+                        <span style="color: #ed4014;margin-right: 8px">{{itema.CostPrice}}元</span>
+                      </p>
+
+                    </div>
                   </Col>
                 </div>
 
