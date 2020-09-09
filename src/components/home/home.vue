@@ -66,27 +66,27 @@
         this.menu1 = '3';
         let menuList = JSON.parse(localStorage.getItem('menuList'));
 
-        this.$emit('operateMuen', '3', '3-1-1');
-        this.$router.push({
-          name: '客服模式',
-          params: {
-            id: Id
-          }
-        });
-
-
-        // for(let i =0;i<menuList.length;i++){
-        //   if(menuList[i].numb==='3'){
-        //     this.$emit('operateMuen', '3', menuList[i].children[0].children[0].numb);
-        //     this.$router.push({
-        //       name: menuList[i].children[0].children[0].name,
-        //       params: {
-        //         id: Id
-        //       }
-        //     });
-        //     return
+        // this.$emit('operateMuen', '3', '3-1-1');
+        // this.$router.push({
+        //   name: '客服模式',
+        //   params: {
+        //     id: Id
         //   }
-        // }
+        // });
+
+
+        for(let i =0;i<menuList.length;i++){
+          if(menuList[i].numb==='3'){
+            this.$emit('operateMuen', '3', menuList[i].children[0].children[0].numb);
+            this.$router.push({
+              name: menuList[i].children[0].children[0].name,
+              params: {
+                id: Id
+              }
+            });
+            return
+          }
+        }
       },
 
       //获取状态数量
