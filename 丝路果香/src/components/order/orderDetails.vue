@@ -56,20 +56,20 @@
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           手机号：{{data.Phone}}
         </Col>
-        <Col class="colClass" :xs="24" :md="12" :lg="8">
-          物流单号：{{data.ExpressNo}}
+        <Col class="colClass" :xs="24" :md="12" :lg="8" v-if="data.ExpressNo">
+          物流单号：
+          <a v-for="(item,index) in data.ExpressNo.split('，')" @click="getExpress(data.Express.split('，')[index],item)">{{item}}，</a>
         </Col>
         <Col class="colClass" :md="24" :lg="16">
           地址：{{data.Address}}
-        </Col>
-
-        <Button @click="amend" type="primary" style="margin-left: 16px">{{data.ExpressNo?'修改':'填写'}}物流信息
-        </Button>
-        <Button @click="afterSsa" style="margin-left: 16px">修改配送信息
-        </Button>
-
+        </Col>.
 
       </Row>
+
+      <Button @click="amend" type="primary" style="margin-left: 16px">{{data.ExpressNo?'修改':'填写'}}物流信息
+      </Button>
+      <Button @click="afterSsa" style="margin-left: 16px">修改配送信息
+      </Button>
       <Divider/>
       <Row :gutter="30">
         <Col span="24">
@@ -119,6 +119,7 @@
       <Divider/>
     </Content>
     <express ref="express" @getOrder="getDetails"></express>
+    <getExpress ref="getExpress"></getExpress>
     <Modal v-model="model" width="360">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -144,11 +145,13 @@
 <script>
   import express from './express'
   import alterSite from './alterSite'
+  import getExpress from './getExpress'
 
   export default {
     components: {
       express,
-      alterSite
+      alterSite,
+      getExpress
     },
     data() {
       return {
@@ -267,6 +270,12 @@
             this.abnormal();
           }
         })
+      },
+
+      //点击获取快递信息
+      getExpress(expressname,expressnumber){
+        const _this = this;
+        this.$refs.getExpress.getExpress(expressname,expressnumber,_this.data.OrderNumber);
       },
 
       //订单转为异常
