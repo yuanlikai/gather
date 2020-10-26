@@ -182,11 +182,11 @@
                     <div v-if="itema.ProductImg" style="float: left;">
                       <Poptip placement="right">
                         <img style="float:left;width: 50px;cursor: pointer;"
-                             :src="itema.ProductImg"
+                             :src="alterPicture(itema.ProductImg)"
                              alt="">
                         <div slot="content">
                           <img style="float:left;width: 250px"
-                               :src="itema.ProductImg"
+                               :src="alterPicture(itema.ProductImg)"
                                alt="">
                         </div>
                       </Poptip>
@@ -495,6 +495,15 @@
         this.ReOrder.idstr = id;
         this.OrderNumber = num;
         this.getDetails(id)
+      },
+      //处理http图片打不开
+      alterPicture(i){
+        console.log(i.replace(/http:/g,''))
+        if(i.indexOf('http:')===-1){
+          return i
+        }else {
+          return i.replace(/http:/,'')
+        }
       },
       //发货
       ship(i) {
