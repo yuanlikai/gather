@@ -108,10 +108,18 @@
               <Input v-model="formValidate.ticketnumber" placeholder="请输入"/>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="24" :lg="8">
+          <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="礼包编号：" prop="giftcode">
+              <Input v-model="formValidate.giftcode" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          
+          <Col span="24">
             <FormItem>
-              <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
-              <Button style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
+              <div style="width: 100%;text-align: right">
+                <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
+                <Button style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
+              </div>
             </FormItem>
           </Col>
         </Row>
@@ -133,6 +141,7 @@
           '&stockno='+formValidate.stockno+
           '&consignee='+formValidate.consignee+
           '&phone='+formValidate.phone+
+          '&giftcode='+formValidate.giftcode+
           '&price1='+formValidate.price1+
           '&price2='+formValidate.price2+
           '&begintime2='+formValidate.time1[0]+
@@ -151,7 +160,7 @@
           </a>
           <Upload style="float: right" v-if="formValidate.state==='1'"></Upload>
         </ButtonGroup>
-
+      
       </p>
       <Table :row-class-name="rowClassName" @on-sort-change="sorts" :loading="loading1" :show-header="true"
              :columns="columns" :data="data"></Table>
@@ -339,7 +348,7 @@
           },
           {
             title: '礼包编号',
-            key: 'Remarks',
+            key: 'GiftCode',
             minWidth: 88,
             maxWidth: 120,
             tooltip: true,
@@ -521,6 +530,7 @@
           time1: ['', ''],
           price1: '',
           price2: '',
+          giftcode:''
         },
         supplierList: [],
         statusList: [],
@@ -532,7 +542,7 @@
       }
     },
     methods: {
-
+      
       //订单时间金额升序降序
       sorts(i) {
         switch (i.order) {
@@ -571,6 +581,7 @@
             stockno: _this.formValidate.stockno,
             consignee: _this.formValidate.consignee,
             phone: _this.formValidate.phone,
+            giftcode: _this.formValidate.giftcode,
             price1: _this.formValidate.price1,
             price2: _this.formValidate.price2,
             begintime: _this.formValidate.time[0],
@@ -700,10 +711,10 @@
         this.total = 0;
         this.getOrder()
       },
-
+      
       getTime1(i) {
         console.log(i)
-
+        
         this.formValidate.time1 = [i[0], i[1]];
         this.start = 1;
         this.total = 0;
