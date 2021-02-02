@@ -121,10 +121,17 @@
               <Input v-model="formValidate.ticketnumber" placeholder="请输入"/>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="24" :lg="8">
+          <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="礼包编号：" prop="giftcode">
+              <Input v-model="formValidate.giftcode" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col span="24">
             <FormItem>
+              <div style="width: 100%;text-align: right">
               <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
               <Button style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
+              </div>
             </FormItem>
           </Col>
         </Row>
@@ -453,6 +460,7 @@
           stockno: '',
           consignee: '',
           phone: '',
+          giftcode: '',
           time: ['', ''],
           time1: ['', ''],
           price1: '',
@@ -586,6 +594,7 @@
             stockno: _this.formValidate.stockno,
             consignee: _this.formValidate.consignee,
             phone: _this.formValidate.phone,
+            giftcode: _this.formValidate.giftcode,
             price1: _this.formValidate.price1,
             price2: _this.formValidate.price2,
             begintime: _this.formValidate.time[0],
