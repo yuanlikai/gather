@@ -19,16 +19,16 @@
               <Input :maxlength="40" v-model="formValidate.erpSupplierNo"
                      placeholder="请输入"></Input>
             </FormItem>
-
-
+            
+            
             <FormItem label="字母编号" prop="supplierNo">
               <Input :disabled="$route.query.id" :maxlength="5" v-model="formValidate.supplierNo"
                      placeholder="请输入"
                      @on-keyup="formValidate.supplierNo = formValidate.supplierNo.replace(/[^a-zA-Z]/g,'').toUpperCase()"></Input>
             </FormItem>
-            <FormItem label="logo" prop="logoUrl">
-              <upImg ref="logoUrl"></upImg>
-            </FormItem>
+            <!--<FormItem label="logo" prop="logoUrl">-->
+            <!--<upImg ref="logoUrl"></upImg>-->
+            <!--</FormItem>-->
             <FormItem label="SKU数量限制" prop="productLim">
               <Input :disabled="$route.query.disabled" :maxlength="4" v-model="formValidate.productLim"
                      @on-keyup="formValidate.productLim=formValidate.productLim.replace(/[^\d]/g,'');"
@@ -56,7 +56,7 @@
 </template>
 <script>
   import upImg from '../upImg'
-
+  
   export default {
     components: {
       upImg
@@ -172,12 +172,13 @@
       }
     },
     methods: {
-
+      
       //提交供应商
       handleSubmit(name) {
         const _this = this;
         _this.$refs[name].validate((valid) => {
           if (valid) {
+            console.log(1221312312)
             _this.Axios.post('/Manage/Supplier/save', _this.Qs.stringify({
               id: _this.formValidate.id,              //分类id 传入就是新增
               supplierName: _this.formValidate.supplierName,   //名称40
@@ -185,7 +186,8 @@
               supplierNo: _this.formValidate.supplierNo,   //代码5
               productLim: _this.formValidate.productLim,   //4
               erpSupplierNo: _this.formValidate.erpSupplierNo,
-              supplierLogo: _this.$refs.logoUrl.uploadList[0].filename,  //品牌LOGO路径160
+              supplierLogo: "https://ylmanager.oss-cn-shanghai.aliyuncs.com/Image/20201230/eef12de4-ccaa-4dae-9988-a58917167e51"
+              // supplierLogo: _this.$refs.logoUrl.uploadList.length>0?_this.$refs.logoUrl.uploadList[0].filename:'',  //品牌LOGO路径160
             })).then(res => {
               if (res.data.code === 0) {
                 _this.status = false;
@@ -202,9 +204,9 @@
       },
       handleReset(name) {
         this.$route.query.id ? '' : this.$refs[name].resetFields();
-
+        
       },
-
+      
       //获取供应商详情
       getDetail() {
         const _this = this;
@@ -230,7 +232,7 @@
             filename: res.data.data.supplierLogo
           });
         })
-
+        
       }
     },
     mounted() {

@@ -159,17 +159,17 @@
             <Button v-else type="text" icon="md-list-box" @click="$Message.warning('请选择要审核的订单')">批量审核</Button>
           </span>
         </transition>
-        <ButtonGroup v-if="formValidate.state>0">
-          <Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>
-        </ButtonGroup>
-        <span v-if="formValidate.state==='1'">
-          <Divider type="vertical"/>
-          <a style="float: right"
-             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
-            <Button type="text">下载发货模板</Button>
-          </a>
-          <Upload style="float: right"></Upload>
-        </span>
+        <!--<ButtonGroup v-if="formValidate.state>0">-->
+          <!--<Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>-->
+        <!--</ButtonGroup>-->
+        <!--<span v-if="formValidate.state==='1'">-->
+          <!--<Divider type="vertical"/>-->
+          <!--<a style="float: right"-->
+             <!--href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">-->
+            <!--<Button type="text">下载发货模板</Button>-->
+          <!--</a>-->
+          <!--<Upload style="float: right"></Upload>-->
+        <!--</span>-->
       </p>
       <Spin fix v-if="loading1"></Spin>
       <p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>
@@ -237,7 +237,7 @@
               <p>{{item.Phone}}</p>
               <p>{{item.Address.split(' ')[0]}}</p>
             </Col>
-            <Col span="3" class="card-warp-col3" style="text-align: center">
+            <Col span="3" class="card-warp-col3">
               <p>{{item.StateStr}}</p>
               <p v-if="item.State===0">
                 <Poptip
@@ -618,6 +618,7 @@
       dcdd() {
         const _this = this;
         _this.modal = true;
+        this.tagArr=[];
         let tagArr = parseInt(_this.total / 100);
         let num = 0;
         for (let i = 0; i < tagArr; i++) {
@@ -748,10 +749,9 @@
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
         let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
-        window.open('http://oms.e6best.com/SupplierAdmin/ExportOrderPage.ashx?typeid=' + typeid +
+        window.open('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPage.ashx?typeid=' + typeid +
           '&sortid=' + _this.sortid +
           '&vid=' + 1 +
-          '&ticketnumber=' + _this.formValidate.ticketnumber +
           '&state=' + _this.formValidate.state +
           '&supplierid=' + supplierid +
           '&platformid=' + _this.formValidate.terraceId +
@@ -762,6 +762,8 @@
           '&phone=' + _this.formValidate.phone +
           '&price1=' + _this.formValidate.price1 +
           '&price2=' + _this.formValidate.price2 +
+          '&ticketnumber=' + _this.formValidate.ticketnumber +
+          '&giftcode=' + _this.formValidate.giftcode +
           '&begintime=' + _this.formValidate.time[0] +
           '&endtime=' + _this.formValidate.time[1] +
           '&begintime2=' + _this.formValidate.time1[0] +
