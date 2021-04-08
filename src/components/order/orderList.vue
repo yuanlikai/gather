@@ -159,9 +159,9 @@
             <Button v-else type="text" icon="md-list-box" @click="$Message.warning('请选择要审核的订单')">批量审核</Button>
           </span>
         </transition>
-        <!--<ButtonGroup v-if="formValidate.state>0">-->
-          <!--<Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>-->
-        <!--</ButtonGroup>-->
+        <ButtonGroup v-if="formValidate.state>0">
+          <Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>
+        </ButtonGroup>
         <!--<span v-if="formValidate.state==='1'">-->
           <!--<Divider type="vertical"/>-->
           <!--<a style="float: right"-->
