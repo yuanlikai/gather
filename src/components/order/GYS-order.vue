@@ -390,6 +390,7 @@
         checkAllGroup: [],
         total: 0,
         modal2: false,
+        modal1: false,
         modal: false,
         tagArr: [],
         loading1: true,

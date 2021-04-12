@@ -393,6 +393,7 @@
         checkAllGroup: [],
         total: 0,
         modal:false,
+        modal1: false,
         modal2: false,
         tagArr:[],
         loading1: true,
