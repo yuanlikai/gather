@@ -126,7 +126,16 @@
               <Input v-model="formValidate.giftcode" placeholder="请输入"/>
             </FormItem>
           </Col>
-          <Col span="24">
+          <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="下单时间排序：" prop="terraceId">
+              <Select v-model="sortid"
+                      @on-change="start=1,total=0,getOrder()">
+                <Option value="1">正序</Option>
+                <Option value="2">倒序</Option>
+              </Select>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="16">
             <FormItem>
               <div style="width: 100%;text-align: right">
                 <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
@@ -163,12 +172,12 @@
           <Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>
         </ButtonGroup>
         <!--<span v-if="formValidate.state==='1'">-->
-          <!--<Divider type="vertical"/>-->
-          <!--<a style="float: right"-->
-             <!--href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">-->
-            <!--<Button type="text">下载发货模板</Button>-->
-          <!--</a>-->
-          <!--<Upload style="float: right"></Upload>-->
+        <!--<Divider type="vertical"/>-->
+        <!--<a style="float: right"-->
+        <!--href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">-->
+        <!--<Button type="text">下载发货模板</Button>-->
+        <!--</a>-->
+        <!--<Upload style="float: right"></Upload>-->
         <!--</span>-->
       </p>
       <Spin fix v-if="loading1"></Spin>
@@ -232,13 +241,17 @@
               <p>运费：{{item.Freight}}</p>
             </Col>
             <Col span="5" class="card-warp-col3">
-              <p style="color: #2db7f5;">发货时间：{{item.GetTime}}</p>
+              <!--<p style="color: #2db7f5;">发货时间：{{item.GetTime}}</p>-->
               <p>收货人：{{item.Consignee}}</p>
               <p>{{item.Phone}}</p>
               <p>{{item.Address.split(' ')[0]}}</p>
             </Col>
             <Col span="3" class="card-warp-col3">
-              <p>{{item.StateStr}}</p>
+              <div>{{item.StateStr}} <span v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">【{{item.GetTime}}】</span>
+              </div>
+              <div style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"
+                   v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">{{item.Express}} 【{{item.ExpressNo}}】
+              </div>
               <p v-if="item.State===0">
                 <Poptip
                   confirm
@@ -315,7 +328,7 @@
         <i class="ivu-icon ivu-icon-ios-arrow-up"></i>
       </div>
     </BackTop>
-    
+  
     <Modal v-model="modal" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -329,10 +342,30 @@
             <Icon type="md-checkmark" v-if="item.download===true"/>
           </span>
         </div>
-      
+    
       </div>
       <div slot="footer">
         <Button type="error" size="large" long @click="modal=false">关闭</Button>
+      </div>
+    </Modal>
+  
+    <Modal v-model="modal1" width="460">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>物流信息</span>
+      </p>
+      <div style="max-height: 400px;overflow: auto">
+  
+        <Timeline>
+          <TimelineItem v-for="(item,index) in express" :key="index">
+            <p class="time">{{item.time}}</p>
+            <p class="content">{{item.context}}</p>
+          </TimelineItem>
+        </Timeline>
+    
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large" @click="modal1=false">关闭</Button>
       </div>
     </Modal>
   </div>
@@ -356,6 +389,7 @@
         total: 0,
         modal2: false,
         modal: false,
+        modal1: false,
         tagArr: [],
         loading1: true,
         OrderNumber: '',
@@ -464,13 +498,29 @@
         supplierList: [],
         statusList: [],
         start: 1,
-        sortid: '',
+        sortid: '1',
         orderNum: {},
         types: '',
         terraceList: [],
+        express:[]
       }
     },
     methods: {
+      searchExpress(Express,ExpressNo,ErpOrderNumber){
+        const _this = this;
+        _this.Axios.post('https://jhoms.e6best.com/GetExpress.ashx', _this.Qs.stringify({
+          expressnumber: ExpressNo,
+          expressname: Express,
+          ordernumber: ErpOrderNumber,
+        })).then(res => {
+          if (res.data.error === 0) {
+            _this.modal1 = true;
+            _this.express = res.data.data
+          } else {
+            _this.$Message.error(res.data.errorMsg)
+          }
+        })
+      },
       //切换每页条数回调
       showSizer(size) {
         this.pageSize = size;
@@ -509,7 +559,6 @@
       },
       //处理http图片打不开
       alterPicture(i) {
-        console.log(i.replace(/http:/g, ''))
         if (i.indexOf('http:') === -1) {
           return i
         } else {
@@ -618,7 +667,7 @@
       dcdd() {
         const _this = this;
         _this.modal = true;
-        this.tagArr=[];
+        this.tagArr = [];
         let tagArr = parseInt(_this.total / 100);
         let num = 0;
         for (let i = 0; i < tagArr; i++) {

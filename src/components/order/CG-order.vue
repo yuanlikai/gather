@@ -126,7 +126,16 @@
               <Input v-model="formValidate.giftcode" placeholder="请输入"/>
             </FormItem>
           </Col>
-          <Col span="24">
+          <Col :xs="24" :md="12" :lg="8">
+            <FormItem label="下单时间排序：" prop="terraceId">
+              <Select v-model="sortid"
+                      @on-change="start=1,total=0,getOrder()">
+                <Option value="1">正序</Option>
+                <Option value="2">倒序</Option>
+              </Select>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="16">
             <FormItem>
               <div style="width: 100%;text-align: right">
               <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
@@ -237,13 +246,17 @@
               <p>运费：{{item.Freight}}</p>
             </Col>
             <Col span="5" class="card-warp-col3">
-              <p style="color: #2db7f5;">发货时间：{{item.GetTime}}</p>
+              <!--<p style="color: #2db7f5;">发货时间：{{item.GetTime}}</p>-->
               <p>收货人：{{item.Consignee}}</p>
               <p>{{item.Phone}}</p>
               <p>{{item.Address.split(' ')[0]}}</p>
             </Col>
             <Col span="3" class="card-warp-col3">
-              <p>{{item.StateStr}}</p>
+              <div>{{item.StateStr}} <span v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">【{{item.GetTime}}】</span>
+              </div>
+              <div style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"
+                   v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">{{item.Express}} 【{{item.ExpressNo}}】
+              </div>
               <p v-if="item.State===0">
                 <Poptip
                   confirm
@@ -338,6 +351,26 @@
       </div>
       <div slot="footer">
         <Button type="error" size="large" long @click="modal=false">关闭</Button>
+      </div>
+    </Modal>
+  
+    <Modal v-model="modal1" width="460">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>物流信息</span>
+      </p>
+      <div style="max-height: 400px;overflow: auto">
+      
+        <Timeline>
+          <TimelineItem v-for="(item,index) in express" :key="index">
+            <p class="time">{{item.time}}</p>
+            <p class="content">{{item.context}}</p>
+          </TimelineItem>
+        </Timeline>
+    
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large" @click="modal1=false">关闭</Button>
       </div>
     </Modal>
   </div>
@@ -469,13 +502,28 @@
         supplierList: [],
         statusList: [],
         start: 1,
-        sortid: '',
+        sortid: '1',
         orderNum: {},
         types: '',
         terraceList: [],
       }
     },
     methods: {
+      searchExpress(Express,ExpressNo,ErpOrderNumber){
+        const _this = this;
+        _this.Axios.post('https://jhoms.e6best.com/GetExpress.ashx', _this.Qs.stringify({
+          expressnumber: ExpressNo,
+          expressname: Express,
+          ordernumber: ErpOrderNumber,
+        })).then(res => {
+          if (res.data.error === 0) {
+            _this.modal1 = true;
+            _this.express = res.data.data
+          } else {
+            _this.$Message.error(res.data.errorMsg)
+          }
+        })
+      },
       //切换每页条数回调
       showSizer(size) {
         this.pageSize = size;
