@@ -17,14 +17,14 @@
         <div v-show="orderNum.error===0">
           <RadioGroup :style="{marginLeft: '20px',}"
                       type="button"
-                      v-model="formValidate.state" @on-change="types='',start=1;total=0;getOrder()">
+                      v-model="formValidate.state" @on-change="group('')">
             <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
               {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
             </Radio>
           </RadioGroup>
           <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}"
                       type="button"
-                      v-model="formValidate.state" @on-change="types='yc',start=1,getOrder('yc')">
+                      v-model="formValidate.state" @on-change="group('yc')">
             <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
             <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
           </RadioGroup>
@@ -517,6 +517,18 @@
       }
     },
     methods: {
+      //订单状态切换
+      group(e){
+        this.types=e;
+        this.start=1;
+        this.total=0;
+        if(this.formValidate.state==='-1'||this.formValidate.state==='2'||this.formValidate.state==='6'){
+          this.sortid = '2'
+        }else{
+          this.sortid = '1'
+        }
+        this.getOrder('yc')
+      },
       //复制物流信息回调
       onCopy(){
         this.$Message.success('复制成功')
@@ -641,11 +653,6 @@
       getOrder(i) {
         const _this = this;
         _this.loading1 = true;
-        if(this.formValidate.state==='-1'||this.formValidate.state==='2'||this.formValidate.state==='6'){
-          this.sortid = '2'
-        }else{
-          this.sortid = '1'
-        }
         _this.tagArr = [];
         _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
           params: {
@@ -891,6 +898,13 @@
           this.checkAll = false;
         }
       },
+    },
+    created(){
+      if(this.$route.params.id==='-1'||this.$route.params.id==='2'||this.$route.params.id==='6'){
+        this.sortid = '2'
+      }else{
+        this.sortid = '1'
+      }
     },
     mounted() {
       this.getOrder();
