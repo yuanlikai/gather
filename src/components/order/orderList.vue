@@ -126,16 +126,11 @@
               <Input v-model="formValidate.giftcode" placeholder="请输入"/>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="下单时间排序：" prop="terraceId">
-              <Select v-model="sortid"
-                      @on-change="start=1,total=0,getOrder()">
-                <Option value="1">正序</Option>
-                <Option value="2">倒序</Option>
-              </Select>
-            </FormItem>
-          </Col>
-          <Col :xs="24" :md="12" :lg="16">
+          <!--<Col :xs="24" :md="12" :lg="8">-->
+            <!--<FormItem label="下单时间排序：" prop="terraceId">-->
+            <!--</FormItem>-->
+          <!--</Col>-->
+          <Col span="24">
             <FormItem>
               <div style="width: 100%;text-align: right">
                 <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
@@ -147,8 +142,14 @@
       </Form>
     </Card>
     <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
-      <p slot="title">
+      <p slot="title" style="height: 24px;display: flex;align-items: center">
         数据列表 <span style="font-weight: 400">【共 {{total}} 条】</span>
+  
+        <Select style="width: 130px;margin-left: 10px;font-weight: 400;" size="small" v-model="sortid"
+                @on-change="start=1,total=0,getOrder()">
+          <Option value="1">按下单时间正序</Option>
+          <Option value="2">按下单时间倒序</Option>
+        </Select>
       </p>
       <p slot="extra">
         <transition name="fade">
@@ -247,11 +248,13 @@
               <p>{{item.Address.split(' ')[0]}}</p>
             </Col>
             <Col span="3" class="card-warp-col3">
-              <div>{{item.StateStr}} <span v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">【{{item.GetTime}}】</span>
-              </div>
-              <div style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"
+              <p>{{item.StateStr}} <span v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">【{{item.GetTime}}】</span>
+              </p>
+              <p>
+                <a style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"
                    v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">{{item.Express}} 【{{item.ExpressNo}}】
-              </div>
+                </a>
+              </p>
               <p v-if="item.State===0">
                 <Poptip
                   confirm
@@ -355,14 +358,19 @@
         <span>物流信息</span>
       </p>
       <div style="max-height: 400px;overflow: auto">
-  
-        <Timeline>
-          <TimelineItem v-for="(item,index) in express" :key="index">
-            <p class="time">{{item.time}}</p>
-            <p class="content">{{item.context}}</p>
-          </TimelineItem>
-        </Timeline>
-    
+        <div class="express-num">
+          <Alert style="float: left;">{{express1}}</Alert>
+          <Button style="float: left;margin-left: 16px" type="info" v-clipboard:copy="express2" v-clipboard:success="onCopy">复制</Button>
+        </div>
+        <div v-if="express.length>0" style="float: left;">
+          <Timeline>
+            <TimelineItem v-for="(item,index) in express" :key="index">
+              <p class="time">{{item.time}}</p>
+              <p class="content">{{item.context}}</p>
+            </TimelineItem>
+          </Timeline>
+        </div>
+        <p v-else style="float: left; width: 100%">{{expressMsg}}</p>
       </div>
       <div slot="footer">
         <Button type="primary" size="large" @click="modal1=false">关闭</Button>
@@ -502,22 +510,32 @@
         orderNum: {},
         types: '',
         terraceList: [],
-        express:[]
+        express:[],
+        expressMsg:'',
+        express1:'',
+        express2:''
       }
     },
     methods: {
+      //复制物流信息回调
+      onCopy(){
+        this.$Message.success('复制成功')
+      },
+      //获取物流详情信息
       searchExpress(Express,ExpressNo,ErpOrderNumber){
         const _this = this;
+        _this.express1 = Express+` 【${ExpressNo}】`;
+        _this.express2 = Express+` ${ExpressNo}`;
         _this.Axios.post('https://jhoms.e6best.com/GetExpress.ashx', _this.Qs.stringify({
           expressnumber: ExpressNo,
           expressname: Express,
           ordernumber: ErpOrderNumber,
         })).then(res => {
+          _this.modal1 = true;
           if (res.data.error === 0) {
-            _this.modal1 = true;
             _this.express = res.data.data
           } else {
-            _this.$Message.error(res.data.errorMsg)
+            _this.expressMsg = res.data.errorMsg
           }
         })
       },
@@ -623,6 +641,11 @@
       getOrder(i) {
         const _this = this;
         _this.loading1 = true;
+        if(this.formValidate.state==='-1'||this.formValidate.state==='2'||this.formValidate.state==='6'){
+          this.sortid = '2'
+        }else{
+          this.sortid = '1'
+        }
         _this.tagArr = [];
         _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
           params: {
@@ -929,7 +952,7 @@
     padding: 8px 48px 8px 16px;
   }
   
-  .ivu-alert {
+  .card-warp .ivu-alert {
     font-weight: 700;
     border: none;
     background: #e8eaec;
@@ -945,5 +968,8 @@
   
   .tag-dow {
     text-align: center;
+  }
+  .express-num{
+    width: 100%;
   }
 </style>

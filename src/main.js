@@ -19,8 +19,10 @@ Vue.prototype.Axios = axios;
 
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
-
 Vue.use(iView);
+
+import VueClipboard  from 'vue-clipboard2'
+Vue.use( VueClipboard )
 
 Vue.prototype.riqi=function(sj){
   var d = new Date(sj * 1);    //根据时间戳生成的时间对象
