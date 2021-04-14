@@ -527,7 +527,7 @@
         }else{
           this.sortid = '1'
         }
-        this.getOrder('yc')
+        this.getOrder()
       },
       //复制物流信息回调
       onCopy(){

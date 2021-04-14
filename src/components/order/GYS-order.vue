@@ -17,7 +17,7 @@
         <div v-show="orderNum.error===0">
           <RadioGroup :style="{marginLeft: '20px',}"
                       type="button"
-                      v-model="formValidate.state" @on-change="group('yc')">
+                      v-model="formValidate.state" @on-change="group('')">
             <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
               {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
             </Radio>
@@ -525,7 +525,7 @@
         }else{
           this.sortid = '1'
         }
-        this.getOrder('yc')
+        this.getOrder(e)
       },
       //复制物流信息回调
       onCopy(){
