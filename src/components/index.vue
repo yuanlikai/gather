@@ -79,12 +79,13 @@
       },
     },
     mounted() {
+      console.log(this.$route.params)
     }
   }
 </script>
 
 <style lang="less" scoped>
-
+  
   .ivu-input {
     height: 36px;
   }

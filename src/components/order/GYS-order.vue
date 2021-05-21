@@ -239,7 +239,7 @@
               <p>运费：{{item.Freight}}</p>
             </Col>
             <Col span="5" class="card-warp-col3">
-              <!--<p style="color: #2db7f5;">发货时间：{{item.GetTime}}</p>-->
+              <p>发货时间：{{item.GetTime}}</p>
               <p>收货人：{{item.Consignee}}</p>
               <p>{{item.Phone}}</p>
               <p>{{item.Address.split(' ')[0]}}</p>
@@ -545,6 +545,7 @@
           if (res.data.error === 0) {
             _this.express = res.data.data
           } else {
+            _this.express = [];
             _this.expressMsg = res.data.errorMsg
           }
         })

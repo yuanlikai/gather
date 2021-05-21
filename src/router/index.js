@@ -21,6 +21,11 @@ export default new Router({
       component: resolve => require(['@/components/Layout'], resolve),
       children: [
         {
+          path: '/home',
+          name: '系统首页',
+          component: resolve => require(['@/components/home/home'], resolve),
+        },
+        {
           path: '/table',
           name: 'table',
           component: resolve => require(['@/components/product/table'], resolve),
@@ -134,11 +139,6 @@ export default new Router({
           path: '/addClassify',
           name: '添加分类',
           component: resolve => require(['@/components/article/addClassify'], resolve),
-        },
-        {
-          path: '/home',
-          name: '系统首页',
-          component: resolve => require(['@/components/home/home'], resolve),
         },
         {
           path: '/terrace',
