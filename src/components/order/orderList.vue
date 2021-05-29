@@ -172,14 +172,14 @@
         <ButtonGroup v-if="formValidate.state>0">
           <Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>
         </ButtonGroup>
-        <!--<span v-if="formValidate.state==='1'">-->
-        <!--<Divider type="vertical"/>-->
-        <!--<a style="float: right"-->
-        <!--href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">-->
-        <!--<Button type="text">下载发货模板</Button>-->
-        <!--</a>-->
-        <!--<Upload style="float: right"></Upload>-->
-        <!--</span>-->
+        <span v-if="formValidate.state==='1'">
+        <Divider type="vertical"/>
+        <a style="float: right"
+           href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
+        <Button type="text">下载发货模板</Button>
+        </a>
+        <Upload style="float: right"></Upload>
+        </span>
       </p>
       <Spin fix v-if="loading1"></Spin>
       <p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>

@@ -168,14 +168,14 @@
         <ButtonGroup v-if="formValidate.state>0">
           <Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>
         </ButtonGroup>
-        <!--<span v-if="formValidate.state==='1'">-->
-          <!--<Divider type="vertical"/>-->
-          <!--<a style="float: right"-->
-             <!--href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">-->
-            <!--<Button type="text">下载发货模板</Button>-->
-          <!--</a>-->
-          <!--<Upload style="float: right"></Upload>-->
-        <!--</span>-->
+        <span v-if="formValidate.state==='1'">
+          <Divider type="vertical"/>
+          <a style="float: right"
+             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
+            <Button type="text">下载发货模板</Button>
+          </a>
+          <Upload style="float: right"></Upload>
+        </span>
       </p>
       <Spin fix v-if="loading1"></Spin>
       <p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>
@@ -697,6 +697,7 @@
       dcdd() {
         const _this = this;
         _this.modal = true;
+        _this.tagArr=[];
         let tagArr = parseInt(_this.total / 100);
         let num = 0;
         for (let i = 0; i < tagArr; i++) {
@@ -715,7 +716,6 @@
       },
       //处理http图片打不开
       alterPicture(i){
-        console.log(i.replace(/http:/g,''))
         if(i.indexOf('http:')===-1){
           return i
         }else {
@@ -843,12 +843,11 @@
       download(page,index) {
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
-        let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
         window.open('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPageGys.ashx?typeid=' + typeid +
           '&sortid=' + _this.sortid +
           '&vid=' + 1 +
           '&state=' + _this.formValidate.state +
-          '&supplierid=' + supplierid +
+          '&supplierid=' + _this.supplier.supplierId +
           '&platformid=' + _this.formValidate.terraceId +
           '&ordernumber=' + _this.formValidate.ordernumber +
           '&proname=' + _this.formValidate.proname +
