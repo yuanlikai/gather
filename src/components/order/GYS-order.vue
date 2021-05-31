@@ -171,7 +171,7 @@
         <span v-if="formValidate.state==='1'">
           <Divider type="vertical"/>
           <a style="float: right"
-             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
+             href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/newmoban.xls" download="muban">
             <Button type="text">下载发货模板</Button>
           </a>
           <Upload style="float: right"></Upload>
@@ -847,7 +847,7 @@
           '&sortid=' + _this.sortid +
           '&vid=' + 1 +
           '&state=' + _this.formValidate.state +
-          '&supplierid=' + _this.supplier.supplierId +
+          '&supplierid=' + _this.sup() +
           '&platformid=' + _this.formValidate.terraceId +
           '&ordernumber=' + _this.formValidate.ordernumber +
           '&proname=' + _this.formValidate.proname +

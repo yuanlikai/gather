@@ -175,7 +175,7 @@
         <span v-if="formValidate.state==='1'">
         <Divider type="vertical"/>
         <a style="float: right"
-           href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/moban1.xls" download="muban">
+           href="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/newmoban.xls" download="muban">
         <Button type="text">下载发货模板</Button>
         </a>
         <Upload style="float: right"></Upload>
