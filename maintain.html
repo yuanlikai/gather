@@ -22,12 +22,34 @@
       <div class="icon-box">
         <i class="weui-icon-warn weui-icon_msg-primary"></i>
         <div class="icon-box__ctn">
-          <h3 class="icon-box__title">系统维护中</h3>
-          <p class="icon-box__desc">预计恢复时间：2020-08-31 23:00</p>
+          <h3 class="icon-box__title" onclick="setNike()">系统维护中</h3>
+          <p class="icon-box__desc" onclick="getNike()">预计恢复时间：2020-08-31 23:00</p>
         </div>
       </div>
     </div>
   </div>
 </div>
+<div>
+  <input id="inp" type="text" value="123">
+</div>
+<script>
+  let userInfo={};
+  Object.defineProperty(userInfo,"nikeName",{
+    get:function(){
+      return document.getElementById('inp').value
+    },
+    set:function (nike) {
+      document.getElementById('inp').value=nike
+    }
+  });
+  function getNike(){
+    console.log(userInfo.nikeName)
+  }
+  function setNike(){
+    userInfo.nikeName="袁理开"
+  }
+  
+  
+</script>
 </body>
 </html>

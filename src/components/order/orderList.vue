@@ -242,13 +242,13 @@
               <p>运费：{{item.Freight}}</p>
             </Col>
             <Col span="5" class="card-warp-col3">
-              <p>发货时间：{{item.GetTime}}</p>
+              <p>预约时间：{{item.GetTime}}</p>
               <p>收货人：{{item.Consignee}}</p>
               <p>{{item.Phone}}</p>
               <p>{{item.Address.split(' ')[0]}}</p>
             </Col>
             <Col span="3" class="card-warp-col3">
-              <p>{{item.StateStr}} <span v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">【{{item.GetTime}}】</span>
+              <p>{{item.StateStr}} <span v-if="item.SendTime">【{{item.SendTime}}】</span>
               </p>
               <p>
                 <a style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"
