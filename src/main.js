@@ -35,6 +35,14 @@ Vue.prototype.riqi=function(sj){
   return date
 };
 
+// 添加请求拦截器
+axios.interceptors.request.use(function (config) {
+  config.headers.route=vm.$route.path;
+  // 在发送请求之前做些什么
+  return config;
+});
+
+
 // 添加响应拦截器
 axios.interceptors.response.use(function (response) {
   if (response.data.code === 43) {

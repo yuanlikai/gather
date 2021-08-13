@@ -96,7 +96,7 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="发货时间：" prop="time1">
+            <FormItem label="预约发货：" prop="time1">
               <DatePicker @on-change="getTime1" style="width: 100%;cursor: pointer;"
                           v-model="formValidate.time1"
                           format="yyyy/MM/dd" type="daterange"
@@ -195,10 +195,10 @@
                 <div v-for="(itema,indexa) in item.ProList" :key="itema.index">
                   <Col span="24" v-if="item.open?true:indexa<3" style="margin-bottom: 16px">
                     <div v-if="itema.ProductImg" style="float: left;">
-                      <Poptip  placement="right">
+                      <Poptip placement="right" trigger="hover">
                         <img style="float:left;width: 50px;cursor: pointer;"
                              :src="alterPicture(itema.ProductImg)"
-                             alt="">
+                             alt="" @click="showModal3(itema.ProductImg)">
                         <div slot="content">
                           <img style="float:left;width: 250px"
                                :src="alterPicture(itema.ProductImg)"
@@ -239,7 +239,7 @@
               <p>运费：{{item.Freight}}</p>
             </Col>
             <Col span="5" class="card-warp-col3">
-              <p>预约时间：{{item.GetTime}}</p>
+              <p>预约发货：{{item.GetTime}}</p>
               <p>收货人：{{item.Consignee}}</p>
               <p>{{item.Phone}}</p>
               <p>{{item.Address.split(' ')[0]}}</p>
@@ -374,6 +374,19 @@
         <Button type="primary" size="large" @click="modal1=false">关闭</Button>
       </div>
     </Modal>
+  
+    <Modal v-model="modal3" width="460">
+      <p slot="header" style="text-align:center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>产品图片</span>
+      </p>
+      <div style="max-height: 500px;overflow: auto">
+        <img :src="proUrl" alt="" style="width: 100%">
+      </div>
+      <div slot="footer">
+        <Button type="primary" size="large" @click="modal3=false">关闭</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -396,6 +409,8 @@
         modal2: false,
         modal1: false,
         modal: false,
+        modal3: false,
+        proUrl: '',
         tagArr: [],
         loading1: true,
         OrderNumber: '',
@@ -515,6 +530,11 @@
       }
     },
     methods: {
+      //点击图片放大弹窗
+      showModal3(e) {
+        this.proUrl = e;
+        this.modal3 = true;
+      },
       //订单状态切换
       group(e){
         this.types=e;
