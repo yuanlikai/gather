@@ -565,7 +565,11 @@
           expressnumber: ExpressNo,
           expressname: Express,
           ordernumber: ErpOrderNumber,
-        })).then(res => {
+        }), {
+          headers: {
+            'Content-Type':'application/json'
+          }
+        }).then(res => {
           _this.modal1 = true;
           if (res.data.error === 0) {
             _this.express = res.data.data
