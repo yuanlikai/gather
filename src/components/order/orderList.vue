@@ -558,6 +558,7 @@
       },
       //获取物流详情信息
       searchExpress(Express, ExpressNo, ErpOrderNumber) {
+        console.log(123)
         const _this = this;
         _this.express1 = Express + ` 【${ExpressNo}】`;
         _this.express2 = Express + ` ${ExpressNo}`;
