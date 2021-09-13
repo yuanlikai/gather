@@ -248,7 +248,10 @@
               <p>{{item.Address.split(' ')[0]}}</p>
             </Col>
             <Col span="3" class="card-warp-col3">
-              <p>{{item.StateStr}} <span v-if="item.SendTime">【{{item.SendTime}}】</span>
+              <p v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">发货日期：<span
+                v-if="item.SendTime">【{{item.SendTime}}】</span>
+              </p>
+              <p v-if="item.StateStr==='已完成'">签收日期：<span v-if="item.CheckTime">【{{item.CheckTime}}】</span>
               </p>
               <p>
                 <a style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"
@@ -558,17 +561,14 @@
       },
       //获取物流详情信息
       searchExpress(Express, ExpressNo, ErpOrderNumber) {
-        console.log(123)
         const _this = this;
         _this.express1 = Express + ` 【${ExpressNo}】`;
         _this.express2 = Express + ` ${ExpressNo}`;
-        _this.Axios.post('https://jhoms.e6best.com/GetExpress.ashx', _this.Qs.stringify({
-          expressnumber: ExpressNo,
-          expressname: Express,
-          ordernumber: ErpOrderNumber,
-        }), {
-          headers: {
-            'Content-Type':'application/json'
+        _this.Axios.get('/Manage/Order/getExpress', {
+          params:{
+            expressnumber: ExpressNo,
+            expressname: Express,
+            ordernumber: ErpOrderNumber,
           }
         }).then(res => {
           _this.modal1 = true;

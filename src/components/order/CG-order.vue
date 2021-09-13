@@ -2,7 +2,7 @@
   .ivu-table .demo-table-info-row td {
     color: red
   }
-
+  
   .card-warp .ivu-card-body {
     padding: 0;
   }
@@ -129,8 +129,8 @@
           <Col span="24">
             <FormItem>
               <div style="width: 100%;text-align: right">
-              <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
-              <Button style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
+                <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
+                <Button style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
               </div>
             </FormItem>
           </Col>
@@ -140,7 +140,7 @@
     <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
       <p slot="title" style="height: 24px;display: flex;align-items: center">
         数据列表 <span style="font-weight: 400">【共 {{total}} 条】</span>
-    
+        
         <Select style="width: 130px;margin-left: 10px;font-weight: 400;" size="small" v-model="sortid"
                 @on-change="start=1,total=0,getOrder()">
           <Option value="1">按下单时间正序</Option>
@@ -227,7 +227,7 @@
                     </div>
                   </Col>
                 </div>
-
+                
                 <div style="float: left;margin-left: 66px">共 <span style="color: #000000;font-weight: 700">{{item.ProList.length}}</span>
                   个产品
                   <span v-if="item.ProList.length>3">
@@ -249,7 +249,10 @@
               <p>{{item.Address.split(' ')[0]}}</p>
             </Col>
             <Col span="3" class="card-warp-col3">
-              <p>{{item.StateStr}} <span v-if="item.SendTime">【{{item.SendTime}}】</span>
+              <p v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">发货日期：<span
+                v-if="item.SendTime">【{{item.SendTime}}】</span>
+              </p>
+              <p v-if="item.StateStr==='已完成'">签收日期：<span v-if="item.CheckTime">【{{item.CheckTime}}】</span>
               </p>
               <p>
                 <a style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"
@@ -343,16 +346,16 @@
              class="tag-dow ivu-tag ivu-tag-default ivu-tag-checked"><!---->
           <span class="ivu-tag-text">
           {{item.num1}}-{{item.num2}}条
-            <Icon type="md-checkmark" v-if="item.download===true" />
+            <Icon type="md-checkmark" v-if="item.download===true"/>
           </span>
         </div>
-
+      
       </div>
       <div slot="footer">
         <Button type="error" size="large" long @click="modal=false">关闭</Button>
       </div>
     </Modal>
-  
+    
     <Modal v-model="modal1" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -361,7 +364,9 @@
       <div style="max-height: 400px;overflow: auto">
         <div class="express-num">
           <Alert style="float: left;">{{express1}}</Alert>
-          <Button style="float: left;margin-left: 16px" type="info" v-clipboard:copy="express2" v-clipboard:success="onCopy">复制</Button>
+          <Button style="float: left;margin-left: 16px" type="info" v-clipboard:copy="express2"
+                  v-clipboard:success="onCopy">复制
+          </Button>
         </div>
         <div v-if="express.length>0" style="float: left;">
           <Timeline>
@@ -377,7 +382,7 @@
         <Button type="primary" size="large" @click="modal1=false">关闭</Button>
       </div>
     </Modal>
-  
+    
     <Modal v-model="modal3" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -395,7 +400,7 @@
 <script>
   import express from './express'
   import Upload from './Upload'
-
+  
   export default {
     components: {
       express,
@@ -409,12 +414,12 @@
         checkAll: false,
         checkAllGroup: [],
         total: 0,
-        modal:false,
+        modal: false,
         modal1: false,
         modal2: false,
         modal3: false,
         proUrl: '',
-        tagArr:[],
+        tagArr: [],
         loading1: true,
         OrderNumber: '',
         ReOrder: {
@@ -526,10 +531,10 @@
         orderNum: {},
         types: '',
         terraceList: [],
-        express:[],
-        expressMsg:'',
-        express1:'',
-        express2:''
+        express: [],
+        expressMsg: '',
+        express1: '',
+        express2: ''
       }
     },
     methods: {
@@ -539,27 +544,27 @@
         this.modal3 = true;
       },
       //订单状态切换
-      group(e){
-        this.types=e;
-        this.start=1;
-        this.total=0;
-        if(this.formValidate.state==='-1'||this.formValidate.state==='2'||this.formValidate.state==='6'){
+      group(e) {
+        this.types = e;
+        this.start = 1;
+        this.total = 0;
+        if (this.formValidate.state === '-1' || this.formValidate.state === '2' || this.formValidate.state === '6') {
           this.sortid = '2'
-        }else{
+        } else {
           this.sortid = '1'
         }
         this.getOrder(e)
       },
       //复制物流信息回调
-      onCopy(){
+      onCopy() {
         this.$Message.success('复制成功')
       },
       //获取物流详情信息
-      searchExpress(Express,ExpressNo,ErpOrderNumber){
+      searchExpress(Express, ExpressNo, ErpOrderNumber) {
         const _this = this;
-        _this.express1 = Express+` 【${ExpressNo}】`;
-        _this.express2 = Express+` ${ExpressNo}`;
-        _this.Axios.post('https://jhoms.e6best.com/GetExpress.ashx', _this.Qs.stringify({
+        _this.express1 = Express + ` 【${ExpressNo}】`;
+        _this.express2 = Express + ` ${ExpressNo}`;
+        _this.Axios.post('/Manage/Order/getExpress', _this.Qs.stringify({
           expressnumber: ExpressNo,
           expressname: Express,
           ordernumber: ErpOrderNumber,
@@ -578,7 +583,7 @@
         this.pageSize = size;
         this.getOrder();
       },
-
+      
       //展开更多产品
       openPro(index) {
         if (this.data[index].open) {
@@ -587,7 +592,7 @@
           this.$set(this.data[index], 'open', true);
         }
       },
-
+      
       //确认退单
       affirm(id) {
         const _this = this;
@@ -603,7 +608,7 @@
           }
         })
       },
-
+      
       //申请退单
       chargeback(id, num) {
         this.modal2 = true;
@@ -612,7 +617,7 @@
         this.OrderNumber = num;
         this.getDetails(id)
       },
-
+      
       //发货
       ship(i) {
         this.$refs.express.model = true;
@@ -625,7 +630,7 @@
           }
         ]
       },
-
+      
       //批量审核
       batchReview() {
         if (this.checkAllGroup.length < 1) {
@@ -634,7 +639,7 @@
           this.review(this.checkAllGroup.join(','))
         }
       },
-
+      
       //审核订单
       review(i) {
         this.Axios.post('/Manage/Order/batchAudit', this.Qs.stringify({
@@ -649,7 +654,7 @@
           }
         })
       },
-
+      
       //订单时间金额升序降序
       sorts(i) {
         switch (i.order) {
@@ -665,13 +670,13 @@
         }
         this.getOrder();
       },
-
+      
       // 分页
       paging(i) {
         this.start = i;
         this.getOrder();
       },
-
+      
       //获取订单列表
       getOrder(i) {
         const _this = this;
@@ -716,12 +721,12 @@
           _this.loading1 = false;
         })
       },
-
+      
       //导出订单弹窗
       dcdd() {
         const _this = this;
         _this.modal = true;
-        _this.tagArr=[];
+        _this.tagArr = [];
         let tagArr = parseInt(_this.total / 100);
         let num = 0;
         for (let i = 0; i < tagArr; i++) {
@@ -738,16 +743,16 @@
           });
         }
       },
-
+      
       //处理http图片打不开
-      alterPicture(i){
-        if(i.indexOf('http:')===-1){
+      alterPicture(i) {
+        if (i.indexOf('http:') === -1) {
           return i
-        }else {
-          return i.replace(/http:/,'')
+        } else {
+          return i.replace(/http:/, '')
         }
       },
-
+      
       //获取详情
       getDetails(id) {
         const _this = this;
@@ -764,7 +769,7 @@
           }
         })
       },
-
+      
       //查询订单
       handleSubmit(name) {
         this.$refs[name].validate((valid) => {
@@ -782,7 +787,7 @@
         this.formValidate.price2 = '';
         this.getOrder()
       },
-
+      
       //申请退单
       applyReOrder() {
         const _this = this;
@@ -803,7 +808,7 @@
           }
         })
       },
-
+      
       //获取状态
       getStatus() {
         const _this = this;
@@ -812,7 +817,7 @@
           _this.statusList = res.data.data;
         })
       },
-
+      
       //获取状态数量
       statusNum() {
         const _this = this;
@@ -820,12 +825,12 @@
           _this.orderNum = resa.data
         });
       },
-
+      
       //获取状态数量
       getOrderNum() {
         const _this = this;
       },
-
+      
       //获取供应商
       getSupplier() {
         const _this = this;
@@ -833,7 +838,7 @@
           _this.supplierList = res.data.data
         })
       },
-
+      
       //获取平台
       getTerrace() {
         const _this = this;
@@ -841,7 +846,7 @@
           _this.terraceList = res.data.data
         })
       },
-
+      
       //选择申请退货产品
       operChange(i) {
         const _this = this;
@@ -855,7 +860,7 @@
         });
         this.totalPrices();
       },
-
+      
       //计算退款产品总价
       totalPrices() {
         const _this = this;
@@ -866,7 +871,7 @@
         });
       },
       //导出订单
-      download(page,index) {
+      download(page, index) {
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
         let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
@@ -892,7 +897,7 @@
           '&page=' + page +
           '&pagesize=' + 100
         );
-        _this.$set(_this.tagArr[index],'download',true);
+        _this.$set(_this.tagArr[index], 'download', true);
       },
       getTime(i) {
         this.formValidate.time = [i[0], i[1]];
@@ -900,22 +905,22 @@
         this.total = 0;
         this.getOrder()
       },
-
+      
       getTime1(i) {
         this.formValidate.time1 = [i[0], i[1]];
         this.start = 1;
         this.total = 0;
         this.getOrder()
       },
-
+      
       rowClassName(row, index) {
         return row.IsAbnormal === 1 ? 'demo-table-info-row' : ''
       },
-
+      
       sup() {
         return this.supplier.userType === 'SUPPLIER' ? this.supplier.supplierId : this.formValidate.supplierid;
       },
-
+      
       handleCheckAll() {
         if (this.indeterminate) {
           this.checkAll = false;
@@ -923,7 +928,7 @@
           this.checkAll = !this.checkAll;
         }
         this.indeterminate = false;
-
+        
         if (this.checkAll) {
           this.checkAllGroup = [];
           for (let i = 0; i < this.data.length; i++) {
@@ -946,10 +951,10 @@
         }
       },
     },
-    created(){
-      if(this.$route.params.id==='-1'||this.$route.params.id==='2'||this.$route.params.id==='6'){
+    created() {
+      if (this.$route.params.id === '-1' || this.$route.params.id === '2' || this.$route.params.id === '6') {
         this.sortid = '2'
-      }else{
+      } else {
         this.sortid = '1'
       }
     },
@@ -968,7 +973,7 @@
     text-align: center;
     padding: 16px 0;
   }
-
+  
   .row-wrap p {
     float: left;
     font-size: 12px;
@@ -976,7 +981,7 @@
     line-height: 24px;
     padding-left: 16px;
   }
-
+  
   .row-wrap-checkbox {
     margin: auto;
     position: absolute;
@@ -986,24 +991,24 @@
     width: 16px;
     height: 32px;
   }
-
+  
   .row-wrap {
     position: relative;
   }
-
+  
   .card-warp-col3 {
     font-size: 12px;
   }
-
+  
   .card-warp-col3 p {
     line-height: 24px;
   }
-
+  
   .card-warp-li {
     flex-direction: column-reverse;
     margin-right: 16px;
   }
-
+  
   .card-warp-ul {
     width: 100%;
     display: flex;
@@ -1012,7 +1017,7 @@
     line-height: 16px;
     padding: 8px 48px 8px 16px;
   }
-
+  
   .card-warp .ivu-alert {
     font-weight: 700;
     border: none;
@@ -1022,15 +1027,16 @@
     -moz-border-radius: 0px;
     border-radius: 0px;
   }
-
+  
   .ivu-table-wrapper {
     overflow: inherit;
   }
-
+  
   .tag-dow {
     text-align: center;
   }
-  .express-num{
+  
+  .express-num {
     width: 100%;
   }
 </style>
