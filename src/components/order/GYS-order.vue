@@ -559,11 +559,13 @@
         const _this = this;
         _this.express1 = Express+` 【${ExpressNo}】`;
         _this.express2 = Express+` ${ExpressNo}`;
-        _this.Axios.post('/Manage/Order/getExpress', _this.Qs.stringify({
-          expressnumber: ExpressNo,
-          expressname: Express,
-          ordernumber: ErpOrderNumber,
-        })).then(res => {
+        _this.Axios.get('/Manage/Order/getExpress', {
+          params:{
+            expressnumber: ExpressNo,
+            expressname: Express,
+            ordernumber: ErpOrderNumber,
+          }
+        }).then(res => {
           _this.modal1 = true;
           if (res.data.error === 0) {
             _this.express = res.data.data

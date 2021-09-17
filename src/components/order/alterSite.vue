@@ -18,6 +18,9 @@
       <FormItem label="详细地址" prop="address">
         <Input type="textarea" v-model="formValidate.address" placeholder="请填写"></Input>
       </FormItem>
+      <FormItem label="发货日期" prop="fhrq">
+        <DatePicker type="date" placeholder="请选择" :value="formValidate.GetTime" @on-change="fhTime" style="width: 100%;cursor:pointer" :editable="false"></DatePicker>
+      </FormItem>
     </Form>
     <div slot="footer">
       <Button type="primary" @click="handleSubmit('formValidate')">确认</Button>
@@ -43,6 +46,7 @@
           phone: '',
           ssq: [],
           address: '',
+          GetTime:''
         },
         ruleValidate: {
           consignee: [
@@ -62,13 +66,18 @@
     },
     methods: {
       getSite(site){
+        console.log(site)
         this.formValidate.consignee = site.consignee;
         this.formValidate.phone = site.phone;
-        this.formValidate.address = site.address
+        this.formValidate.address = site.address;
+        this.formValidate.GetTime = site.GetTime
       },
       dzjhs(i,b){
         this.ssq=b
 
+      },
+      fhTime(e){
+        this.formValidate.GetTime = e;
       },
       handleSubmit(name) {
         const _this = this;
@@ -82,6 +91,7 @@
               city: _this.ssq[1].label,   // 市
               area: _this.ssq[2].label,   // 区
               address: _this.formValidate.address,   // 详细地址
+              getdate: _this.formValidate.GetTime
             })).then(res => {
               if(res.data.error===0){
                 _this.model=false;

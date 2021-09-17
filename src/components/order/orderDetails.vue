@@ -137,7 +137,8 @@
     <alterSite ref="alterSite" @getOrder="getDetails" :site="{
     consignee:data.Consignee,
     phone:data.Phone,
-    address:data.address
+    address:data.address,
+    GetTime:data.GetTime
     }"></alterSite>
   </div>
 </template>
@@ -257,6 +258,7 @@
           consignee: _this.data.Consignee,
           phone: _this.data.Phone,
           address: _this.data.Address,
+          GetTime: _this.data.GetTime
         });
       },
 
