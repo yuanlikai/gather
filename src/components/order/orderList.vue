@@ -37,7 +37,18 @@
       </p>
       <Form ref="formValidate" :model="formValidate" :label-width="80">
         <Row :gutter="30">
-          <Col :xs="24" :md="12" :lg="8">
+          <Col :xs="24" :md="12" :lg="6" v-if="supplier.userType!=='SUPPLIER'">
+            <FormItem label="来源平台：" prop="terraceId">
+              <Select :disabled="supplier.userType==='SUPPLIER'"
+                      v-model="formValidate.terraceId"
+                      @on-change="start=1,total=0,getOrder()">
+                <Option value="-1">全部</Option>
+                <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}
+                </Option>
+              </Select>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="6">
             <FormItem label="供应商：" prop="supplierid">
               <Select :disabled="supplier.userType==='SUPPLIER'"
                       v-model="supplier.userType==='SUPPLIER'?supplier.supplierId:formValidate.supplierid"
@@ -50,44 +61,27 @@
               </Select>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8" v-if="supplier.userType!=='SUPPLIER'">
-            <FormItem label="来源平台：" prop="terraceId">
-              <Select :disabled="supplier.userType==='SUPPLIER'"
-                      v-model="formValidate.terraceId"
-                      @on-change="start=1,total=0,getOrder()">
-                <Option value="-1">全部</Option>
-                <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}
-                </Option>
-              </Select>
-            </FormItem>
-          </Col>
-          <Col :xs="24" :md="12" :lg="8">
+        </Row>
+        <Row :gutter="30">
+          <Col :xs="24" :md="12" :lg="6">
             <FormItem label="订单编号：" prop="ordernumber">
               <Input v-model="formValidate.ordernumber" placeholder="请输入"/>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="商品名称：" prop="proname">
-              <Input v-model="formValidate.proname" placeholder="请输入"/>
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="订单金额：" prop="price1">
+              <div class="price-inp">
+                <Input v-model="formValidate.price1"
+                       @on-keyup="formValidate.price1=formValidate.price1.replace(/[^\d]/g,'');"
+                       placeholder="请输入"/>
+                <span>-</span>
+                <Input v-model="formValidate.price2"
+                       @on-keyup="formValidate.price2=formValidate.price2.replace(/[^\d]/g,'');"
+                       placeholder="请输入"/>
+              </div>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="产品货号：" prop="stockno">
-              <Input v-model="formValidate.stockno" placeholder="请输入"/>
-            </FormItem>
-          </Col>
-          <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="收货人：" prop="consignee">
-              <Input v-model="formValidate.consignee" placeholder="请输入"/>
-            </FormItem>
-          </Col>
-          <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="手机号：" prop="phone">
-              <Input :maxlength="11" @on-keyup="formValidate.phone=formValidate.phone.replace(/[^\d]/g,'')"
-                     v-model="formValidate.phone" placeholder="请输入"/>
-            </FormItem>
-          </Col>
-          <Col :xs="24" :md="12" :lg="8">
+          <Col :xs="24" :md="12" :lg="6">
             <FormItem label="下单时间：" prop="time">
               <DatePicker @on-change="getTime" style="width: 100%;cursor: pointer;"
                           v-model="formValidate.time"
@@ -95,42 +89,52 @@
                           placement="bottom-start" placeholder="请选择" :editable="false"></DatePicker>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="预约发货：" prop="time1">
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="发货时间：" prop="time1">
               <DatePicker @on-change="getTime1" style="width: 100%;cursor: pointer;"
+                          :options="options1"
                           v-model="formValidate.time1"
                           format="yyyy/MM/dd" type="daterange"
                           placement="bottom-start" placeholder="请选择" :editable="false"></DatePicker>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="订单金额：" prop="price1">
-              <div style="width: 280px">
-                <Input v-model="formValidate.price1"
-                       @on-keyup="formValidate.price1=formValidate.price1.replace(/[^\d]/g,'');" style="width: 100px"
-                       placeholder="请输入"/>
-                -
-                <Input v-model="formValidate.price2"
-                       @on-keyup="formValidate.price2=formValidate.price2.replace(/[^\d]/g,'');" style="width: 100px"
-                       placeholder="请输入"/>
-              </div>
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="产品货号：" prop="stockno">
+              <Input v-model="formValidate.stockno" placeholder="请输入"/>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="产品名称：" prop="proname">
+              <Input v-model="formValidate.proname" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="6">
             <FormItem label="券号：" prop="ticketnumber">
               <Input v-model="formValidate.ticketnumber" placeholder="请输入"/>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="8">
+          <Col :xs="24" :md="12" :lg="6">
             <FormItem label="礼包编号：" prop="giftcode">
               <Input v-model="formValidate.giftcode" placeholder="请输入"/>
             </FormItem>
           </Col>
-          <!--<Col :xs="24" :md="12" :lg="8">-->
-          <!--<FormItem label="下单时间排序：" prop="terraceId">-->
-          <!--</FormItem>-->
-          <!--</Col>-->
-          <Col span="24">
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="收货人：" prop="consignee">
+              <Input v-model="formValidate.consignee" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="手机号：" prop="phone">
+              <Input :maxlength="11" @on-keyup="formValidate.phone=formValidate.phone.replace(/[^\d]/g,'')"
+                     v-model="formValidate.phone" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="收货区域" prop="ssq">
+              <Cascader @on-change="xzdq" :data="dataSite" v-model="formValidate.ssq"></Cascader>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="6">
             <FormItem>
               <div style="width: 100%;text-align: right">
                 <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
@@ -408,6 +412,28 @@
     props: ['supplier'],
     data() {
       return {
+        options1: {
+          shortcuts: [
+            {
+              text: '今天发货',
+              value () {
+                const start = new Date();
+                const end = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 6);
+                return [start, end];
+              }
+            },
+            {
+              text: '明天发货',
+              value () {
+                const start = new Date();
+                start.setTime(start.getTime() + 3600 * 1000 * 24);
+                return [start, start];
+              }
+            },
+          ]
+        },
+        dataSite: [],
         pageSize: 10,
         indeterminate: true,
         checkAll: false,
@@ -522,6 +548,7 @@
           time1: ['', ''],
           price1: '',
           price2: '',
+          ssq:[],
         },
         supplierList: [],
         statusList: [],
@@ -537,6 +564,28 @@
       }
     },
     methods: {
+      //收货区域
+      xzdq(value, selectedData){
+        this.formValidate.ssq = value;
+        this.start = 1;
+        this.total = 0;
+        this.getOrder()
+      },
+      //收货区域一级级联动改为二级联动
+      getSsq() {
+        const _this = this;
+        _this.Axios.get('/Manage/Region/region').then(res => {
+          for(let i = 0;i<res.data.RegionList.length;i++){
+            res.data.RegionList[i].value = res.data.RegionList[i].label;
+            for(let a = 0;a<res.data.RegionList[i].children.length;a++){
+              res.data.RegionList[i].children[a].value = res.data.RegionList[i].children[a].label;
+              delete res.data.RegionList[i].children[a].children
+            }
+          }
+          _this.dataSite = res.data.RegionList;
+        })
+    
+      },
       //点击图片放大弹窗
       showModal3(e) {
         this.proUrl = e;
@@ -704,6 +753,7 @@
             endtime: _this.formValidate.time[1],
             begintime2: _this.formValidate.time1[0],
             endtime2: _this.formValidate.time1[1],
+            address:_this.formValidate.ssq.join(' '),
             page: _this.start,
             pagesize: _this.pageSize,
           }
@@ -876,6 +926,7 @@
           '&endtime=' + _this.formValidate.time[1] +
           '&begintime2=' + _this.formValidate.time1[0] +
           '&endtime2=' + _this.formValidate.time1[1] +
+          '&address=' + _this.formValidate.ssq.join(' ') +
           '&page=' + page +
           '&pagesize=' + 100
         );
@@ -940,11 +991,18 @@
       this.getSupplier();
       this.getTerrace();
       this.getStatus();
+      this.getSsq();
     }
   }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+  .price-inp{
+    display: flex;
+  }
+  .price-inp>span{
+    margin: 0 10px;
+  }
   .Page-wrap {
     width: 100%;
     text-align: center;
