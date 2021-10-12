@@ -90,7 +90,7 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="发货时间：" prop="time1">
+            <FormItem label="预约发货：" prop="time1">
               <DatePicker @on-change="getTime1" style="width: 100%;cursor: pointer;"
                           :options="options1"
                           v-model="formValidate.time1"
@@ -135,6 +135,11 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="套餐编号：" prop="actcode">
+              <Input v-model="formValidate.actcode" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col span="24">
             <FormItem>
               <div style="width: 100%;text-align: right">
                 <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
@@ -416,7 +421,7 @@
           shortcuts: [
             {
               text: '今天发货',
-              value () {
+              value() {
                 const start = new Date();
                 const end = new Date();
                 start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 6);
@@ -425,7 +430,7 @@
             },
             {
               text: '明天发货',
-              value () {
+              value() {
                 const start = new Date();
                 start.setTime(start.getTime() + 3600 * 1000 * 24);
                 return [start, start];
@@ -548,7 +553,8 @@
           time1: ['', ''],
           price1: '',
           price2: '',
-          ssq:[],
+          ssq: [],
+          actcode: ''
         },
         supplierList: [],
         statusList: [],
@@ -565,7 +571,7 @@
     },
     methods: {
       //收货区域
-      xzdq(value, selectedData){
+      xzdq(value, selectedData) {
         this.formValidate.ssq = value;
         this.start = 1;
         this.total = 0;
@@ -575,16 +581,16 @@
       getSsq() {
         const _this = this;
         _this.Axios.get('/Manage/Region/region').then(res => {
-          for(let i = 0;i<res.data.RegionList.length;i++){
+          for (let i = 0; i < res.data.RegionList.length; i++) {
             res.data.RegionList[i].value = res.data.RegionList[i].label;
-            for(let a = 0;a<res.data.RegionList[i].children.length;a++){
+            for (let a = 0; a < res.data.RegionList[i].children.length; a++) {
               res.data.RegionList[i].children[a].value = res.data.RegionList[i].children[a].label;
               delete res.data.RegionList[i].children[a].children
             }
           }
           _this.dataSite = res.data.RegionList;
         })
-    
+        
       },
       //点击图片放大弹窗
       showModal3(e) {
@@ -614,7 +620,7 @@
         _this.express1 = Express + ` 【${ExpressNo}】`;
         _this.express2 = Express + ` ${ExpressNo}`;
         _this.Axios.get('/Manage/Order/getExpress', {
-          params:{
+          params: {
             expressnumber: ExpressNo,
             expressname: Express,
             ordernumber: ErpOrderNumber,
@@ -753,7 +759,8 @@
             endtime: _this.formValidate.time[1],
             begintime2: _this.formValidate.time1[0],
             endtime2: _this.formValidate.time1[1],
-            address:_this.formValidate.ssq.join(' '),
+            address: _this.formValidate.ssq.join(' '),
+            actcode: _this.formValidate.actcode,
             page: _this.start,
             pagesize: _this.pageSize,
           }
@@ -927,6 +934,7 @@
           '&begintime2=' + _this.formValidate.time1[0] +
           '&endtime2=' + _this.formValidate.time1[1] +
           '&address=' + _this.formValidate.ssq.join(' ') +
+          '&actcode=' + _this.formValidate.actcode +
           '&page=' + page +
           '&pagesize=' + 100
         );
@@ -997,12 +1005,14 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-  .price-inp{
+  .price-inp {
     display: flex;
   }
-  .price-inp>span{
+  
+  .price-inp > span {
     margin: 0 10px;
   }
+  
   .Page-wrap {
     width: 100%;
     text-align: center;

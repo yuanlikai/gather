@@ -135,6 +135,11 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="套餐编号：" prop="actcode">
+              <Input v-model="formValidate.actcode" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col span="24">
             <FormItem>
               <div style="width: 100%;text-align: right">
                 <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
@@ -549,6 +554,7 @@
           price1: '',
           price2: '',
           ssq:[],
+          actcode: ''
         },
         supplierList: [],
         statusList: [],
@@ -754,6 +760,7 @@
             begintime2: _this.formValidate.time1[0],
             endtime2: _this.formValidate.time1[1],
             address:_this.formValidate.ssq.join(' '),
+            actcode: _this.formValidate.actcode,
             page: _this.start,
             pagesize: _this.pageSize,
           }
@@ -942,6 +949,7 @@
           '&begintime2=' + _this.formValidate.time1[0] +
           '&endtime2=' + _this.formValidate.time1[1] +
           '&address=' + _this.formValidate.ssq.join(' ') +
+          '&actcode=' + _this.formValidate.actcode +
           '&page=' + page +
           '&pagesize=' + 100
         );
