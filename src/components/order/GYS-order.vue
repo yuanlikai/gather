@@ -90,7 +90,7 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="发货时间：" prop="time1">
+            <FormItem label="预约发货：" prop="time1">
               <DatePicker @on-change="getTime1" style="width: 100%;cursor: pointer;"
                           :options="options1"
                           v-model="formValidate.time1"
