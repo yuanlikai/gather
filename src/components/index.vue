@@ -21,6 +21,7 @@
             <Button style="width: 100%;height: 36px;" type="primary" :loading="loading"
                     @click="handleSubmit('formInline')">登录
             </Button>
+            <p class="version">当前版本 V2.1</p>
           </FormItem>
         </Form>
       </div>
@@ -79,6 +80,8 @@
       },
     },
     mounted() {
+      let a = 'hello'
+      console.log(a.split('').join('123'))
     
     }
   }
@@ -88,5 +91,10 @@
   
   .ivu-input {
     height: 36px;
+  }
+  .version{
+    width: 100%;
+    text-align: right;
+    color: #777777;
   }
 </style>
