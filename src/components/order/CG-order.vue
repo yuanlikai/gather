@@ -84,7 +84,7 @@
           <Col :xs="24" :md="12" :lg="6">
             <FormItem label="下单时间：" prop="time">
               <DatePicker @on-change="getTime" style="width: 100%;cursor: pointer;"
-                          v-model="formValidate.time"
+                          :value="formValidate.time"
                           format="yyyy/MM/dd" type="daterange"
                           placement="bottom-start" placeholder="请选择" :editable="false"></DatePicker>
             </FormItem>
@@ -93,7 +93,7 @@
             <FormItem label="预约发货：" prop="time1">
               <DatePicker @on-change="getTime1" style="width: 100%;cursor: pointer;"
                           :options="options1"
-                          v-model="formValidate.time1"
+                          :value="formValidate.time1"
                           format="yyyy/MM/dd" type="daterange"
                           placement="bottom-start" placeholder="请选择" :editable="false"></DatePicker>
             </FormItem>
