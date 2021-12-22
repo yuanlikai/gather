@@ -33,7 +33,7 @@
     </div>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
-        筛选查询{{formValidate.time1}}
+        筛选查询
       </p>
       <Form ref="formValidate" :model="formValidate" :label-width="80">
         <Row :gutter="30">
