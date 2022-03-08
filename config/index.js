@@ -18,6 +18,13 @@ module.exports = {
           '^/Upload': ''
         }
       },
+      '/youke': {
+        target: 'https://xcx.e6best.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/youke': ''
+        }
+      },
       '/': {
         // target: 'http://192.168.1.73:8088',
         target: 'https://ylm2.e6best.com',

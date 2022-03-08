@@ -114,7 +114,6 @@
         _this.Axios.get('/Manage/Region/region').then(res => {
           _this.dataSite = res.data.RegionList;
         })
-
       }
     },
     mounted() {

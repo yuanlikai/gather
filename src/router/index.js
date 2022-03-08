@@ -174,6 +174,21 @@ export default new Router({
           path: '/addTerrace',
           name: '添加平台',
           component: resolve => require(['@/components/setting/addTerrace'], resolve),
+        },
+        {
+          path: '/commerce',
+          name: '电商平台导单',
+          component: resolve => require(['@/components/lead/commerce'], resolve),
+        },
+        {
+          path: '/pick',
+          name: '提货平台导单',
+          component: resolve => require(['@/components/lead/pick'], resolve),
+        },
+        {
+          path: '/createOrder',
+          name: '下单',
+          component: resolve => require(['@/components/createOrder/createOrder'], resolve),
         }
       ]
     }

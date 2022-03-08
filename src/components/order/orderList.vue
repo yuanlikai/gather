@@ -938,6 +938,29 @@
           '&page=' + page +
           '&pagesize=' + 100
         );
+        console.log('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPage.ashx?typeid=' + typeid +
+          '&sortid=' + _this.sortid +
+          '&vid=' + 1 +
+          '&state=' + _this.formValidate.state +
+          '&supplierid=' + supplierid +
+          '&platformid=' + _this.formValidate.terraceId +
+          '&ordernumber=' + _this.formValidate.ordernumber +
+          '&proname=' + _this.formValidate.proname +
+          '&stockno=' + _this.formValidate.stockno +
+          '&consignee=' + _this.formValidate.consignee +
+          '&phone=' + _this.formValidate.phone +
+          '&price1=' + _this.formValidate.price1 +
+          '&price2=' + _this.formValidate.price2 +
+          '&ticketnumber=' + _this.formValidate.ticketnumber +
+          '&giftcode=' + _this.formValidate.giftcode +
+          '&begintime=' + _this.formValidate.time[0] +
+          '&endtime=' + _this.formValidate.time[1] +
+          '&begintime2=' + _this.formValidate.time1[0] +
+          '&endtime2=' + _this.formValidate.time1[1] +
+          '&address=' + _this.formValidate.ssq.join(' ') +
+          '&actcode=' + _this.formValidate.actcode +
+          '&page=' + page +
+          '&pagesize=' + 100)
         _this.$set(_this.tagArr[index], 'download', true);
       },
       getTime(i) {

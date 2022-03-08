@@ -80,8 +80,6 @@
       },
     },
     mounted() {
-      let a = 'hello'
-      console.log(a.split('').join('123'))
     
     }
   }
@@ -92,7 +90,8 @@
   .ivu-input {
     height: 36px;
   }
-  .version{
+  
+  .version {
     width: 100%;
     text-align: right;
     color: #777777;
