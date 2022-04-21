@@ -500,7 +500,7 @@
       getOrder(i) {
         const _this = this;
         _this.loading1 = true;
-        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
+        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/GetYcOrderList.ashx', {
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             vid:0,
@@ -599,7 +599,7 @@
       getStatus() {
         const _this = this;
         _this.statusNum();
-        _this.Axios.get('/Manage/Order/getStateStr').then(res => {
+        _this.Axios.get('/GetStateStr.ashx').then(res => {
           _this.statusList = res.data.data;
         })
       },
@@ -607,7 +607,7 @@
       //获取状态数量
       statusNum() {
         const _this = this;
-        _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
+        _this.Axios.get('/GetOrderNum.ashx').then(resa => {
           _this.orderNum = resa.data
         });
       },
@@ -620,7 +620,7 @@
       //获取供应商
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
+        _this.Axios.get('/GetSupList.ashx').then(res => {
           _this.supplierList = res.data.data
         })
       },
@@ -628,7 +628,7 @@
       //获取平台
       getTerrace() {
         const _this = this;
-        _this.Axios.get('/Manage/Platform/list').then(res => {
+        _this.Axios.get('/GetPlaList.ashx').then(res => {
           _this.terraceList = res.data.data
         })
       },

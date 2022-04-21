@@ -2,7 +2,7 @@
   .ivu-table .demo-table-info-row td {
     color: red
   }
-  
+
   .card-warp .ivu-card-body {
     padding: 0;
   }
@@ -153,7 +153,7 @@
     <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
       <p slot="title" style="height: 24px;display: flex;align-items: center">
         数据列表 <span style="font-weight: 400">【共 {{total}} 条】</span>
-        
+
         <Select style="width: 130px;margin-left: 10px;font-weight: 400;" size="small" v-model="sortid"
                 @on-change="start=1,total=0,getOrder()">
           <Option value="1">按下单时间正序</Option>
@@ -235,7 +235,7 @@
                     </div>
                   </Col>
                 </div>
-                
+
                 <div style="float: left;margin-left: 66px">共 <span style="color: #000000;font-weight: 700">{{item.ProList.length}}</span>
                   个产品
                   <span v-if="item.ProList.length>3">
@@ -343,7 +343,7 @@
         <i class="ivu-icon ivu-icon-ios-arrow-up"></i>
       </div>
     </BackTop>
-    
+
     <Modal v-model="modal" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -357,13 +357,13 @@
             <Icon type="md-checkmark" v-if="item.download===true"/>
           </span>
         </div>
-      
+
       </div>
       <div slot="footer">
         <Button type="error" size="large" long @click="modal=false">关闭</Button>
       </div>
     </Modal>
-    
+
     <Modal v-model="modal1" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -390,7 +390,7 @@
         <Button type="primary" size="large" @click="modal1=false">关闭</Button>
       </div>
     </Modal>
-    
+
     <Modal v-model="modal3" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -408,7 +408,7 @@
 <script>
   import express from './express'
   import Upload from './Upload'
-  
+
   export default {
     components: {
       express,
@@ -590,14 +590,14 @@
           }
           _this.dataSite = res.data.RegionList;
         })
-        
+
       },
       //点击图片放大弹窗
       showModal3(e) {
         this.proUrl = e;
         this.modal3 = true;
       },
-      
+
       //订单状态切换
       group(e) {
         this.types = e;
@@ -738,8 +738,7 @@
         const _this = this;
         _this.loading1 = true;
         _this.tagArr = [];
-        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
-          params: {
+        _this.Axios.post(_this.types !== 'yc' ? '/GetOrderList.ashx' : '/GetYcOrderList.ashx', {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             sortid: _this.sortid,
             vid: 1,
@@ -763,7 +762,6 @@
             actcode: _this.formValidate.actcode,
             page: _this.start,
             pagesize: _this.pageSize,
-          }
         }).then(res => {
           _this.getOrderNum();
           _this.indeterminate = false;
@@ -858,14 +856,14 @@
       getStatus() {
         const _this = this;
         _this.statusNum();
-        _this.Axios.get('/Manage/Order/getStateStr').then(res => {
+        _this.Axios.get('/GetStateStr.ashx').then(res => {
           _this.statusList = res.data.data;
         })
       },
       //获取状态数量
       statusNum() {
         const _this = this;
-        _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
+        _this.Axios.get('/GetOrderNum.ashx').then(resa => {
           _this.orderNum = resa.data
         });
       },
@@ -876,14 +874,14 @@
       //获取供应商
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
+        _this.Axios.get('/GetSupList.ashx').then(res => {
           _this.supplierList = res.data.data
         })
       },
       //获取平台
       getTerrace() {
         const _this = this;
-        _this.Axios.get('/Manage/Platform/list').then(res => {
+        _this.Axios.get('/GetPlaList.ashx').then(res => {
           _this.terraceList = res.data.data
         })
       },
@@ -1031,17 +1029,17 @@
   .price-inp {
     display: flex;
   }
-  
+
   .price-inp > span {
     margin: 0 10px;
   }
-  
+
   .Page-wrap {
     width: 100%;
     text-align: center;
     padding: 16px 0;
   }
-  
+
   .row-wrap p {
     float: left;
     font-size: 12px;
@@ -1049,7 +1047,7 @@
     line-height: 24px;
     padding-left: 16px;
   }
-  
+
   .row-wrap-checkbox {
     margin: auto;
     position: absolute;
@@ -1059,24 +1057,24 @@
     width: 16px;
     height: 32px;
   }
-  
+
   .row-wrap {
     position: relative;
   }
-  
+
   .card-warp-col3 {
     font-size: 12px;
   }
-  
+
   .card-warp-col3 p {
     line-height: 24px;
   }
-  
+
   .card-warp-li {
     flex-direction: column-reverse;
     margin-right: 16px;
   }
-  
+
   .card-warp-ul {
     width: 100%;
     display: flex;
@@ -1085,7 +1083,7 @@
     line-height: 16px;
     padding: 8px 48px 8px 16px;
   }
-  
+
   .card-warp .ivu-alert {
     font-weight: 700;
     border: none;
@@ -1095,15 +1093,15 @@
     -moz-border-radius: 0px;
     border-radius: 0px;
   }
-  
+
   .ivu-table-wrapper {
     overflow: inherit;
   }
-  
+
   .tag-dow {
     text-align: center;
   }
-  
+
   .express-num {
     width: 100%;
   }

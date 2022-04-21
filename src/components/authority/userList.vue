@@ -217,7 +217,7 @@ margin-right: 16px">
           }
         })
       },
-      
+
       // 用户名 供应商搜索
       getProduct() {
         const _this = this;
@@ -228,7 +228,7 @@ margin-right: 16px">
       // //获取供应商下拉
       // getSupplier() {
       //   const _this = this;
-      //   _this.Axios.get('/Manage/Supplier/selectList').then(res => {
+      //   _this.Axios.get('/GetSupList.ashx').then(res => {
       //     if (res.data.code === 0) {
       //       _this.supplierList = res.data.data
       //     } else {

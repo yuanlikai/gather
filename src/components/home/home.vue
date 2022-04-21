@@ -56,7 +56,7 @@
       //获取状态
       getStatus() {
         const _this = this;
-        _this.Axios.get('/Manage/Order/getStateStr').then(res => {
+        _this.Axios.get('/GetStateStr.ashx').then(res => {
           _this.statusList = res.data.data;
         })
       },
@@ -92,7 +92,7 @@
       //获取状态数量
       getOrderNum() {
         const _this = this;
-        _this.Axios.get('/Manage/Order/getOrderNum').then(res => {
+        _this.Axios.get('/GetOrderNum.ashx').then(res => {
           _this.orderNum = res.data;
           setTimeout(()=>{
             _this.loading = false;

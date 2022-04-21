@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    
+
     <Form ref="formValidate" :model="formValidate" :label-width="110">
       <Row :gutter="30" style="width: 1000px;margin:40px 0 0 40px">
         <Col span="12">
@@ -157,7 +157,7 @@
         </Form>
         <Table :columns="columns1" :data="dataList" @on-selection-change="selectionChange"
                style="max-height:281px;overflow-y: auto;overflow-x: hidden"></Table>
-      
+
       </div>
     </Modal>
   </div>
@@ -226,13 +226,13 @@
       getTime(i) {
         this.formValidate.GetTime = i
       },
-      
+
       dzjhs(i, b) {
         this.formValidate.Province = b[0].label;
         this.formValidate.City = b[1].label;
         this.formValidate.Area = b[2].label;
       },
-      
+
       //新增商品
       handleSubmit(name) {
         const _this = this;
@@ -250,7 +250,7 @@
               Prolist[i].TotalPrice = String(Prolist[i].TotalPrice)
             }
             formValidate.Prolist = Prolist;
-            _this.Axios.post('/Upload/SupplierAdmin/ActCreateOrder.ashx', formValidate).then(res => {
+            _this.Axios.post('/ActCreateOrder.ashx', formValidate).then(res => {
               console.log(res.data)
               if(res.data.error===0){
                 _this.$Message.success('创建成功')
@@ -264,13 +264,13 @@
           }
         })
       },
-      
+
       //删除勾选商品
       delProlist(i) {
         this.formValidate.Prolist.splice(i, 1)
       },
-      
-      
+
+
       //勾选完成
       selectOk() {
         if (this.selectList.length < 1) {
@@ -292,7 +292,7 @@
           this.formValidate.Prolist = arr
         }
       },
-      
+
       //勾选商品
       selectionChange(select) {
         this.selectList = select
@@ -318,7 +318,7 @@
       //获取平台
       getTerrace() {
         const _this = this;
-        _this.Axios.get('/Manage/Platform/list').then(res => {
+        _this.Axios.get('/GetPlaList.ashx').then(res => {
           _this.terraceList = res.data.data
         })
       },
@@ -329,11 +329,11 @@
           _this.dataSite = res.data.RegionList;
         })
       },
-  
+
       //获取供应商
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
+        _this.Axios.get('/GetSupList.ashx').then(res => {
           _this.supplierList = res.data.data
         })
       },
@@ -346,7 +346,7 @@
       this.getTerrace();
       this.getSupplier();
       this.getSsq()
-      
+
     }
   }
 </script>

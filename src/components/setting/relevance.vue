@@ -111,7 +111,7 @@
       //获取平台列表
       terraceList() {
         const _this = this;
-        _this.Axios.get('/Manage/Platform/list', {
+        _this.Axios.get('/GetPlaList.ashxx', {
           params: {
             status: true
           }

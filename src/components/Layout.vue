@@ -189,7 +189,7 @@
       //获取用户信息
       getCurrentUser() {
         const _this = this;
-        _this.Axios.get('/Manage/UserInfo/getCurrentUser').then(res => {
+        _this.Axios.get('/getCurrentUser.ashx').then(res => {
           _this.supplier = res.data.data;
         })
       },
