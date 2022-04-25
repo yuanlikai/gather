@@ -16,6 +16,11 @@ export default new Router({
       component: resolve => require(['@/components/index'], resolve)
     },
     {
+      path: '/tihuo/download',
+      name: 'download',
+      component: resolve => require(['@/components/tihuo/download'], resolve)
+    },
+    {
       path: '/tihuo/index',
       name: 'tihuo',
       component: resolve => require(['@/components/tihuo/tihuo'], resolve)
