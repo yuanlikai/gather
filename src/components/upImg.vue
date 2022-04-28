@@ -29,7 +29,7 @@
       :multiple="true"
       :data="data"
       type="drag"
-      action="https://ylmanager.oss-cn-shanghai.aliyuncs.com"
+      action="http://oms.e6best.com/UploadFile.aspx"
       style="display: inline-block;width:58px;" v-show="!$route.query.examineId">
       <div style="width: 58px;height:58px;line-height: 58px;">
         <Icon type="ios-camera" size="20"></Icon>
@@ -82,7 +82,8 @@
         this.$refs.upload.fileList.splice(0, this.uploadList.length);
       },
       handleSuccess(res, file) {
-        file.filename = file.response.data.filename;
+        console.log(file)
+        file.filename = file.response.msg;
       },
       handleFormatError(file) {
         this.$Notice.warning({
@@ -136,7 +137,7 @@
     mounted() {
       this.uploadList = this.$refs.upload.fileList;
       this.upload();
-      this.policy();
+      // this.policy();
       const _this = this;
       setInterval(function () {
         _this.policy()

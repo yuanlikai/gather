@@ -177,11 +177,12 @@
               platformNo: _this.formValidate.platformNo,
               description: _this.formValidate.description,
             })).then(res => {
-              if (res.data.code === 0) {
+              console.log(res.data)
+              if (res.data.error === 0) {
                 _this.current = 1;
                 _this.handleReset('formValidate');
                 _this.$refs.logo.uploadList = [];
-                _this.$Message.success(_this.$route.query.id ? '修改成功！' : '添加成功！')
+                _this.$Message.success(_this.$route.query.id!=='-1' ? '修改成功！' : '添加成功！')
               } else {
                 _this.$Message.warning(res.data.message)
               }
