@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">{{$route.query.id?'编辑':'添加'}}平台</div>
+      <div class="ivu-page-header-title">{{ $route.query.id ? '编辑' : '添加' }}平台</div>
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <Row v-show="current===0">
@@ -45,9 +45,9 @@
       <Row v-show="current===1">
         <Col span="24" style="text-align: center">
           <Icon type="ios-checkmark-circle" size="90" color="#19be6b" style="margin: 32px 0 24px 0"/>
-          <div class="ivu-result-title">{{$route.query.id?'修改':'添加'}}成功</div>
+          <div class="ivu-result-title">{{ $route.query.id ? '修改' : '添加' }}成功</div>
           <Alert style="width:50%;margin: 0 auto 32px auto;font-size: 14px;text-align: left;padding: 16px">
-            平台{{$route.query.id?'修改':'添加'}}成功，请到平台列表查看
+            平台{{ $route.query.id ? '修改' : '添加' }}成功，请到平台列表查看
           </Alert>
           <Button v-show="!$route.query.id" type="primary" @click="current = 0">继续添加</Button>&nbsp;
         </Col>
@@ -56,173 +56,174 @@
   </div>
 </template>
 <script>
-  import upImg from '../upImg'
+import upImg from '../upImg'
 
-  export default {
-    components: {
-      upImg
-    },
-    data() {
-      // const validate = (rule, value, callback) => {
-      //   if (this.$refs.logo.uploadList < 1) {
-      //     callback(new Error('请上传logo'));
-      //   } else {
-      //     callback();
-      //   }
-      // };
-      const validate1 = (rule, value, callback) => {
-        const _this = this;
-        if (value) {
-          _this.Axios.get('/Manage/Platform/valid/platformName', {
-            params: {
-              id: _this.$route.query.id ? _this.$route.query.id : '',
-              value: value
-            }
-          }).then(res => {
-            if (res.data.code === 0) {
-              callback();
-            } else {
-              callback(new Error('平台名称重复'))
-            }
-          });
-        } else {
-          callback(new Error('请输入平台名称'))
-        }
-      };
-      const validate2 = (rule, value, callback) => {
-        const _this = this;
-        if (value) {
-          _this.Axios.get('/Manage/Platform/valid/abbrPlatformName', {
-            params: {
-              id: _this.$route.query.id ? _this.$route.query.id : '',
-              value: value
-            }
-          }).then(res => {
-            if (res.data.code === 0) {
-              callback();
-            } else {
-              callback(new Error('平台简称重复'))
-            }
-          });
-        } else {
-          callback(new Error('请输入平台简称'))
-        }
-      };
-      const validate3 = (rule, value, callback) => {
-        const _this = this;
-        if (value) {
-          _this.Axios.get('/Manage/Platform/valid/platformNo', {
-            params: {
-              id: _this.$route.query.id ? _this.$route.query.id : '',
-              value: value
-            }
-          }).then(res => {
-            if (res.data.code === 0) {
-              callback();
-            } else {
-              callback(new Error('平台编号重复'))
-            }
-          });
-        } else {
-          callback(new Error('请输入平台编号'))
-        }
-      };
-
-      return {
-        current: 0,
-        detail: {},
-        formValidate: {
-          id: '-1',
-          platformName: '',
-          abbrPlatformName: '',
-          logoUrl: '',
-          platformNo: '',
-          domian: '',
-          description: '',
-          status: true,
-        },
-        ruleValidate: {
-          platformName: [
-            { message: '请输入名称',  required: true, trigger: 'blur'}
-          ],
-          abbrPlatformName: [
-            { message: '请输入简称',  required: true, trigger: 'blur'}
-          ],
-          platformNo: [
-            { message: '请输入编号',  required: true, mtrigger: 'blur'}
-          ],
-          // logoUrl: [
-          //   {validator: validate, required: true, trigger: 'change'}
-          // ],
-          domian: [
-            {required: true, message: '请输入域名', trigger: 'blur'}
-          ],
-        },
-      }
-    },
-    methods: {
-
-      //提交平台
-      handleSubmit(name) {
-        const _this = this;
-        _this.$refs[name].validate((valid) => {
-          if (valid) {
-            _this.Axios.post('/EditPlatform.ashx', _this.Qs.stringify({
-              id: _this.formValidate.id,
-              platformName: _this.formValidate.platformName,
-              abbrPlatformName: _this.formValidate.abbrPlatformName,
-              logoUrl: _this.$refs.logo.uploadList.length>0 ? _this.$refs.logo.uploadList[0].filename : '',
-              domian: _this.formValidate.domian,
-              status: _this.formValidate.status,
-              platformNo: _this.formValidate.platformNo,
-              description: _this.formValidate.description,
-            })).then(res => {
-              console.log(res.data)
-              if (res.data.error === 0) {
-                _this.current = 1;
-                _this.handleReset('formValidate');
-                _this.$refs.logo.uploadList = [];
-                _this.$Message.success(_this.$route.query.id!=='-1' ? '修改成功！' : '添加成功！')
-              } else {
-                _this.$Message.warning(res.data.message)
-              }
-            })
-          } else {
-            _this.$Message.error('有必填项未填写!');
+export default {
+  components: {
+    upImg
+  },
+  data() {
+    // const validate = (rule, value, callback) => {
+    //   if (this.$refs.logo.uploadList < 1) {
+    //     callback(new Error('请上传logo'));
+    //   } else {
+    //     callback();
+    //   }
+    // };
+    const validate1 = (rule, value, callback) => {
+      const _this = this;
+      if (value) {
+        _this.Axios.get('/Manage/Platform/valid/platformName', {
+          params: {
+            id: _this.$route.query.id ? _this.$route.query.id : '',
+            value: value
           }
-        })
-      },
-      handleReset(name) {
-        this.$refs[name].resetFields();
-      },
-
-      //获取平台详情
-      getDetail() {
-        const _this = this;
-        _this.Axios.post('/GetPlaModel.ashx', {
-          id: Number(_this.$route.query.id)
         }).then(res => {
-          console.log(res.data.data)
-          _this.formValidate = {
-            id: res.data.id,
-            platformName: res.data.data.platformName,
-            abbrPlatformName: res.data.data.abbrPlatformName,
-            domian: res.data.data.domian,
-            status: res.data.data.status,
-            platformNo: res.data.data.platformNo,
-            description: res.data.data.description,
-          };
-          _this.$refs.logo.defaultList.push({
-            filename: res.data.data.logoUrl
-          });
-        })
-
+          if (res.data.code === 0) {
+            callback();
+          } else {
+            callback(new Error('平台名称重复'))
+          }
+        });
+      } else {
+        callback(new Error('请输入平台名称'))
       }
-    },
-    mounted() {
-      this.$route.query.id ? this.getDetail() : '';
+    };
+    const validate2 = (rule, value, callback) => {
+      const _this = this;
+      if (value) {
+        _this.Axios.get('/Manage/Platform/valid/abbrPlatformName', {
+          params: {
+            id: _this.$route.query.id ? _this.$route.query.id : '',
+            value: value
+          }
+        }).then(res => {
+          if (res.data.code === 0) {
+            callback();
+          } else {
+            callback(new Error('平台简称重复'))
+          }
+        });
+      } else {
+        callback(new Error('请输入平台简称'))
+      }
+    };
+    const validate3 = (rule, value, callback) => {
+      const _this = this;
+      if (value) {
+        _this.Axios.get('/Manage/Platform/valid/platformNo', {
+          params: {
+            id: _this.$route.query.id ? _this.$route.query.id : '',
+            value: value
+          }
+        }).then(res => {
+          if (res.data.code === 0) {
+            callback();
+          } else {
+            callback(new Error('平台编号重复'))
+          }
+        });
+      } else {
+        callback(new Error('请输入平台编号'))
+      }
+    };
+
+    return {
+      current: 0,
+      detail: {},
+      formValidate: {
+        id: -1,
+        platformName: '',
+        abbrPlatformName: '',
+        logoUrl: '',
+        platformNo: '',
+        domian: '',
+        description: '',
+        status: true,
+      },
+      ruleValidate: {
+        platformName: [
+          {message: '请输入名称', required: true, trigger: 'blur'}
+        ],
+        abbrPlatformName: [
+          {message: '请输入简称', required: true, trigger: 'blur'}
+        ],
+        platformNo: [
+          {message: '请输入编号', required: true, mtrigger: 'blur'}
+        ],
+        // logoUrl: [
+        //   {validator: validate, required: true, trigger: 'change'}
+        // ],
+        domian: [
+          {required: true, message: '请输入域名', trigger: 'blur'}
+        ],
+      },
     }
+  },
+  methods: {
+
+    //提交平台
+    handleSubmit(name) {
+      const _this = this;
+      _this.$refs[name].validate((valid) => {
+        if (valid) {
+          console.log(_this.formValidate)
+          _this.Axios.post('/EditPlatform.ashx', {
+            id: Number(_this.formValidate.id),
+            platformName: _this.formValidate.platformName,
+            abbrPlatformName: _this.formValidate.abbrPlatformName,
+            logoUrl: _this.$refs.logo.uploadList.length > 0 ? _this.$refs.logo.uploadList[0].filename : '',
+            domian: _this.formValidate.domian,
+            status: _this.formValidate.status ? 0 : 1,
+            platformNo: _this.formValidate.platformNo,
+            description: _this.formValidate.description,
+          }).then(res => {
+            console.log(res.data)
+            if (res.data.error === 0) {
+              _this.current = 1;
+              _this.handleReset('formValidate');
+              _this.$refs.logo.uploadList = [];
+              _this.$Message.success(_this.$route.query.id !== -1 ? '修改成功！' : '添加成功！')
+            } else {
+              _this.$Message.warning(res.data.errorMsg)
+            }
+          })
+        } else {
+          _this.$Message.error('有必填项未填写!');
+        }
+      })
+    },
+    handleReset(name) {
+      this.$refs[name].resetFields();
+    },
+
+    //获取平台详情
+    getDetail() {
+      const _this = this;
+      _this.Axios.post('/GetPlaModel.ashx', {
+        id: Number(_this.$route.query.id)
+      }).then(res => {
+        console.log(res.data.data)
+        _this.formValidate = {
+          id: res.data.data.id,
+          platformName: res.data.data.platformName,
+          abbrPlatformName: res.data.data.abbrPlatformName,
+          domian: res.data.data.domian,
+          status: res.data.data.status==0?true:false,
+          platformNo: res.data.data.platformNo,
+          description: res.data.data.description,
+        };
+        _this.$refs.logo.defaultList.push({
+          filename: res.data.data.logoUrl
+        });
+      })
+
+    }
+  },
+  mounted() {
+    this.$route.query.id ? this.getDetail() : '';
   }
+}
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">

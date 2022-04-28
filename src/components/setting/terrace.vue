@@ -77,10 +77,10 @@
               return h('div',[
                 h('Badge',{
                   props:{
-                    status: params.row.status===true?'success':'error'
+                    status: params.row.status===0?'success':'error'
                   }
                 }),
-                h('span',params.row.status===true?'启用':'停用')
+                h('span',params.row.status===0?'启用':'停用')
               ],)
             }
           },
