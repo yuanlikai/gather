@@ -138,16 +138,14 @@
       getTerrace() {
         const _this = this;
         _this.loading = true;
-        _this.Axios.get('/Manage/Platform/pageList', {
-          params: {
-            start: _this.start - 1,
-            size: 10,
-            status: _this.status!=='全部'?_this.status:''
-          }
+        _this.Axios.post('GetPlatformList.ashx', {
+          page: _this.start,
+          pagesize: 10,
+          status: _this.status!=='全部'?_this.status:''
         }).then(res => {
-          if (res.data.code === 0) {
-            _this.data = res.data.data.content;
-            _this.total = res.data.data.totalElements;
+          if (res.data.error === 0) {
+            _this.data = res.data.data;
+            _this.total = res.data.total;
           } else {
             _this.data = [];
             _this.total = 0;

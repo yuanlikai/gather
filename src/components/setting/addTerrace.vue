@@ -143,13 +143,13 @@
         },
         ruleValidate: {
           platformName: [
-            {validator: validate1, required: true, trigger: 'blur'}
+            { message: '请输入名称',  required: true, trigger: 'blur'}
           ],
           abbrPlatformName: [
-            {validator: validate2, required: true, trigger: 'blur'}
+            { message: '请输入简称',  required: true, trigger: 'blur'}
           ],
           platformNo: [
-            {validator: validate3, required: true, mtrigger: 'blur'}
+            { message: '请输入编号',  required: true, mtrigger: 'blur'}
           ],
           // logoUrl: [
           //   {validator: validate, required: true, trigger: 'change'}
@@ -198,13 +198,12 @@
       //获取平台详情
       getDetail() {
         const _this = this;
-        _this.Axios.get('/Manage/Platform/detail', {
-          params: {
-            id: _this.$route.query.id
-          }
+        _this.Axios.post('/GetPlaModel.ashx', {
+          id: Number(_this.$route.query.id)
         }).then(res => {
+          console.log(res.data.data)
           _this.formValidate = {
-            id: res.data.data.id,
+            id: res.data.id,
             platformName: res.data.data.platformName,
             abbrPlatformName: res.data.data.abbrPlatformName,
             domian: res.data.data.domian,
