@@ -19,8 +19,8 @@
               <Input :maxlength="40" v-model="formValidate.erpSupplierNo"
                      placeholder="请输入"></Input>
             </FormItem>
-            
-            
+
+
             <FormItem label="字母编号" prop="supplierNo">
               <Input :disabled="$route.query.id" :maxlength="5" v-model="formValidate.supplierNo"
                      placeholder="请输入"
@@ -56,7 +56,7 @@
 </template>
 <script>
   import upImg from '../upImg'
-  
+
   export default {
     components: {
       upImg
@@ -141,7 +141,7 @@
         status: true,
         detail: {},
         formValidate: {
-          id: '',              //分类id 传入就是新增
+          id: -1,              //分类id 传入就是新增
           supplierName: '',   //名称40
           abbrSupplierName: '',   //简称10
           supplierNo: '',   //代码5
@@ -151,13 +151,13 @@
         },
         ruleValidate: {
           supplierName: [
-            {validator: validate1, required: true, trigger: 'blur'}
+            { message: '请输入企业名称', required: true, trigger: 'blur'}
           ],
           abbrSupplierName: [
-            {validator: validate2, required: true, trigger: 'blur'}
+            { message: '请输入简称', required: true, trigger: 'blur'}
           ],
           supplierNo: [
-            {validator: validate3, required: true, trigger: 'blur'}
+            { message: '请输入字母编号', required: true, trigger: 'blur'}
           ],
           productLim: [
             {required: true, message: '请输入SKU限制数量', trigger: 'blur'}
@@ -166,13 +166,13 @@
           //   {validator: validate, required: true, trigger: 'change'}
           // ],
           erpSupplierNo: [
-            {validator: validate4, trigger: 'blur'}
+            {message: '请输入ERP编号', trigger: 'blur'}
           ],
         },
       }
     },
     methods: {
-      
+
       //提交供应商
       handleSubmit(name) {
         const _this = this;
@@ -204,9 +204,9 @@
       },
       handleReset(name) {
         this.$route.query.id ? '' : this.$refs[name].resetFields();
-        
+
       },
-      
+
       //获取供应商详情
       getDetail() {
         const _this = this;
@@ -232,7 +232,7 @@
             filename: res.data.data.supplierLogo
           });
         })
-        
+
       }
     },
     mounted() {
