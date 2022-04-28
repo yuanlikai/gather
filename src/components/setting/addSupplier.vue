@@ -29,11 +29,11 @@
             <!--<FormItem label="logo" prop="logoUrl">-->
             <!--<upImg ref="logoUrl"></upImg>-->
             <!--</FormItem>-->
-            <FormItem label="SKU数量限制" prop="productLim">
-              <Input :disabled="$route.query.disabled" :maxlength="4" v-model="formValidate.productLim"
-                     @on-keyup="formValidate.productLim=formValidate.productLim.replace(/[^\d]/g,'');"
-                     placeholder="请输入"></Input>
-            </FormItem>
+<!--            <FormItem label="SKU数量限制" prop="productLim">-->
+<!--              <Input :disabled="$route.query.disabled" :maxlength="4" v-model="formValidate.productLim"-->
+<!--                     @on-keyup="formValidate.productLim=formValidate.productLim.replace(/[^\d]/g,'');"-->
+<!--                     placeholder="请输入"></Input>-->
+<!--            </FormItem>-->
             <FormItem v-show="!$route.query.disabled">
               <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
             </FormItem>
@@ -145,7 +145,6 @@
           supplierName: '',   //名称40
           abbrSupplierName: '',   //简称10
           supplierNo: '',   //代码5
-          productLim: '999',   //4
           logoUrl: '',
           erpSupplierNo: '',
         },
@@ -158,9 +157,6 @@
           ],
           supplierNo: [
             { message: '请输入字母编号', required: true, trigger: 'blur'}
-          ],
-          productLim: [
-            {required: true, message: '请输入SKU限制数量', trigger: 'blur'}
           ],
           // logoUrl: [
           //   {validator: validate, required: true, trigger: 'change'}
@@ -179,22 +175,21 @@
         _this.$refs[name].validate((valid) => {
           if (valid) {
             console.log(1221312312)
-            _this.Axios.post('/Manage/Supplier/save', _this.Qs.stringify({
+            _this.Axios.post('/EditSupplier.ashx', {
               id: _this.formValidate.id,              //分类id 传入就是新增
               supplierName: _this.formValidate.supplierName,   //名称40
               abbrSupplierName: _this.formValidate.abbrSupplierName,   //简称10
-              supplierNo: _this.formValidate.supplierNo,   //代码5
-              productLim: _this.formValidate.productLim,   //4
+              supplierNo: _this.formValidate.supplierNo,   //代/EditSupplier.ashx码5
               erpSupplierNo: _this.formValidate.erpSupplierNo,
               supplierLogo: "https://ylmanager.oss-cn-shanghai.aliyuncs.com/Image/20201230/eef12de4-ccaa-4dae-9988-a58917167e51"
               // supplierLogo: _this.$refs.logoUrl.uploadList.length>0?_this.$refs.logoUrl.uploadList[0].filename:'',  //品牌LOGO路径160
-            })).then(res => {
-              if (res.data.code === 0) {
+            }).then(res => {
+              if (res.data.error === 0) {
                 _this.status = false;
                 _this.$refs.logoUrl.uploadList = [];
                 _this.$Message.success(_this.$route.query.id ? '修改成功！' : '添加成功！')
               } else {
-                _this.$Message.warning(res.data.message)
+                _this.$Message.warning(res.data.errorMsg)
               }
             })
           } else {
@@ -210,10 +205,8 @@
       //获取供应商详情
       getDetail() {
         const _this = this;
-        _this.Axios.get('/GetSupModel.ashx', {
-          params: {
-            id: _this.$route.query.id
-          }
+        _this.Axios.post('/GetSupModel.ashx', {
+          id: Number(_this.$route.query.id)
         }).then(res => {
           _this.formValidate = {
             id: res.data.data.id,              //分类id 传入就是新增
@@ -221,7 +214,6 @@
             abbrSupplierName: res.data.data.abbrSupplierName,   //简称10
             supplierNo: res.data.data.supplierNo,   //代码5
             erpSupplierNo: res.data.data.erpSupplierNo,
-            productLim: String(res.data.data.productLim),   //4
           };
           if (res.data.data.imgUrl) {
             _this.$refs.classify.defaultList.push({

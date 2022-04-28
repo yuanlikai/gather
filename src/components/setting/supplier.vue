@@ -116,13 +116,6 @@ export default {
           align: "center",
         },
         {
-          title: 'SKU数量限制',
-          tooltip: true,
-          key: 'productLim',
-          align: "center",
-          sortable: "custom"
-        },
-        {
           title: '关联品牌',
           tooltip: true,
           key: 'brandCount',
