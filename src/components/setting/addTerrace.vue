@@ -132,7 +132,7 @@
         current: 0,
         detail: {},
         formValidate: {
-          id: '',
+          id: '-1',
           platformName: '',
           abbrPlatformName: '',
           logoUrl: '',
@@ -167,7 +167,7 @@
         const _this = this;
         _this.$refs[name].validate((valid) => {
           if (valid) {
-            _this.Axios.post('/Manage/Platform/save', _this.Qs.stringify({
+            _this.Axios.post('/EditPlatform.ashx', _this.Qs.stringify({
               id: _this.formValidate.id,
               platformName: _this.formValidate.platformName,
               abbrPlatformName: _this.formValidate.abbrPlatformName,
