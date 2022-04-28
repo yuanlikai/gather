@@ -252,22 +252,22 @@ export default {
       const _this = this;
       _this.loading1 = true;
       _this.Axios.post('/GetSupListPage.ashx', {
-        start: _this.start - 1,
-        size: 10,
+        page: _this.start,
+        pagesize: 10,
         supplierNameLike: _this.formValidate.supplierNameLike,   //名称模糊搜索
         abbrSupplierNameLike: _this.formValidate.abbrSupplierNameLike,   //简称模糊搜索
         supplierNoLike: _this.formValidate.supplierNoLike,   //代码模糊搜索
-        locked: _this.formValidate.locked,                    //状态 true为停用 false为正常
+        StatusId: _this.formValidate.locked?0:1,                    //状态 true为停用 false为正常
         productCountAsc: _this.formValidate.productCountAsc === 'normal' ? '' : (_this.formValidate.productCountAsc === 'asc' ? 'true' : 'false'),   //关联产品数量 true为升序
         productLimAsc: _this.formValidate.productLimAsc === 'normal' ? '' : (_this.formValidate.productLimAsc === 'asc' ? 'true' : 'false'),   //产品限制 true为升序lidate.brandId,
         brandCountAsc: _this.formValidate.brandCountAsc === 'normal' ? '' : (_this.formValidate.brandCountAsc === 'asc' ? 'true' : 'false'),   //品牌
         recycleBin: false
       }).then(res => {
-        if (res.data.code === 0) {
+        if (res.data.error === 0) {
           _this.data = res.data.data.content;
           _this.total = res.data.data.totalElements
         } else {
-          _this.$Message.warning(res.data.message)
+          _this.$Message.warning(res.data.errorMsg)
         }
         _this.loading1 = false;
       })
