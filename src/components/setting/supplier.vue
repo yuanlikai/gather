@@ -26,9 +26,10 @@
           </Col>
           <Col :xs="24" :md="12" :lg="8">
             <FormItem label="状态：" prop="locked">
-              <Select v-model="formValidate.locked" @on-change="resetPage();getList()" clearable>
-                <Option value="false">启用</Option>
-                <Option value="true">停用</Option>
+              <Select v-model="formValidate.locked" @on-change="resetPage();getList()">
+                <Option :value="-1">全部</Option>
+                <Option :value="0">启用</Option>
+                <Option :value="1">停用</Option>
               </Select>
             </FormItem>
           </Col>
@@ -70,7 +71,7 @@ export default {
     return {
       loading1: true,
       formValidate: {
-        locked: '',
+        locked: -1,
         supplierNameLike: '',   //名称模糊搜索
         abbrSupplierNameLike: '',   //简称模糊搜索
         supplierNoLike: '',   //代码模糊搜索
@@ -136,7 +137,7 @@ export default {
           render: (h, params) => {
             return h('i-switch', {
                 props: {
-                  value: !params.row.locked,
+                  value: params.row.locked===0?true:false,
                   size: 'small'
                 },
                 on: {
@@ -257,15 +258,15 @@ export default {
         supplierNameLike: _this.formValidate.supplierNameLike,   //名称模糊搜索
         abbrSupplierNameLike: _this.formValidate.abbrSupplierNameLike,   //简称模糊搜索
         supplierNoLike: _this.formValidate.supplierNoLike,   //代码模糊搜索
-        StatusId: _this.formValidate.locked?0:1,                    //状态 true为停用 false为正常
+        StatusId: _this.formValidate.locked,                    //状态 true为停用 false为正常
         productCountAsc: _this.formValidate.productCountAsc === 'normal' ? '' : (_this.formValidate.productCountAsc === 'asc' ? 'true' : 'false'),   //关联产品数量 true为升序
         productLimAsc: _this.formValidate.productLimAsc === 'normal' ? '' : (_this.formValidate.productLimAsc === 'asc' ? 'true' : 'false'),   //产品限制 true为升序lidate.brandId,
         brandCountAsc: _this.formValidate.brandCountAsc === 'normal' ? '' : (_this.formValidate.brandCountAsc === 'asc' ? 'true' : 'false'),   //品牌
         recycleBin: false
       }).then(res => {
+        _this.data = res.data.data;
         if (res.data.error === 0) {
-          _this.data = res.data.data.content;
-          _this.total = res.data.data.totalElements
+          _this.total = res.data.total
         } else {
           _this.$Message.warning(res.data.errorMsg)
         }
