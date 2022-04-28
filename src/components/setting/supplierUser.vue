@@ -15,9 +15,9 @@ margin-right: 16px">
           <Option v-for="item in roleList" :value="item.id" :key="item.id">{{item.roleName}}</Option>
         </Select>
         <RadioGroup class="users" v-model="status" @on-change="start=0;getUser()" type="button">
-          <Radio label="全部">全部</Radio>
-          <Radio label="1">正常</Radio>
-          <Radio label="0">禁用</Radio>
+          <Radio :label="-1">全部</Radio>
+          <Radio :label="0">正常</Radio>
+          <Radio :label="1">禁用</Radio>
         </RadioGroup>
         <Input @on-enter="start=0;getUser()" v-model="value13" placeholder="用户名搜索"
                style="width: 150px;margin-left: 16px;">
@@ -35,13 +35,13 @@ margin-right: 16px">
           <span style="font-weight: 700">{{item.username}}</span>
         </Col>
         <Col span="24">状态：
-          <Badge :status="item.status === '1' ?'success':'error'"/>
-          {{item.status === '1' ? '正常' : '锁定'}}
+          <Badge :status="item.status == '0' ?'success':'error'"/>
+          {{item.status == 0 ? '正常' : '锁定'}}
         </Col>
         <Col span="24">姓名：{{item.name}}</Col>
         <Col span="24" v-if="item.supplierName">供应商：{{item.supplierName}}</Col>
         <Col span="24" style="margin-top: 8px">
-          <Tag color="geekblue">{{item.roleNames}}</Tag>
+          <Tag color="geekblue">{{item.userInfoType.name}}</Tag>
           <Button @click="Handle(item.id)" size="small" icon="md-list" style="margin-left: 16px;">展开操作</Button>
         </Col>
         <Col span="24" style="margin-top: 16px" v-if="handleId===item.id">
@@ -169,8 +169,8 @@ margin-right: 16px">
         cityList: [],
         loading: true,
         statuss: false,
-        roleId: '全部',
-        status: '全部',
+        roleId: -1,
+        status: -1,
         value13: '',
         value14: '',
         userInfoType: '',
@@ -179,7 +179,7 @@ margin-right: 16px">
         roleName: '全部',
         roleList: [
           {
-            id: '全部',
+            id: -1,
             roleName: '全部',
           }
         ],
@@ -274,11 +274,9 @@ margin-right: 16px">
       // 获取角色下拉列表
       getRole() {
         const _this = this;
-        _this.Axios.get('/Manage/Role/list', {
-          params: {
-            excludeSuper: true,
-            supplierExclusive: true
-          }
+        _this.Axios.get('/GetSelectRole.ashx',{
+          excludeSuper: true,
+          supplierExclusive: true
         }).then(res => {
           _this.roleList = _this.roleList.concat(res.data.data);
         })
@@ -325,22 +323,22 @@ margin-right: 16px">
       getUser() {
         const _this = this;
         _this.loading = true;
-        _this.Axios.post('/Manage/UserInfo/supplierUsers', _this.Qs.stringify({
-          start: _this.start,
-          size: 5,
+        _this.Axios.post('/GetSupAdminList.ashx', {
+          page: _this.start,
+          pagesize: 10,
           usernameLike: _this.value13,         //账号模糊查询
           supplierNameLike: _this.value14,     //供应商名称模糊查询
-          status: _this.status === '全部' ? '' : _this.status,               //是否锁定 "1"为正常 “0”为锁定
-          roleId: _this.roleId === '全部' ? '' : _this.roleId,               //角色id
+          status: _this.status,               //是否锁定 "1"为正常 “0”为锁定
+          roleId: Number(_this.roleId),               //角色id
           userInfoType: '',         //用户类型 ADMIN("普通管理员"), SUPPLIER("供应商管理员"),
-        })).then(res => {
-          if (res.data.code === 0) {
-            _this.data = res.data.data.content;
+        }).then(res => {
+          _this.data = res.data.data;
+          if (res.data.error === 0) {
           } else {
-            _this.$Message.error(res.data.message)
+            _this.$Message.error(res.data.errorMsg)
           }
           _this.loading = false;
-          _this.total = Number(res.data.data.totalElements);
+          _this.total = Number(res.data.total);
         })
       },
 
