@@ -210,7 +210,7 @@
       //获取供应商详情
       getDetail() {
         const _this = this;
-        _this.Axios.get('/Manage/Supplier/detail', {
+        _this.Axios.get('/GetSupModel.ashx', {
           params: {
             id: _this.$route.query.id
           }
