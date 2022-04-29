@@ -136,10 +136,10 @@
         like: '',
         ruleValidate: {
           roleName: [
-            {validator: roleName, required: true, trigger: 'blur'}
+            {message: '请输入角色名称', required: true, trigger: 'blur'}
           ],
           roleCode: [
-            {validator: roleCode, required: true, trigger: 'blur'}
+            {message: '请输入角色编号', required: true, trigger: 'blur'}
           ],
           menuIds: [
             {validator: roleMenu, required: true, trigger: 'change'}
@@ -273,7 +273,7 @@
       // 获取菜单树形结构
       getTree() {
         const _this = this;
-        _this.Axios.get('/Manage/Menu/tree').then(res => {
+        _this.Axios.get('/GetMenuList.ashx').then(res => {
           _this.roleTree = res.data.data;
         })
       },
@@ -290,20 +290,18 @@
       getTreeList() {
         const _this = this;
         _this.loading = true;
-        _this.Axios.get('/Manage/Role/pageList', {
-          params: {
-            start: _this.start,
-            size: 14,
-            roleNameLike: '',
-          }
+        _this.Axios.post('/GetRoleList.ashx', {
+          page: _this.start,
+          pagesize: 20,
+          roleNameLike: '',
         }).then(res => {
-          if (res.data.code === 0) {
-            _this.data = res.data.data.content
+          if (res.data.error === 0) {
+            _this.data = res.data.data
           } else {
-            _this.$Message.error(res.data.message)
+            _this.$Message.error(res.data.errorMsg)
           }
           _this.loading = false;
-          _this.total = res.data.data.totalElements;
+          _this.total = res.data.data.total;
         })
       },
 
