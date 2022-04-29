@@ -118,6 +118,7 @@
                     click: () => {
                       this.getChild({
                         id: params.row.id,
+                        parentId: params.row.parentId,
                         numb: params.row.numb,
                         menuUrl: params.row.menuUrl,
                         menuName: params.row.menuName
@@ -173,6 +174,7 @@
         this.status = '修改';
         this.addAccount = true;
         this.id = i.id;
+        this.formValidate.parentId = i.parentId;
         this.formValidate.numb = i.numb;
         this.formValidate.menuUrl = i.menuUrl;
         this.formValidate.menuName = i.menuName;
@@ -185,6 +187,22 @@
         _this.$refs[name].validate((valid) => {
           if (valid) {
             _this.modal_loading = true;
+            _this.Axios.post('/EditMenu.ashx', {
+              id: Number(_this.id),
+              parentId: Number(_this.formValidate.parentId),  //上级id 如果为模块级 不需要传入
+              menuName: _this.formValidate.menuName,  //菜单名称
+              menuUrl: _this.formValidate.menuUrl,  //菜单路径
+              numb: _this.formValidate.numb,  //前端用
+            }).then(res => {
+              if (res.data.error === 0) {
+                _this.getMenuList();
+                _this.addAccount = false;
+              } else {
+                _this.$Message.error(res.data.errorMsg)
+              }
+              _this.modal_loading = false
+            })
+            return
             if (_this.status === '修改') {
               _this.Axios.post('/Manage/Menu/updateMenu', _this.Qs.stringify({
                 id: _this.id,  //上级id 如果为模块级 不需要传入
