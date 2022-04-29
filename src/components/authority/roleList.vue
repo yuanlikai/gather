@@ -206,13 +206,11 @@ export default {
                     _this.formValidate.roleName = params.row.roleName;
                     _this.formValidate.roleCode = params.row.roleCode;
                     _this.formValidate.supplierExclusive = params.row.supplierExclusive;
-                    _this.Axios.get('/Manage/Role/getRole', {
-                      params: {
-                        id: params.row.id
-                      }
+                    _this.Axios.post('/GetRoleModel.ashx', {
+                      id: Number(params.row.id)
                     }).then(res => {
-                      if (res.data.code === 0) {
-                        let menu = res.data.data.menuTreeList,
+                      if (res.data.error === 0) {
+                        let menu = res.data.data,
                           menuList = [];
                         for (let i = 0; i < menu.length; i++) {
                           menu[i].expand = menu[i].checked === true ? true : false;
@@ -314,11 +312,11 @@ export default {
       let menuId2 = [];
       let menuId3 = [];
       for (let i in _this.cheTree) {
-        if (_this.cheTree[i].numb.split('-').length === 1) {
+        if (_this.cheTree[i].index === 1) {
           menuId1.push(_this.cheTree[i].id)
-        } else if (_this.cheTree[i].numb.split('-').length === 2) {
+        } else if (_this.cheTree[i].index === 2) {
           menuId2.push(_this.cheTree[i].id)
-        } else if (_this.cheTree[i].numb.split('-').length === 3) {
+        } else if (_this.cheTree[i].index === 3) {
           menuId3.push(_this.cheTree[i].id)
         }
       }
