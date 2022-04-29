@@ -105,12 +105,6 @@ margin-right: 16px">
           <!--<span slot="close">否</span>-->
           <!--</i-switch>-->
           <!--</FormItem>-->
-          <FormItem label="所有字段显示" prop="allField">
-            <i-switch v-model="formValidate.allField">
-              <span slot="open">开</span>
-              <span slot="close">关</span>
-            </i-switch>
-          </FormItem>
         </Form>
       </div>
       <div slot="footer">
@@ -270,6 +264,7 @@ export default {
       this.formValidate.roleIds = roleIds;
       this.formValidate.allField = allField;
       this.statuss = status === '0' ? true : false;
+      console.log(this.formValidate)
     },
 
     // 获取角色下拉列表
@@ -347,27 +342,29 @@ export default {
       _this.$refs[name].validate((valid) => {
         if (valid) {
           _this.modal_loading = true;
+
+          // 添加用户
+          _this.Axios.post('/EditSupAdmin.ashx', {
+            id: Number(_this.formValidate.id),
+            username: _this.formValidate.username,  //账号
+            password: _this.formValidate.affirmPassword,  //密码
+            name: _this.formValidate.name,   //用户姓名
+            roleId: _this.formValidate.roleIds.join(','),  //角色id素组
+            supplierId: Number(_this.formValidate.supplierId),
+            allField: _this.formValidate.allField,
+            sex: 'MALE'
+          }).then(res => {
+            if (res.data.error === 0) {
+              _this.addAccount = false;
+              _this.getUser();
+              _this.$Message.success('success')
+            } else {
+              _this.$Message.error(res.data.message)
+            }
+            _this.modal_loading = false;
+          })
+          return
           if (_this.formValidate.id === -1) {
-            // 添加用户
-            _this.Axios.post('/EditSupAdmin.ashx', {
-              id: Number(_this.formValidate.id),
-              username: _this.formValidate.username,  //账号
-              password: _this.formValidate.affirmPassword,  //密码
-              name: _this.formValidate.name,   //用户姓名
-              roleId: _this.formValidate.roleIds.join(','),  //角色id素组
-              supplierId: Number(_this.formValidate.supplierId),
-              allField: _this.formValidate.allField,
-              sex: 'MALE'
-            }).then(res => {
-              if (res.data.error === 0) {
-                _this.addAccount = false;
-                _this.getUser();
-                _this.$Message.success('success')
-              } else {
-                _this.$Message.error(res.data.message)
-              }
-              _this.modal_loading = false;
-            })
           } else {
             // 更新用户
             _this.Axios.post('/Manage/UserInfo/updateSupplierUser', _this.Qs.stringify({

@@ -209,8 +209,10 @@
               })
 
             } else {
-              _this.Axios.post('/Manage/Menu/addMenu', _this.Qs.stringify({
-                parentId: _this.id !== '' ? this.id : '',  //上级id 如果为模块级 不需要传入
+              // {"id": 1, "parentId":0, "menuName": "首页", "numb":"1", "menuUrl":""}
+              _this.Axios.post('/EditMenu.ashx', _this.Qs.stringify({
+                id: -1,
+                parentId: _this.id !== '' ? this.id : -1,  //上级id 如果为模块级 不需要传入
                 menuName: _this.formValidate.menuName,  //菜单名称
                 menuUrl: _this.formValidate.menuUrl,  //菜单路径
                 numb: _this.formValidate.numb,  //前端用
@@ -246,8 +248,8 @@
       getMenuList() {
         const _this = this;
         _this.loading = true;
-        _this.Axios.get('/Manage/Menu/tree').then(res => {
-          if (res.data.code === 0) {
+        _this.Axios.post('/GetMenuList.ashx').then(res => {
+          if (res.data.error === 0) {
             _this.data = res.data.data.sort(function(a,b){
               return Number(a.numb)-Number(b.numb)
             });
