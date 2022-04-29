@@ -160,6 +160,7 @@
           menuName: '',       //角色名称
           menuUrl: '',       //角色名称
           numb: '',       //角色名称
+          parentId: 0,       //角色名称
         },
         ruleValidate: {
           menuName: [
@@ -210,13 +211,13 @@
 
             } else {
               // {"id": 1, "parentId":0, "menuName": "首页", "numb":"1", "menuUrl":""}
-              _this.Axios.post('/EditMenu.ashx', _this.Qs.stringify({
-                id: -1,
-                parentId: _this.id !== '' ? this.id : -1,  //上级id 如果为模块级 不需要传入
+              _this.Axios.post('/EditMenu.ashx', {
+                id: Number(_this.id),
+                parentId: _this.formValidate.parentId,  //上级id 如果为模块级 不需要传入
                 menuName: _this.formValidate.menuName,  //菜单名称
                 menuUrl: _this.formValidate.menuUrl,  //菜单路径
                 numb: _this.formValidate.numb,  //前端用
-              })).then(res => {
+              }).then(res => {
                 if (res.data.code === 0) {
                   _this.getMenuList();
                   _this.addAccount = false;
