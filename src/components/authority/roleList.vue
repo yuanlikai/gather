@@ -320,32 +320,25 @@
             menuId3.push(_this.cheTree[i].id)
           }
         }
-        console.log()
-        console.log()
-        console.log()
         _this.$refs[name].validate((valid) => {
           if (valid) {
             _this.modal_loading = true;
-            const menuIds = [];
-            for (let i in _this.cheTree) {
-              menuIds.push(_this.cheTree[i].id)
-            }
             if (_this.id === '') {
-              _this.Axios.post('/Manage/Role/addRole', _this.Qs.stringify({
+              _this.Axios.post('/EditRole.ashx',{
                 roleName: _this.formValidate.roleName,        //角色名称
                 roleCode: _this.formValidate.roleCode,        //角色编号
                 remark: _this.formValidate.remark,            //备注
                 menuId1:menuId1.join(','),
                 menuId2:menuId2.join(','),
                 menuId3:menuId3.join(','),
-                supplierExclusive: _this.formValidate.supplierExclusive,   //是否供应商专属 true为是 需要传
-              }, {indices: false})).then(res => {
-                if (res.data.code === 0) {
+                IsSupplier: _this.formValidate.supplierExclusive?0:1,   //是否供应商专属 true为是 需要传
+              }).then(res => {
+                if (res.data.error === 0) {
                   _this.addAccount = false;
                   _this.getTreeList();
                   _this.$Message.success('添加成功')
                 } else {
-                  _this.$Message.error(res.data.message)
+                  _this.$Message.error(res.data.errorMsg)
                 }
                 _this.modal_loading = false;
               })
