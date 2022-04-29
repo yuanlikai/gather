@@ -281,7 +281,7 @@ export default {
     // 获取角色列表
     cityRole() {
       const _this = this;
-      _this.Axios.post('/GetSelectRole.ashx', {
+      _this.Axios.post('/GetSelectRole2.ashx', {
         excludeSuper: true,
         supplierExclusive: false
       }).then(res => {

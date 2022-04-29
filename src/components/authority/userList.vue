@@ -15,9 +15,9 @@ margin-right: 16px">
           <Option v-for="item in cityList" :value="item.id" :key="item.id">{{item.roleName}}</Option>
         </Select>
         <RadioGroup class="users" v-model="status" @on-change="getUser()" type="button">
-          <Radio label="全部">全部</Radio>
-          <Radio label="1">正常</Radio>
-          <Radio label="0">禁用</Radio>
+          <Radio :label="-1">全部</Radio>
+          <Radio :label="0">正常</Radio>
+          <Radio :label="1">禁用</Radio>
         </RadioGroup>
         <Input @on-enter="getProduct()" v-model="value13" placeholder="用户名搜索" style="width: 150px;margin-left: 16px;">
           <Icon @click="getProduct" type="ios-search" slot="suffix" style="cursor: pointer"/>
@@ -30,13 +30,13 @@ margin-right: 16px">
           <span style="font-weight: 700">{{item.username}}</span>
         </Col>
         <Col span="24">状态：
-          <Badge :status="item.status === '1' ?'success':'error'"/>
-          {{item.status === '1' ? '正常' : '锁定'}}
+          <Badge :status="item.status == '0' ?'success':'error'"/>
+          {{ item.status == 0 ? '正常' : '锁定' }}
         </Col>
         <Col span="24">姓名：{{item.name}}</Col>
         <Col span="24" v-if="item.supplierName">供应商：{{item.supplierName}}</Col>
         <Col span="24" style="margin-top: 8px">
-          <Tag color="geekblue">{{item.roleNames}}</Tag>
+          <Tag color="geekblue">{{ item.userInfoType.name }}</Tag>
           <Button @click="Handle(item.id)" size="small" icon="md-list" style="margin-left: 16px;">展开操作</Button>
         </Col>
         <Col span="24" style="margin-top: 16px" v-if="handleId===item.id">
@@ -69,7 +69,7 @@ margin-right: 16px">
         <span>{{id===''?'添加':'修改'}}用户</span>
       </p>
       <div>
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="70">
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
           <FormItem v-if="userInfoType!=='SUPPLIER'" label="用户账号" prop="username">
             <Input :disabled="id!==''" :maxlength="36" v-model="formValidate.username" placeholder="请输入账号"></Input>
           </FormItem>
@@ -135,14 +135,14 @@ margin-right: 16px">
         if (value.length < 1) {
           callback(new Error('请填写用户名'))
         } else {
-          _this.Axios.post('/Manage/UserInfo/checkUserName', _this.Qs.stringify({
-            id: _this.id !== '' ? _this.id : '',
+          _this.Axios.post('/CheckUserName.ashx', {
+            id: Number(_this.formValidate.id),
             username: _this.formValidate.username
-          })).then(res => {
-            if (res.data.code === 0) {
+          }).then(res => {
+            if (res.data.error === 0) {
               callback();
             } else {
-              callback(new Error(res.data.message))
+              callback(new Error(res.data.errorMsg))
             }
           })
         }
@@ -152,14 +152,14 @@ margin-right: 16px">
         id: '',
         handleId: '',
         total: 0,
-        start: 0,
+        start: 1,
         pre: '0',
         select3: '0',
         cityList: [],
         loading: true,
         statuss: false,
         roleId: '全部',
-        status: '全部',
+        status: -1,
         value13: '',
         userInfoType: '',
         addAccount: false,
@@ -172,6 +172,7 @@ margin-right: 16px">
           }
         ],
         formValidate: {
+          id:-1,
           roleIds: [],       //角色权限
           username: '',      //账号
           password: '',       //密码
@@ -256,18 +257,19 @@ margin-right: 16px">
       //修改用户信息
       amend(id, userInfoType, username, name, roleIds, status) {
         this.id = id;
+        this.formValidate.id = id;
         this.addAccount = true;
         this.userInfoType = userInfoType;
         this.formValidate.username = username;
         this.formValidate.name = name;
         this.formValidate.roleIds = roleIds;
-        this.statuss = status === '0' ? true : false;
+        this.statuss = status !== '0' ? true : false;
       },
 
       // 获取角色列表
       cityRole() {
         const _this = this;
-        _this.Axios.get('/Manage/Role/list', {
+        _this.Axios.get('/GetRoleList.ashx', {
           params: {
             excludeSuper: true,
             supplierExclusive: false
@@ -305,22 +307,22 @@ margin-right: 16px">
       getUser() {
         const _this = this;
         _this.loading = true;
-        _this.Axios.post('/GetAdminUserList.ashx', _this.Qs.stringify({
+        _this.Axios.post('/GetAdminUserList.ashx', {
           page: _this.start,
-          pagesize: 20,
+          pagesize: 5,
           usernameLike: _this.pre === '0' ? this.like : '',         //账号模糊查询
           supplierNameLike: _this.pre === '1' ? this.like : '',     //供应商名称模糊查询
-          status: _this.status === '全部' ? '' : _this.status,               //是否锁定 "1"为正常 “0”为锁定
-          roleId: _this.roleId === '全部' ? '' : _this.roleId,               //角色id
+          status: _this.status,               //是否锁定 "1"为正常 “0”为锁定
+          roleId: _this.roleId === '全部' ? 0 : Number(_this.roleId),               //角色id
           userInfoType: '',         //用户类型 ADMIN("普通管理员"), SUPPLIER("供应商管理员"),
-        })).then(res => {
+        }).then(res => {
+          _this.data = res.data.data;
           if (res.data.error === 0) {
-            _this.data = res.data.data.content;
           } else {
             _this.$Message.error(res.data.errorMsg)
           }
           _this.loading = false;
-          _this.total = Number(res.data.data.total);
+          _this.total = Number(res.data.total);
         })
       },
 
@@ -330,25 +332,27 @@ margin-right: 16px">
         _this.$refs[name].validate((valid) => {
           if (valid) {
             _this.modal_loading = true;
+            // 添加用户
+            _this.Axios.post('/EditAdminuser.ashx', {
+              id:Number(_this.formValidate.id),
+              status: _this.statuss === false ? 0 : 1,  //"0"为锁定 "1"为正常
+              username: _this.formValidate.username,  //账号
+              password: _this.formValidate.affirmPassword,  //密码
+              name: _this.formValidate.name,   //用户姓名
+              roleId: _this.formValidate.roleIds.join(','),  //角色id素组
+              supplierId: Number(_this.formValidate.supplierId)
+            }).then(res => {
+              if (res.data.error === 0) {
+                _this.addAccount = false;
+                _this.getUser();
+                _this.$Message.success('success')
+              } else {
+                _this.$Message.error(res.data.errorMsg)
+              }
+              _this.modal_loading = false;
+            })
+            return
             if (_this.id === '') {
-              // 添加用户
-              _this.Axios.post('/Manage/UserInfo/addUser', _this.Qs.stringify({
-                status: _this.statuss === false ? '1' : '0',  //"0"为锁定 "1"为正常
-                username: _this.formValidate.username,  //账号
-                password: _this.formValidate.affirmPassword,  //密码
-                name: _this.formValidate.name,   //用户姓名
-                roleIdSet: _this.formValidate.roleIds,  //角色id素组
-                supplierId: _this.formValidate.supplierId
-              }, {indices: false})).then(res => {
-                if (res.data.code === 0) {
-                  _this.addAccount = false;
-                  _this.getUser();
-                  _this.$Message.success('success')
-                } else {
-                  _this.$Message.error(res.data.message)
-                }
-                _this.modal_loading = false;
-              })
             } else {
               // 更新用户
               _this.Axios.post('/Manage/UserInfo/updateUser', _this.Qs.stringify({
