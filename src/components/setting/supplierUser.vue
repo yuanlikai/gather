@@ -72,20 +72,20 @@ margin-right: 16px">
     <Modal v-model="addAccount" width="300">
       <p slot="header">
         <Icon type="ios-information-circle"></Icon>
-        <span>{{ id === '' ? '添加' : '修改' }}用户</span>
+        <span>{{ formValidate.id === -1 ? '添加' : '修改' }}用户</span>
       </p>
       <div>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="70">
           <FormItem v-if="userInfoType!=='SUPPLIER'" label="用户账号" prop="username">
-            <Input :disabled="id!==''" :maxlength="36" v-model="formValidate.username" placeholder="请输入账号"></Input>
+            <Input :disabled="formValidate.id!==-1" :maxlength="36" v-model="formValidate.username" placeholder="请输入账号"></Input>
           </FormItem>
-          <FormItem v-if="id===''" label="用户密码" prop="password">
+          <FormItem v-if="formValidate.id === -1" label="用户密码" prop="password">
             <Input :maxlength="25" type="password" v-model="formValidate.password" placeholder="请输入密码"></Input>
           </FormItem>
-          <FormItem v-if="id===''" label="确认密码" prop="affirmPassword">
+          <FormItem v-if="formValidate.id === -1" label="确认密码" prop="affirmPassword">
             <Input :maxlength="25" type="password" v-model="formValidate.affirmPassword" placeholder="请确认密码"></Input>
           </FormItem>
-          <FormItem v-if="id===''" label="供应商" prop="supplierId">
+          <FormItem v-if="formValidate.id === -1" label="供应商" prop="supplierId">
             <Select v-model="formValidate.supplierId" style="width:200px">
               <Option v-for="item in supplierList" :value="String(item.id)" :key="item.id">{{ item.supplierName }}
               </Option>
@@ -115,7 +115,7 @@ margin-right: 16px">
       </div>
       <div slot="footer">
         <Button type="success" size="large" long :loading="modal_loading" @click="handleSubmit('formValidate')">
-          {{ id === '' ? '添加' : '修改' }}
+          {{ formValidate.id === -1 ? '添加' : '修改' }}
         </Button>
       </div>
     </Modal>
@@ -148,14 +148,14 @@ export default {
       if (value.length < 1) {
         callback(new Error('请填写用户名'))
       } else {
-        _this.Axios.post('/Manage/UserInfo/checkUserName', _this.Qs.stringify({
-          id: _this.id !== '' ? _this.id : '',
+        _this.Axios.post('/CheckUserName.ashx', {
+          id: Number(_this.formValidate.id),
           username: _this.formValidate.username
-        })).then(res => {
-          if (res.data.code === 0) {
+        }).then(res => {
+          if (res.data.error === 0) {
             callback();
           } else {
-            callback(new Error(res.data.message))
+            callback(new Error(res.data.errorMsg))
           }
         })
       }
@@ -184,6 +184,7 @@ export default {
         }
       ],
       formValidate: {
+        id: -1,       //角色权限
         roleIds: [],       //角色权限
         username: '',      //账号
         password: '',       //密码
@@ -235,10 +236,10 @@ export default {
     getSupplier() {
       const _this = this;
       _this.Axios.get('/GetSupList.ashx').then(res => {
-        if (res.data.code === 0) {
+        if (res.data.error === 0) {
           _this.supplierList = res.data.data
         } else {
-          _this.$Message.error(res.data.message)
+          _this.$Message.error(res.data.errorMsg)
         }
       })
     },
@@ -261,7 +262,7 @@ export default {
 
     //修改用户信息
     amend(id, userInfoType, username, name, roleIds, status, allField) {
-      this.id = id;
+      this.formValidate.id = id;
       this.addAccount = true;
       this.userInfoType = userInfoType;
       this.formValidate.username = username;
@@ -346,18 +347,19 @@ export default {
       _this.$refs[name].validate((valid) => {
         if (valid) {
           _this.modal_loading = true;
-          if (_this.id === '') {
+          if (_this.formValidate.id === -1) {
             // 添加用户
-            _this.Axios.post('/Manage/UserInfo/addSupplierUser', _this.Qs.stringify({
+            _this.Axios.post('/EditSupAdmin.ashx', {
+              id: Number(_this.formValidate.id),
               username: _this.formValidate.username,  //账号
               password: _this.formValidate.affirmPassword,  //密码
               name: _this.formValidate.name,   //用户姓名
-              roleIdSet: _this.formValidate.roleIds,  //角色id素组
-              supplierId: _this.formValidate.supplierId,
+              roleId: _this.formValidate.roleIds.join(','),  //角色id素组
+              supplierId: Number(_this.formValidate.supplierId),
               allField: _this.formValidate.allField,
               sex: 'MALE'
-            }, {indices: false})).then(res => {
-              if (res.data.code === 0) {
+            }).then(res => {
+              if (res.data.error === 0) {
                 _this.addAccount = false;
                 _this.getUser();
                 _this.$Message.success('success')
