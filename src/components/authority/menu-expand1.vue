@@ -133,6 +133,7 @@
                     transfer: true,
                     placement: "top",
                     title: '确定删除该菜单？',
+
                   },
                   on: {
                     'on-ok': () => {
