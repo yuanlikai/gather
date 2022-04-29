@@ -308,6 +308,12 @@
       // 添加角色
       handleSubmit(name) {
         const _this = this;
+        let menuId1 = [];
+        let menuId2 = [];
+        let menuId3 = [];
+        for (let i in _this.cheTree) {
+          console.log(_this.cheTree[i].numb.split('-'))
+        }
         _this.$refs[name].validate((valid) => {
           if (valid) {
             _this.modal_loading = true;
