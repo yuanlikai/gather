@@ -312,8 +312,17 @@
         let menuId2 = [];
         let menuId3 = [];
         for (let i in _this.cheTree) {
-          console.log(_this.cheTree[i].numb.split('-'))
+          if(_this.cheTree[i].numb.split('-').length===1){
+            menuId1.push(_this.cheTree[i].id)
+          }else if(_this.cheTree[i].numb.split('-').length===2){
+            menuId2.push(_this.cheTree[i].id)
+          }else if(_this.cheTree[i].numb.split('-').length===3){
+            menuId3.push(_this.cheTree[i].id)
+          }
         }
+        console.log()
+        console.log()
+        console.log()
         _this.$refs[name].validate((valid) => {
           if (valid) {
             _this.modal_loading = true;
@@ -326,7 +335,9 @@
                 roleName: _this.formValidate.roleName,        //角色名称
                 roleCode: _this.formValidate.roleCode,        //角色编号
                 remark: _this.formValidate.remark,            //备注
-                menuIds: menuIds,             //菜单id集合
+                menuId1:menuId1.join(','),
+                menuId2:menuId2.join(','),
+                menuId3:menuId3.join(','),
                 supplierExclusive: _this.formValidate.supplierExclusive,   //是否供应商专属 true为是 需要传
               }, {indices: false})).then(res => {
                 if (res.data.code === 0) {
