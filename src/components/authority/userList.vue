@@ -305,22 +305,22 @@ margin-right: 16px">
       getUser() {
         const _this = this;
         _this.loading = true;
-        _this.Axios.post('/Manage/UserInfo/pageList', _this.Qs.stringify({
-          start: _this.start,
-          size: 5,
+        _this.Axios.post('/GetAdminUserList.ashx', _this.Qs.stringify({
+          page: _this.start,
+          pagesize: 20,
           usernameLike: _this.pre === '0' ? this.like : '',         //账号模糊查询
           supplierNameLike: _this.pre === '1' ? this.like : '',     //供应商名称模糊查询
           status: _this.status === '全部' ? '' : _this.status,               //是否锁定 "1"为正常 “0”为锁定
           roleId: _this.roleId === '全部' ? '' : _this.roleId,               //角色id
           userInfoType: '',         //用户类型 ADMIN("普通管理员"), SUPPLIER("供应商管理员"),
         })).then(res => {
-          if (res.data.code === 0) {
+          if (res.data.error === 0) {
             _this.data = res.data.data.content;
           } else {
-            _this.$Message.error(res.data.message)
+            _this.$Message.error(res.data.errorMsg)
           }
           _this.loading = false;
-          _this.total = Number(res.data.data.totalElements);
+          _this.total = Number(res.data.data.total);
         })
       },
 
