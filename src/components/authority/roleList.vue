@@ -42,10 +42,10 @@
           <FormItem label="角色名称" prop="roleName">
             <Input :maxlength="10" v-model="formValidate.roleName" placeholder="请输入角色名称"></Input>
           </FormItem>
-          <FormItem label="角色编号" prop="roleCode">
-            <Input :disabled="id!==''?true:false" :maxlength="10" v-model="formValidate.roleCode"
-                   placeholder="请输入角色编号"></Input>
-          </FormItem>
+<!--          <FormItem label="角色编号" prop="roleCode">-->
+<!--            <Input :disabled="id!==''?true:false" :maxlength="10" v-model="formValidate.roleCode"-->
+<!--                   placeholder="请输入角色编号"></Input>-->
+<!--          </FormItem>-->
           <FormItem label="角色说明" prop="remark">
             <Input type="textarea" :maxlength="50" v-model="formValidate.remark" placeholder="请输入角色说明"></Input>
           </FormItem>
