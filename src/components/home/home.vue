@@ -63,7 +63,7 @@
 
       //根据ID 跳转到订单页面
       order(Id) {
-        this.menu1 = '3';
+        this.menu1 = '2';
         let menuList = JSON.parse(localStorage.getItem('menuList'));
 
         // this.$emit('operateMuen', '3', '3-1-1');
@@ -76,8 +76,8 @@
 
 
         for(let i =0;i<menuList.length;i++){
-          if(menuList[i].numb==='3'){
-            this.$emit('operateMuen', '3', menuList[i].children[0].children[0].numb);
+          if(menuList[i].numb==='2'){
+            this.$emit('operateMuen', '2', menuList[i].children[0].children[0].numb);
             this.$router.push({
               name: menuList[i].children[0].children[0].name,
               params: {
