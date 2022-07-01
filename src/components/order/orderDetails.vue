@@ -274,10 +274,10 @@
       //订单转为异常
       abnormal() {
         const _this = this;
-        _this.Axios.post('/Manage/Order/operTransAbnormal', _this.Qs.stringify({
+        _this.Axios.post('/Manage/Order/operTransAbnormal', {
           orderid: _this.$route.query.idstr,
           abnormalstr: _this.formValidate.abnormalstr,  // 异常原因
-        })).then(res => {
+        }).then(res => {
           if (res.data.error === 0) {
             _this.model = false;
             _this.$Message.success('转为异常成功')
@@ -303,11 +303,9 @@
       //获取订单详情
       getDetails() {
         const _this = this;
-        _this.Axios.get('/Manage/Order/detail', {
-          params: {
-            idstr: _this.$route.query.idstr,
-            vid: _this.$route.query.vid,
-          }
+        _this.Axios.post('/GetOrderDetailed.ashx', {
+          idstr: Number(_this.$route.query.idstr),
+          vid: _this.$route.query.vid,
         }).then(res => {
           if (res.data.error === 0) {
             _this.OperBtn = res.data.data;

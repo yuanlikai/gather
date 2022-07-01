@@ -427,7 +427,7 @@
                   on: {
                     'on-ok': () => {
                       const _this = this;
-                      _this.Axios.post('/Manage/Order/updateOrder', _this.Qs.stringify({
+                      _this.Axios.post('/OperOrder.ashx', _this.Qs.stringify({
                         idstr: params.row.ID,
                         statusid: 1,
                         Express: '',
@@ -574,7 +574,7 @@
             sortid: _this.sortid,
             ticketnumber:_this.formValidate.ticketnumber,
             state: _this.formValidate.state,
-            supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
+            supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
             platformid: _this.formValidate.terraceId,
             ordernumber: _this.formValidate.ordernumber,
             proname: _this.formValidate.proname,
@@ -606,7 +606,7 @@
       //获取详情
       getDetails(id) {
         const _this = this;
-        _this.Axios.get('/Manage/Order/detail', {
+        _this.Axios.get('/GetOrderDetailed.ashx', {
           params: {
             idstr: id
           }

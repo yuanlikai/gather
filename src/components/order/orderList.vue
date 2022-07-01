@@ -2,7 +2,7 @@
   .ivu-table .demo-table-info-row td {
     color: red
   }
-
+  
   .card-warp .ivu-card-body {
     padding: 0;
   }
@@ -153,7 +153,7 @@
     <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
       <p slot="title" style="height: 24px;display: flex;align-items: center">
         数据列表 <span style="font-weight: 400">【共 {{total}} 条】</span>
-
+        
         <Select style="width: 130px;margin-left: 10px;font-weight: 400;" size="small" v-model="sortid"
                 @on-change="start=1,total=0,getOrder()">
           <Option value="1">按下单时间正序</Option>
@@ -235,7 +235,7 @@
                     </div>
                   </Col>
                 </div>
-
+                
                 <div style="float: left;margin-left: 66px">共 <span style="color: #000000;font-weight: 700">{{item.ProList.length}}</span>
                   个产品
                   <span v-if="item.ProList.length>3">
@@ -271,16 +271,16 @@
                 <Poptip
                   confirm
                   title="是否确定审核该订单？"
-                  @on-ok="review(item.ID)">
+                  @on-ok="review(String(item.ID))">
                   <a>审核</a>
                 </Poptip>
               </p>
               <p v-if="item.State===1&&formValidate.state != 9">
                 <a @click="ship(item.ID)">发货</a>
               </p>
-              <p v-if="item.State===2&&formValidate.state != 9">
-                <a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>
-              </p>
+              <!--<p v-if="item.State===2&&formValidate.state != 9">-->
+              <!--<a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>-->
+              <!--</p>-->
               <p v-if="item.State===5&&formValidate.state != 9">
                 <Poptip
                   confirm
@@ -343,7 +343,7 @@
         <i class="ivu-icon ivu-icon-ios-arrow-up"></i>
       </div>
     </BackTop>
-
+    
     <Modal v-model="modal" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -357,13 +357,13 @@
             <Icon type="md-checkmark" v-if="item.download===true"/>
           </span>
         </div>
-
+      
       </div>
       <div slot="footer">
         <Button type="error" size="large" long @click="modal=false">关闭</Button>
       </div>
     </Modal>
-
+    
     <Modal v-model="modal1" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -390,7 +390,7 @@
         <Button type="primary" size="large" @click="modal1=false">关闭</Button>
       </div>
     </Modal>
-
+    
     <Modal v-model="modal3" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -408,7 +408,7 @@
 <script>
   import express from './express'
   import Upload from './Upload'
-
+  
   export default {
     components: {
       express,
@@ -580,24 +580,24 @@
       //收货区域一级级联动改为二级联动
       getSsq() {
         const _this = this;
-        _this.Axios.get('/Manage/Region/region').then(res => {
-          for (let i = 0; i < res.data.RegionList.length; i++) {
-            res.data.RegionList[i].value = res.data.RegionList[i].label;
-            for (let a = 0; a < res.data.RegionList[i].children.length; a++) {
-              res.data.RegionList[i].children[a].value = res.data.RegionList[i].children[a].label;
-              delete res.data.RegionList[i].children[a].children
+        _this.Axios.post('/GetRegional.ashx').then(res => {
+          console.log(res.data.data)
+          for (let i = 0; i < res.data.data.length; i++) {
+            res.data.data[i].value = res.data.data[i].label;
+            for (let a = 0; a < res.data.data[i].children.length; a++) {
+              res.data.data[i].children[a].value = res.data.data[i].children[a].label;
+              delete res.data.data[i].children[a].children
             }
           }
-          _this.dataSite = res.data.RegionList;
+          _this.dataSite = res.data.data;
         })
-
       },
       //点击图片放大弹窗
       showModal3(e) {
         this.proUrl = e;
         this.modal3 = true;
       },
-
+      
       //订单状态切换
       group(e) {
         this.types = e;
@@ -619,12 +619,10 @@
         const _this = this;
         _this.express1 = Express + ` 【${ExpressNo}】`;
         _this.express2 = Express + ` ${ExpressNo}`;
-        _this.Axios.get('/Manage/Order/getExpress', {
-          params: {
-            expressnumber: ExpressNo,
-            expressname: Express,
-            ordernumber: ErpOrderNumber,
-          }
+        _this.Axios.post('/GetExpress.ashx', {
+          expressnumber: ExpressNo,
+          expressname: Express,
+          ordernumber: ErpOrderNumber,
         }).then(res => {
           _this.modal1 = true;
           if (res.data.error === 0) {
@@ -701,9 +699,9 @@
       },
       //审核订单
       review(i) {
-        this.Axios.post('/Manage/Order/batchAudit', this.Qs.stringify({
+        this.Axios.post('/BatchAudit.ashx', {
           idstr: i
-        })).then(res => {
+        }).then(res => {
           if (res.data.error === 0) {
             this.$Message.success('审核成功');
             this.getOrder();
@@ -739,29 +737,29 @@
         _this.loading1 = true;
         _this.tagArr = [];
         _this.Axios.post(_this.types !== 'yc' ? '/GetOrderList.ashx' : '/GetYcOrderList.ashx', {
-            typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
-            sortid: _this.sortid,
-            vid: 1,
-            ticketnumber: _this.formValidate.ticketnumber,
-            state: _this.formValidate.state,
-            supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
-            platformid: _this.formValidate.terraceId,
-            ordernumber: _this.formValidate.ordernumber,
-            proname: _this.formValidate.proname,
-            stockno: _this.formValidate.stockno,
-            consignee: _this.formValidate.consignee,
-            phone: _this.formValidate.phone,
-            giftcode: _this.formValidate.giftcode,
-            price1: _this.formValidate.price1,
-            price2: _this.formValidate.price2,
-            begintime: _this.formValidate.time[0],
-            endtime: _this.formValidate.time[1],
-            begintime2: _this.formValidate.time1[0],
-            endtime2: _this.formValidate.time1[1],
-            address: _this.formValidate.ssq.join(' '),
-            actcode: _this.formValidate.actcode,
-            page: _this.start,
-            pagesize: _this.pageSize,
+          typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
+          sortid: _this.sortid,
+          vid: 1,
+          ticketnumber: _this.formValidate.ticketnumber,
+          state: _this.formValidate.state,
+          supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
+          platformid: _this.formValidate.terraceId,
+          ordernumber: _this.formValidate.ordernumber,
+          proname: _this.formValidate.proname,
+          stockno: _this.formValidate.stockno,
+          consignee: _this.formValidate.consignee,
+          phone: _this.formValidate.phone,
+          giftcode: _this.formValidate.giftcode,
+          price1: _this.formValidate.price1,
+          price2: _this.formValidate.price2,
+          begintime: _this.formValidate.time[0],
+          endtime: _this.formValidate.time[1],
+          begintime2: _this.formValidate.time1[0],
+          endtime2: _this.formValidate.time1[1],
+          address: _this.formValidate.ssq.join(' '),
+          actcode: _this.formValidate.actcode,
+          page: _this.start,
+          pagesize: _this.pageSize,
         }).then(res => {
           _this.getOrderNum();
           _this.indeterminate = false;
@@ -801,10 +799,8 @@
       //获取详情
       getDetails(id) {
         const _this = this;
-        _this.Axios.get('/Manage/Order/detail', {
-          params: {
-            idstr: id
-          }
+        _this.Axios.post('/GetOrderDetailed.ashx', {
+          idstr: id
         }).then(res => {
           if (res.data.error === 0) {
             _this.OperBtn = res.data.data;
@@ -911,8 +907,8 @@
       download(page, index) {
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
-        let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
-        window.open('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPage.ashx?typeid=' + typeid +
+        let supplierid = localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1');
+        window.open('/ExportOrderPage.ashx?typeid=' + typeid +
           '&sortid=' + _this.sortid +
           '&vid=' + 1 +
           '&state=' + _this.formValidate.state +
@@ -936,29 +932,6 @@
           '&page=' + page +
           '&pagesize=' + 100
         );
-        console.log('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPage.ashx?typeid=' + typeid +
-          '&sortid=' + _this.sortid +
-          '&vid=' + 1 +
-          '&state=' + _this.formValidate.state +
-          '&supplierid=' + supplierid +
-          '&platformid=' + _this.formValidate.terraceId +
-          '&ordernumber=' + _this.formValidate.ordernumber +
-          '&proname=' + _this.formValidate.proname +
-          '&stockno=' + _this.formValidate.stockno +
-          '&consignee=' + _this.formValidate.consignee +
-          '&phone=' + _this.formValidate.phone +
-          '&price1=' + _this.formValidate.price1 +
-          '&price2=' + _this.formValidate.price2 +
-          '&ticketnumber=' + _this.formValidate.ticketnumber +
-          '&giftcode=' + _this.formValidate.giftcode +
-          '&begintime=' + _this.formValidate.time[0] +
-          '&endtime=' + _this.formValidate.time[1] +
-          '&begintime2=' + _this.formValidate.time1[0] +
-          '&endtime2=' + _this.formValidate.time1[1] +
-          '&address=' + _this.formValidate.ssq.join(' ') +
-          '&actcode=' + _this.formValidate.actcode +
-          '&page=' + page +
-          '&pagesize=' + 100)
         _this.$set(_this.tagArr[index], 'download', true);
       },
       getTime(i) {
@@ -1029,17 +1002,17 @@
   .price-inp {
     display: flex;
   }
-
+  
   .price-inp > span {
     margin: 0 10px;
   }
-
+  
   .Page-wrap {
     width: 100%;
     text-align: center;
     padding: 16px 0;
   }
-
+  
   .row-wrap p {
     float: left;
     font-size: 12px;
@@ -1047,7 +1020,7 @@
     line-height: 24px;
     padding-left: 16px;
   }
-
+  
   .row-wrap-checkbox {
     margin: auto;
     position: absolute;
@@ -1057,24 +1030,24 @@
     width: 16px;
     height: 32px;
   }
-
+  
   .row-wrap {
     position: relative;
   }
-
+  
   .card-warp-col3 {
     font-size: 12px;
   }
-
+  
   .card-warp-col3 p {
     line-height: 24px;
   }
-
+  
   .card-warp-li {
     flex-direction: column-reverse;
     margin-right: 16px;
   }
-
+  
   .card-warp-ul {
     width: 100%;
     display: flex;
@@ -1083,7 +1056,7 @@
     line-height: 16px;
     padding: 8px 48px 8px 16px;
   }
-
+  
   .card-warp .ivu-alert {
     font-weight: 700;
     border: none;
@@ -1093,15 +1066,15 @@
     -moz-border-radius: 0px;
     border-radius: 0px;
   }
-
+  
   .ivu-table-wrapper {
     overflow: inherit;
   }
-
+  
   .tag-dow {
     text-align: center;
   }
-
+  
   .express-num {
     width: 100%;
   }

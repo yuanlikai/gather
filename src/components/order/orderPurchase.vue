@@ -213,16 +213,16 @@
                 <Poptip
                   confirm
                   title="是否确定审核该订单？"
-                  @on-ok="review(item.ID)">
+                  @on-ok="review(String(item.ID))">
                   <a>审核</a>
                 </Poptip>
               </p>
               <p v-if="item.State===1&&formValidate.state != 9">
                 <a @click="ship(item.ID)">发货</a>
               </p>
-              <p v-if="item.State===2&&formValidate.state != 9">
-                <a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>
-              </p>
+              <!--<p v-if="item.State===2&&formValidate.state != 9">-->
+                <!--<a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>-->
+              <!--</p>-->
               <p v-if="item.State===5&&formValidate.state != 9">
                 <Poptip
                   confirm
@@ -461,9 +461,9 @@
 
       //审核订单
       review(i) {
-        this.Axios.post('/Manage/Order/batchAudit', this.Qs.stringify({
+        this.Axios.post('/BatchAudit.ashx', {
           idstr: i
-        })).then(res => {
+        }).then(res => {
           if (res.data.error === 0) {
             this.$Message.success('审核成功');
             this.getOrder();
@@ -507,7 +507,7 @@
             sortid: _this.sortid,
             ticketnumber: _this.formValidate.ticketnumber,
             state: _this.formValidate.state,
-            supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
+            supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
             platformid: _this.formValidate.terraceId,
             ordernumber: _this.formValidate.ordernumber,
             proname: _this.formValidate.proname,
@@ -542,7 +542,7 @@
       //获取详情
       getDetails(id) {
         const _this = this;
-        _this.Axios.get('/Manage/Order/detail', {
+        _this.Axios.get('/GetOrderDetailed.ashx', {
           params: {
             idstr: id
           }

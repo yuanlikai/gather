@@ -1,6 +1,6 @@
 <template>
   <Upload
-    action="/Upload/SupplierAdmin/UploadExpressLog.aspx"
+    action="/UploadExpressLog.aspx"
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
     :format="['xls','xlsx']"
     :show-upload-list="false"

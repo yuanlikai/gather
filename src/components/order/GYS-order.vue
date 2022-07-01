@@ -273,16 +273,16 @@
                 <Poptip
                   confirm
                   title="是否确定审核该订单？"
-                  @on-ok="review(item.ID)">
+                  @on-ok="review(String(item.ID))">
                   <a>审核</a>
                 </Poptip>
               </p>
               <p v-if="item.State===1&&formValidate.state != 9">
                 <a @click="ship(item.ID)">发货</a>
               </p>
-              <p v-if="item.State===2&&formValidate.state != 9">
-                <a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>
-              </p>
+              <!--<p v-if="item.State===2&&formValidate.state != 9">-->
+                <!--<a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>-->
+              <!--</p>-->
               <p v-if="item.State===5&&formValidate.state != 9">
                 <Poptip
                   confirm
@@ -583,17 +583,17 @@ export default {
     //收货区域一级级联动改为二级联动
     getSsq() {
       const _this = this;
-      _this.Axios.get('/Manage/Region/region').then(res => {
-        for (let i = 0; i < res.data.RegionList.length; i++) {
-          res.data.RegionList[i].value = res.data.RegionList[i].label;
-          for (let a = 0; a < res.data.RegionList[i].children.length; a++) {
-            res.data.RegionList[i].children[a].value = res.data.RegionList[i].children[a].label;
-            delete res.data.RegionList[i].children[a].children
+      _this.Axios.post('/GetRegional.ashx').then(res => {
+        console.log(res.data.data)
+        for (let i = 0; i < res.data.data.length; i++) {
+          res.data.data[i].value = res.data.data[i].label;
+          for (let a = 0; a < res.data.data[i].children.length; a++) {
+            res.data.data[i].children[a].value = res.data.data[i].children[a].label;
+            delete res.data.data[i].children[a].children
           }
         }
-        _this.dataSite = res.data.RegionList;
+        _this.dataSite = res.data.data;
       })
-
     },
     //点击图片放大弹窗
     showModal3(e) {
@@ -621,12 +621,10 @@ export default {
       const _this = this;
       _this.express1 = Express + ` 【${ExpressNo}】`;
       _this.express2 = Express + ` ${ExpressNo}`;
-      _this.Axios.get('/Manage/Order/getExpress', {
-        params: {
-          expressnumber: ExpressNo,
-          expressname: Express,
-          ordernumber: ErpOrderNumber,
-        }
+      _this.Axios.post('/GetExpress.ashx', {
+        expressnumber: ExpressNo,
+        expressname: Express,
+        ordernumber: ErpOrderNumber,
       }).then(res => {
         _this.modal1 = true;
         if (res.data.error === 0) {
@@ -701,9 +699,9 @@ export default {
 
     //审核订单
     review(i) {
-      this.Axios.post('/Manage/Order/batchAudit', this.Qs.stringify({
+      this.Axios.post('/BatchAudit.ashx', {
         idstr: i
-      })).then(res => {
+      }).then(res => {
         if (res.data.error === 0) {
           this.$Message.success('审核成功');
           this.getOrder();
@@ -747,7 +745,7 @@ export default {
         vid: 1,
         ticketnumber: _this.formValidate.ticketnumber,
         state: _this.formValidate.state,
-        supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
+        supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
         platformid: _this.formValidate.terraceId,
         ordernumber: _this.formValidate.ordernumber,
         proname: _this.formValidate.proname,
@@ -812,7 +810,7 @@ export default {
     //获取详情
     getDetails(id) {
       const _this = this;
-      _this.Axios.get('/Manage/Order/detail', {
+      _this.Axios.get('/GetOrderDetailed.ashx', {
         params: {
           idstr: id
         }
@@ -930,7 +928,7 @@ export default {
     download(page, index) {
       const _this = this;
       let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
-      window.open('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPageGys.ashx?typeid=' + typeid +
+      window.open('/ExportOrderPage.ashx?typeid=' + typeid +
         '&sortid=' + _this.sortid +
         '&vid=' + 1 +
         '&state=' + _this.formValidate.state +

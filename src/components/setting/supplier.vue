@@ -135,14 +135,15 @@ export default {
                 },
                 on: {
                   'on-change': (i) => {
-                    this.Axios.post('/Manage/Supplier/updateLock', this.Qs.stringify({
-                      id: params.row.id,   //品牌id
-                      lock: !params.row.locked,   //是否显示 true为显示 false为隐藏
-                    })).then(res => {
-                      if (res.data.code === 0) {
+                    this.Axios.post('/UpdateSupLock.ashx', {
+                      id: Number(params.row.id),   //品牌id
+                      locked: !params.row.locked?1:0,   //是否显示 true为显示 false为隐藏
+                    }).then(res => {
+                      console.log(res.data)
+                      if (res.data.error === 0) {
                         this.getList()
                       } else {
-                        this.$Message.warning(res.data.message)
+                        this.$Message.warning(res.data.errorMsg)
                       }
                     });
                   }

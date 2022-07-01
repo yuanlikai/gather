@@ -41,7 +41,7 @@ margin-right: 16px">
         <Col span="24">姓名：{{ item.name }}</Col>
         <Col span="24" v-if="item.supplierName">供应商：{{ item.supplierName }}</Col>
         <Col span="24" style="margin-top: 8px">
-          <Tag color="geekblue">{{ item.userInfoType.name }}</Tag>
+          <Tag color="geekblue">{{ item.roleNames }}</Tag>
           <Button @click="Handle(item.id)" size="small" icon="md-list" style="margin-left: 16px;">展开操作</Button>
         </Col>
         <Col span="24" style="margin-top: 16px" v-if="handleId===item.id">

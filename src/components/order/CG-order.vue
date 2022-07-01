@@ -1,11 +1,11 @@
 <style>
-.ivu-table .demo-table-info-row td {
-  color: red
-}
-
-.card-warp .ivu-card-body {
-  padding: 0;
-}
+  .ivu-table .demo-table-info-row td {
+    color: red
+  }
+  
+  .card-warp .ivu-card-body {
+    padding: 0;
+  }
 </style>
 <template>
   <div class="content">
@@ -153,7 +153,7 @@
     <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
       <p slot="title" style="height: 24px;display: flex;align-items: center">
         数据列表 <span style="font-weight: 400">【共 {{ total }} 条】</span>
-
+        
         <Select style="width: 130px;margin-left: 10px;font-weight: 400;" size="small" v-model="sortid"
                 @on-change="start=1,total=0,getOrder()">
           <Option value="1">按下单时间正序</Option>
@@ -240,7 +240,7 @@
                     </div>
                   </Col>
                 </div>
-
+                
                 <div style="float: left;margin-left: 66px">共 <span
                   style="color: #000000;font-weight: 700">{{ item.ProList.length }}</span>
                   个产品
@@ -277,16 +277,16 @@
                 <Poptip
                   confirm
                   title="是否确定审核该订单？"
-                  @on-ok="review(item.ID)">
+                  @on-ok="review(String(item.ID))">
                   <a>审核</a>
                 </Poptip>
               </p>
               <p v-if="item.State===1&&formValidate.state != 9">
                 <a @click="ship(item.ID)">发货</a>
               </p>
-              <p v-if="item.State===2&&formValidate.state != 9">
-                <a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>
-              </p>
+              <!--<p v-if="item.State===2&&formValidate.state != 9">-->
+              <!--<a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>-->
+              <!--</p>-->
               <p v-if="item.State===5&&formValidate.state != 9">
                 <Poptip
                   confirm
@@ -363,13 +363,13 @@
             <Icon type="md-checkmark" v-if="item.download===true"/>
           </span>
         </div>
-
+      
       </div>
       <div slot="footer">
         <Button type="error" size="large" long @click="modal=false">关闭</Button>
       </div>
     </Modal>
-
+    
     <Modal v-model="modal1" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -396,7 +396,7 @@
         <Button type="primary" size="large" @click="modal1=false">关闭</Button>
       </div>
     </Modal>
-
+    
     <Modal v-model="modal3" width="460">
       <p slot="header" style="text-align:center">
         <Icon type="ios-information-circle"></Icon>
@@ -412,704 +412,702 @@
   </div>
 </template>
 <script>
-import express from './express'
-import Upload from './Upload'
-
-export default {
-  components: {
-    express,
-    Upload
-  },
-  props: ['supplier'],
-  data() {
-    return {
-      options1: {
-        shortcuts: [
+  import express from './express'
+  import Upload from './Upload'
+  
+  export default {
+    components: {
+      express,
+      Upload
+    },
+    props: ['supplier'],
+    data() {
+      return {
+        options1: {
+          shortcuts: [
+            {
+              text: '今天发货',
+              value() {
+                const start = new Date();
+                const end = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 6);
+                return [start, end];
+              }
+            },
+            {
+              text: '明天发货',
+              value() {
+                const start = new Date();
+                start.setTime(start.getTime() + 3600 * 1000 * 24);
+                return [start, start];
+              }
+            },
+          ]
+        },
+        dataSite: [],
+        pageSize: 10,
+        indeterminate: true,
+        checkAll: false,
+        checkAllGroup: [],
+        total: 0,
+        modal: false,
+        modal1: false,
+        modal2: false,
+        modal3: false,
+        proUrl: '',
+        tagArr: [],
+        loading1: true,
+        OrderNumber: '',
+        ReOrder: {
+          dstr: '',  //原单Id
+          total: 0,  //退款金额
+          remarks: '',  //备注
+          freight: 0,  //运费
+          prolist: [],
+        },
+        columns1: [
           {
-            text: '今天发货',
-            value() {
-              const start = new Date();
-              const end = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 6);
-              return [start, end];
-            }
+            type: 'selection',
+            width: 60,
+            align: 'center'
           },
           {
-            text: '明天发货',
-            value() {
-              const start = new Date();
-              start.setTime(start.getTime() + 3600 * 1000 * 24);
-              return [start, start];
+            title: '商品名称',
+            tooltip: true,
+            key: 'ProductName',
+            minWidth: 120,
+            align: "center",
+          },
+          {
+            title: '货号',
+            tooltip: true,
+            key: 'StockNo',
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '数量',
+            tooltip: true,
+            key: 'Num',
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '单价',
+            tooltip: true,
+            key: 'Price',
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '小计',
+            tooltip: true,
+            key: 'SumPrice',
+            minWidth: 88,
+            align: "center",
+          },
+          {
+            title: '退货数量',
+            minWidth: 88,
+            align: "center",
+            key: 'asdadasda',
+            render: (h, params) => {
+              const _this = this;
+              _this.OperBtn[params.index].number = Number(params.row.Num);
+              return h('div', [
+                h('InputNumber', {
+                  props: {
+                    value: Number(params.row.Num),
+                    size: 'small',
+                    min: 1,
+                    max: Number(params.row.Num)
+                  },
+                  style: {
+                    width: '60px'
+                  },
+                  on: {
+                    'on-change': (e) => {
+                      const _this = this;
+                      _this.OperBtn[params.index].number = Number(e);
+                      for (let i in _this.ReOrder.prolist) {
+                        if (_this.ReOrder.prolist[i].id == params.row.ID) {
+                          _this.ReOrder.prolist[i].num = String(e)
+                        }
+                      }
+                      this.totalPrices();
+                    }
+                  }
+                })
+              ])
             }
           },
+        ],
+        OperBtn: [],
+        data: [],
+        formValidate: {
+          state: this.$route.params.id ? this.$route.params.id : '0',
+          supplierid: '',
+          ticketnumber: '',
+          terraceId: '-1',
+          ordernumber: '',
+          proname: '',
+          stockno: '',
+          consignee: '',
+          phone: '',
+          giftcode: '',
+          time: ['', ''],
+          time1: ['', ''],
+          price1: '',
+          price2: '',
+          ssq: [],
+          actcode: ''
+        },
+        supplierList: [],
+        statusList: [],
+        start: 1,
+        sortid: '1',
+        orderNum: {},
+        types: '',
+        terraceList: [],
+        express: [],
+        expressMsg: '',
+        express1: '',
+        express2: ''
+      }
+    },
+    methods: {
+      //收货区域
+      xzdq(value, selectedData) {
+        this.formValidate.ssq = value;
+        this.start = 1;
+        this.total = 0;
+        this.getOrder()
+      },
+      //收货区域一级级联动改为二级联动
+      getSsq() {
+        const _this = this;
+        _this.Axios.post('/GetRegional.ashx').then(res => {
+          console.log(res.data.data)
+          for (let i = 0; i < res.data.data.length; i++) {
+            res.data.data[i].value = res.data.data[i].label;
+            for (let a = 0; a < res.data.data[i].children.length; a++) {
+              res.data.data[i].children[a].value = res.data.data[i].children[a].label;
+              delete res.data.data[i].children[a].children
+            }
+          }
+          _this.dataSite = res.data.data;
+        })
+      },
+      //点击图片放大弹窗
+      showModal3(e) {
+        this.proUrl = e;
+        this.modal3 = true;
+      },
+      //订单状态切换
+      group(e) {
+        this.types = e;
+        this.start = 1;
+        this.total = 0;
+        if (this.formValidate.state === '-1' || this.formValidate.state === '2' || this.formValidate.state === '6') {
+          this.sortid = '2'
+        } else {
+          this.sortid = '1'
+        }
+        this.getOrder(e)
+      },
+      //复制物流信息回调
+      onCopy() {
+        this.$Message.success('复制成功')
+      },
+      //获取物流详情信息
+      searchExpress(Express, ExpressNo, ErpOrderNumber) {
+        const _this = this;
+        _this.express1 = Express + ` 【${ExpressNo}】`;
+        _this.express2 = Express + ` ${ExpressNo}`;
+        _this.Axios.post('/GetExpress.ashx', {
+          expressnumber: ExpressNo,
+          expressname: Express,
+          ordernumber: ErpOrderNumber,
+        }).then(res => {
+          _this.modal1 = true;
+          if (res.data.error === 0) {
+            _this.express = res.data.data
+          } else {
+            _this.express = [];
+            _this.expressMsg = res.data.errorMsg
+          }
+        })
+      },
+      //切换每页条数回调
+      showSizer(size) {
+        this.pageSize = size;
+        this.getOrder();
+      },
+      
+      //展开更多产品
+      openPro(index) {
+        if (this.data[index].open) {
+          this.$set(this.data[index], 'open', false);
+        } else {
+          this.$set(this.data[index], 'open', true);
+        }
+      },
+      
+      //确认退单
+      affirm(id) {
+        const _this = this;
+        _this.Axios.post('/Manage/Order/comfirmReOrder', _this.Qs.stringify({
+          idstr: id
+        })).then(res => {
+          if (res.data.code === 0) {
+            _this.getOrder();
+            _this.statusNum();
+            _this.$Message.success('退单成功！')
+          } else {
+            _this.$Message.error(res.data.errorMsg)
+          }
+        })
+      },
+      
+      //申请退单
+      chargeback(id, num) {
+        this.modal2 = true;
+        this.ReOrder.total = 0;
+        this.ReOrder.idstr = id;
+        this.OrderNumber = num;
+        this.getDetails(id)
+      },
+      
+      //发货
+      ship(i) {
+        this.$refs.express.model = true;
+        this.$refs.express.formDynamic.idstr = i;
+        this.$refs.express.formDynamic.Description = '';
+        this.$refs.express.formDynamic.items = [
+          {
+            Express: '',
+            ExpressNo: ''
+          }
         ]
       },
-      dataSite: [],
-      pageSize: 10,
-      indeterminate: true,
-      checkAll: false,
-      checkAllGroup: [],
-      total: 0,
-      modal: false,
-      modal1: false,
-      modal2: false,
-      modal3: false,
-      proUrl: '',
-      tagArr: [],
-      loading1: true,
-      OrderNumber: '',
-      ReOrder: {
-        dstr: '',  //原单Id
-        total: 0,  //退款金额
-        remarks: '',  //备注
-        freight: 0,  //运费
-        prolist: [],
-      },
-      columns1: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
-        {
-          title: '商品名称',
-          tooltip: true,
-          key: 'ProductName',
-          minWidth: 120,
-          align: "center",
-        },
-        {
-          title: '货号',
-          tooltip: true,
-          key: 'StockNo',
-          minWidth: 88,
-          align: "center",
-        },
-        {
-          title: '数量',
-          tooltip: true,
-          key: 'Num',
-          minWidth: 88,
-          align: "center",
-        },
-        {
-          title: '单价',
-          tooltip: true,
-          key: 'Price',
-          minWidth: 88,
-          align: "center",
-        },
-        {
-          title: '小计',
-          tooltip: true,
-          key: 'SumPrice',
-          minWidth: 88,
-          align: "center",
-        },
-        {
-          title: '退货数量',
-          minWidth: 88,
-          align: "center",
-          key: 'asdadasda',
-          render: (h, params) => {
-            const _this = this;
-            _this.OperBtn[params.index].number = Number(params.row.Num);
-            return h('div', [
-              h('InputNumber', {
-                props: {
-                  value: Number(params.row.Num),
-                  size: 'small',
-                  min: 1,
-                  max: Number(params.row.Num)
-                },
-                style: {
-                  width: '60px'
-                },
-                on: {
-                  'on-change': (e) => {
-                    const _this = this;
-                    _this.OperBtn[params.index].number = Number(e);
-                    for (let i in _this.ReOrder.prolist) {
-                      if (_this.ReOrder.prolist[i].id == params.row.ID) {
-                        _this.ReOrder.prolist[i].num = String(e)
-                      }
-                    }
-                    this.totalPrices();
-                  }
-                }
-              })
-            ])
-          }
-        },
-      ],
-      OperBtn: [],
-      data: [],
-      formValidate: {
-        state: this.$route.params.id ? this.$route.params.id : '0',
-        supplierid: '',
-        ticketnumber: '',
-        terraceId: '-1',
-        ordernumber: '',
-        proname: '',
-        stockno: '',
-        consignee: '',
-        phone: '',
-        giftcode: '',
-        time: ['', ''],
-        time1: ['', ''],
-        price1: '',
-        price2: '',
-        ssq: [],
-        actcode: ''
-      },
-      supplierList: [],
-      statusList: [],
-      start: 1,
-      sortid: '1',
-      orderNum: {},
-      types: '',
-      terraceList: [],
-      express: [],
-      expressMsg: '',
-      express1: '',
-      express2: ''
-    }
-  },
-  methods: {
-    //收货区域
-    xzdq(value, selectedData) {
-      this.formValidate.ssq = value;
-      this.start = 1;
-      this.total = 0;
-      this.getOrder()
-    },
-    //收货区域一级级联动改为二级联动
-    getSsq() {
-      const _this = this;
-      _this.Axios.get('/Manage/Region/region').then(res => {
-        for (let i = 0; i < res.data.RegionList.length; i++) {
-          res.data.RegionList[i].value = res.data.RegionList[i].label;
-          for (let a = 0; a < res.data.RegionList[i].children.length; a++) {
-            res.data.RegionList[i].children[a].value = res.data.RegionList[i].children[a].label;
-            delete res.data.RegionList[i].children[a].children
-          }
+      
+      //批量审核
+      batchReview() {
+        if (this.checkAllGroup.length < 1) {
+          this.$Message.warning('请选择要审核的订单')
+        } else {
+          this.review(this.checkAllGroup.join(','))
         }
-        _this.dataSite = res.data.RegionList;
-      })
-
+      },
+      
+      //审核订单
+      review(i) {
+        this.Axios.post('/BatchAudit.ashx', {
+          idstr: i
+        }).then(res => {
+          if (res.data.error === 0) {
+            this.$Message.success('审核成功');
+            this.getOrder();
+            this.statusNum();
+          } else {
+            this.$Message.error(res.data.errorMsg)
+          }
+        })
+      },
+      
+      //订单时间金额升序降序
+      sorts(i) {
+        switch (i.order) {
+          case 'asc':
+            i.key === 'AddTime' ? this.sortid = '1' : this.sortid = '3';
+            break;
+          case 'desc':
+            i.key === 'AddTime' ? this.sortid = '2' : this.sortid = '4';
+            break;
+          default:
+            this.sortid = '';
+            break
+        }
+        this.getOrder();
+      },
+      
+      // 分页
+      paging(i) {
+        this.start = i;
+        this.getOrder();
+      },
+      
+      //获取订单列表
+      getOrder(i) {
+        const _this = this;
+        _this.loading1 = true;
+        _this.tagArr = [];
+        _this.Axios.post(_this.types !== 'yc' ? '/GetOrderList.ashx' : '/GetYcOrderList.ashx', {
+          typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
+          sortid: _this.sortid,
+          vid: 1,
+          ticketnumber: _this.formValidate.ticketnumber,
+          state: _this.formValidate.state,
+          supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
+          platformid: _this.formValidate.terraceId,
+          ordernumber: _this.formValidate.ordernumber,
+          proname: _this.formValidate.proname,
+          stockno: _this.formValidate.stockno,
+          consignee: _this.formValidate.consignee,
+          phone: _this.formValidate.phone,
+          giftcode: _this.formValidate.giftcode,
+          price1: _this.formValidate.price1,
+          price2: _this.formValidate.price2,
+          begintime: _this.formValidate.time[0],
+          endtime: _this.formValidate.time[1],
+          begintime2: _this.formValidate.time1[0],
+          endtime2: _this.formValidate.time1[1],
+          address: _this.formValidate.ssq.join(' '),
+          actcode: _this.formValidate.actcode,
+          page: _this.start,
+          pagesize: _this.pageSize,
+        }).then(res => {
+          _this.getOrderNum();
+          _this.indeterminate = false;
+          _this.checkAll = false;
+          _this.checkAllGroup = [];
+          if (res.data.error === 0) {
+            _this.data = res.data.data;
+            _this.total = res.data.total;
+          } else {
+            _this.data = [];
+            _this.total = 0;
+          }
+          _this.loading1 = false;
+        })
+      },
+      
+      //导出订单弹窗
+      dcdd() {
+        const _this = this;
+        _this.modal = true;
+        _this.tagArr = [];
+        let tagArr = parseInt(_this.total / 100);
+        let num = 0;
+        for (let i = 0; i < tagArr; i++) {
+          _this.tagArr.push({
+            num1: num + 1,
+            num2: num + 100
+          });
+          num += 100
+        }
+        if (_this.total % 100 !== 0) {
+          _this.tagArr.push({
+            num1: num + 1,
+            num2: num + _this.total % 100
+          });
+        }
+      },
+      
+      //处理http图片打不开
+      alterPicture(i) {
+        if (i.indexOf('http:') === -1) {
+          return i
+        } else {
+          return i.replace(/http:/, '')
+        }
+      },
+      
+      //获取详情
+      getDetails(id) {
+        const _this = this;
+        _this.Axios.get('/GetOrderDetailed.ashx', {
+          params: {
+            idstr: id
+          }
+        }).then(res => {
+          if (res.data.error === 0) {
+            _this.OperBtn = res.data.data;
+            _this.ReOrder.freight = res.data.Freight
+          } else {
+            _this.$Message.error(res.data.errorMsg)
+          }
+        })
+      },
+      
+      //查询订单
+      handleSubmit(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.start = 1;
+            this.total = 0;
+            this.getOrder();
+          } else {
+            this.$Message.error('Fail!');
+          }
+        })
+      },
+      handleReset(name) {
+        this.$refs[name].resetFields();
+        this.formValidate.price2 = '';
+        this.getOrder()
+      },
+      
+      //申请退单
+      applyReOrder() {
+        const _this = this;
+        _this.Axios.post('/Manage/Order/applyReOrder', _this.Qs.stringify({
+          idstr: _this.ReOrder.idstr,  //原单Id
+          total: _this.ReOrder.total,  //退款金额
+          remarks: _this.ReOrder.remarks,  //备注
+          freight: _this.ReOrder.freight,  //运费
+          prolist: JSON.stringify(_this.ReOrder.prolist),
+        })).then(res => {
+          if (res.data.code === 0) {
+            _this.$Message.success('已提交申请退单');
+            _this.getOrder(_this.formValidate.state > 8 ? 'yc' : '');
+            _this.statusNum();
+            _this.modal2 = false;
+          } else {
+            _this.$Message.warning(res.data.errorMsg)
+          }
+        })
+      },
+      
+      //获取状态
+      getStatus() {
+        const _this = this;
+        _this.statusNum();
+        _this.Axios.get('/GetStateStr.ashx').then(res => {
+          _this.statusList = res.data.data;
+        })
+      },
+      
+      //获取状态数量
+      statusNum() {
+        const _this = this;
+        _this.Axios.get('/GetOrderNum.ashx').then(resa => {
+          _this.orderNum = resa.data
+        });
+      },
+      
+      //获取状态数量
+      getOrderNum() {
+        const _this = this;
+      },
+      
+      //获取供应商
+      getSupplier() {
+        const _this = this;
+        _this.Axios.get('/GetSupList.ashx').then(res => {
+          _this.supplierList = res.data.data
+        })
+      },
+      
+      //获取平台
+      getTerrace() {
+        const _this = this;
+        _this.Axios.get('/GetPlaList.ashx').then(res => {
+          _this.terraceList = res.data.data
+        })
+      },
+      
+      //选择申请退货产品
+      operChange(i) {
+        const _this = this;
+        _this.ReOrder.prolist = [];
+        i.forEach(function (item, index) {
+          _this.ReOrder.prolist.push({
+            id: String(item.ID),
+            Price: item.Price,
+            num: String(item.number)
+          });
+        });
+        this.totalPrices();
+      },
+      
+      //计算退款产品总价
+      totalPrices() {
+        const _this = this;
+        _this.ReOrder.total = 0;
+        let i = _this.ReOrder.prolist;
+        i.forEach(function (item, index) {
+          _this.ReOrder.total += item.Price * item.num
+        });
+      },
+      //导出订单
+      download(page, index) {
+        const _this = this;
+        let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
+        let supplierid = localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1');
+        window.open('/ExportOrderPage.ashx?typeid=' + typeid +
+          '&sortid=' + _this.sortid +
+          '&vid=' + 1 +
+          '&state=' + _this.formValidate.state +
+          '&supplierid=' + supplierid +
+          '&platformid=' + _this.formValidate.terraceId +
+          '&ordernumber=' + _this.formValidate.ordernumber +
+          '&proname=' + _this.formValidate.proname +
+          '&stockno=' + _this.formValidate.stockno +
+          '&consignee=' + _this.formValidate.consignee +
+          '&phone=' + _this.formValidate.phone +
+          '&price1=' + _this.formValidate.price1 +
+          '&price2=' + _this.formValidate.price2 +
+          '&ticketnumber=' + _this.formValidate.ticketnumber +
+          '&giftcode=' + _this.formValidate.giftcode +
+          '&begintime=' + _this.formValidate.time[0] +
+          '&endtime=' + _this.formValidate.time[1] +
+          '&begintime2=' + _this.formValidate.time1[0] +
+          '&endtime2=' + _this.formValidate.time1[1] +
+          '&address=' + _this.formValidate.ssq.join(' ') +
+          '&actcode=' + _this.formValidate.actcode +
+          '&page=' + page +
+          '&pagesize=' + 100
+        );
+        _this.$set(_this.tagArr[index], 'download', true);
+      },
+      getTime(i) {
+        this.formValidate.time = [i[0], i[1]];
+        this.start = 1;
+        this.total = 0;
+        this.getOrder()
+      },
+      
+      getTime1(i) {
+        this.formValidate.time1 = [i[0], i[1]];
+        this.start = 1;
+        this.total = 0;
+        this.getOrder()
+      },
+      
+      rowClassName(row, index) {
+        return row.IsAbnormal === 1 ? 'demo-table-info-row' : ''
+      },
+      
+      sup() {
+        return this.supplier.userType === 'SUPPLIER' ? this.supplier.supplierId : this.formValidate.supplierid;
+      },
+      
+      handleCheckAll() {
+        if (this.indeterminate) {
+          this.checkAll = false;
+        } else {
+          this.checkAll = !this.checkAll;
+        }
+        this.indeterminate = false;
+        
+        if (this.checkAll) {
+          this.checkAllGroup = [];
+          for (let i = 0; i < this.data.length; i++) {
+            this.checkAllGroup.push(this.data[i].ID)
+          }
+        } else {
+          this.checkAllGroup = [];
+        }
+      },
+      checkAllGroupChange(data) {
+        if (data.length === this.data.length) {
+          this.indeterminate = false;
+          this.checkAll = true;
+        } else if (data.length > 0) {
+          this.indeterminate = true;
+          this.checkAll = false;
+        } else {
+          this.indeterminate = false;
+          this.checkAll = false;
+        }
+      },
     },
-    //点击图片放大弹窗
-    showModal3(e) {
-      this.proUrl = e;
-      this.modal3 = true;
-    },
-    //订单状态切换
-    group(e) {
-      this.types = e;
-      this.start = 1;
-      this.total = 0;
-      if (this.formValidate.state === '-1' || this.formValidate.state === '2' || this.formValidate.state === '6') {
+    created() {
+      if (this.$route.params.id === '-1' || this.$route.params.id === '2' || this.$route.params.id === '6') {
         this.sortid = '2'
       } else {
         this.sortid = '1'
       }
-      this.getOrder(e)
     },
-    //复制物流信息回调
-    onCopy() {
-      this.$Message.success('复制成功')
-    },
-    //获取物流详情信息
-    searchExpress(Express, ExpressNo, ErpOrderNumber) {
-      const _this = this;
-      _this.express1 = Express + ` 【${ExpressNo}】`;
-      _this.express2 = Express + ` ${ExpressNo}`;
-      _this.Axios.post('/Manage/Order/getExpress', {
-        params: {
-          expressnumber: ExpressNo,
-          expressname: Express,
-          ordernumber: ErpOrderNumber,
-        }
-      }).then(res => {
-        _this.modal1 = true;
-        if (res.data.error === 0) {
-          _this.express = res.data.data
-        } else {
-          _this.express = [];
-          _this.expressMsg = res.data.errorMsg
-        }
-      })
-    },
-    //切换每页条数回调
-    showSizer(size) {
-      this.pageSize = size;
+    mounted() {
       this.getOrder();
-    },
-
-    //展开更多产品
-    openPro(index) {
-      if (this.data[index].open) {
-        this.$set(this.data[index], 'open', false);
-      } else {
-        this.$set(this.data[index], 'open', true);
-      }
-    },
-
-    //确认退单
-    affirm(id) {
-      const _this = this;
-      _this.Axios.post('/Manage/Order/comfirmReOrder', _this.Qs.stringify({
-        idstr: id
-      })).then(res => {
-        if (res.data.code === 0) {
-          _this.getOrder();
-          _this.statusNum();
-          _this.$Message.success('退单成功！')
-        } else {
-          _this.$Message.error(res.data.errorMsg)
-        }
-      })
-    },
-
-    //申请退单
-    chargeback(id, num) {
-      this.modal2 = true;
-      this.ReOrder.total = 0;
-      this.ReOrder.idstr = id;
-      this.OrderNumber = num;
-      this.getDetails(id)
-    },
-
-    //发货
-    ship(i) {
-      this.$refs.express.model = true;
-      this.$refs.express.formDynamic.idstr = i;
-      this.$refs.express.formDynamic.Description = '';
-      this.$refs.express.formDynamic.items = [
-        {
-          Express: '',
-          ExpressNo: ''
-        }
-      ]
-    },
-
-    //批量审核
-    batchReview() {
-      if (this.checkAllGroup.length < 1) {
-        this.$Message.warning('请选择要审核的订单')
-      } else {
-        this.review(this.checkAllGroup.join(','))
-      }
-    },
-
-    //审核订单
-    review(i) {
-      this.Axios.post('/Manage/Order/batchAudit', this.Qs.stringify({
-        idstr: i
-      })).then(res => {
-        if (res.data.error === 0) {
-          this.$Message.success('审核成功');
-          this.getOrder();
-          this.statusNum();
-        } else {
-          this.$Message.error(res.data.errorMsg)
-        }
-      })
-    },
-
-    //订单时间金额升序降序
-    sorts(i) {
-      switch (i.order) {
-        case 'asc':
-          i.key === 'AddTime' ? this.sortid = '1' : this.sortid = '3';
-          break;
-        case 'desc':
-          i.key === 'AddTime' ? this.sortid = '2' : this.sortid = '4';
-          break;
-        default:
-          this.sortid = '';
-          break
-      }
-      this.getOrder();
-    },
-
-    // 分页
-    paging(i) {
-      this.start = i;
-      this.getOrder();
-    },
-
-    //获取订单列表
-    getOrder(i) {
-      const _this = this;
-      _this.loading1 = true;
-      _this.tagArr = [];
-      _this.Axios.post(_this.types !== 'yc' ? '/GetOrderList.ashx' : '/GetYcOrderList.ashx', {
-        typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
-        sortid: _this.sortid,
-        vid: 1,
-        ticketnumber: _this.formValidate.ticketnumber,
-        state: _this.formValidate.state,
-        supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
-        platformid: _this.formValidate.terraceId,
-        ordernumber: _this.formValidate.ordernumber,
-        proname: _this.formValidate.proname,
-        stockno: _this.formValidate.stockno,
-        consignee: _this.formValidate.consignee,
-        phone: _this.formValidate.phone,
-        giftcode: _this.formValidate.giftcode,
-        price1: _this.formValidate.price1,
-        price2: _this.formValidate.price2,
-        begintime: _this.formValidate.time[0],
-        endtime: _this.formValidate.time[1],
-        begintime2: _this.formValidate.time1[0],
-        endtime2: _this.formValidate.time1[1],
-        address: _this.formValidate.ssq.join(' '),
-        actcode: _this.formValidate.actcode,
-        page: _this.start,
-        pagesize: _this.pageSize,
-      }).then(res => {
-        _this.getOrderNum();
-        _this.indeterminate = false;
-        _this.checkAll = false;
-        _this.checkAllGroup = [];
-        if (res.data.error === 0) {
-          _this.data = res.data.data;
-          _this.total = res.data.total;
-        } else {
-          _this.data = [];
-          _this.total = 0;
-        }
-        _this.loading1 = false;
-      })
-    },
-
-    //导出订单弹窗
-    dcdd() {
-      const _this = this;
-      _this.modal = true;
-      _this.tagArr = [];
-      let tagArr = parseInt(_this.total / 100);
-      let num = 0;
-      for (let i = 0; i < tagArr; i++) {
-        _this.tagArr.push({
-          num1: num + 1,
-          num2: num + 100
-        });
-        num += 100
-      }
-      if (_this.total % 100 !== 0) {
-        _this.tagArr.push({
-          num1: num + 1,
-          num2: num + _this.total % 100
-        });
-      }
-    },
-
-    //处理http图片打不开
-    alterPicture(i) {
-      if (i.indexOf('http:') === -1) {
-        return i
-      } else {
-        return i.replace(/http:/, '')
-      }
-    },
-
-    //获取详情
-    getDetails(id) {
-      const _this = this;
-      _this.Axios.get('/Manage/Order/detail', {
-        params: {
-          idstr: id
-        }
-      }).then(res => {
-        if (res.data.error === 0) {
-          _this.OperBtn = res.data.data;
-          _this.ReOrder.freight = res.data.Freight
-        } else {
-          _this.$Message.error(res.data.errorMsg)
-        }
-      })
-    },
-
-    //查询订单
-    handleSubmit(name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          this.start = 1;
-          this.total = 0;
-          this.getOrder();
-        } else {
-          this.$Message.error('Fail!');
-        }
-      })
-    },
-    handleReset(name) {
-      this.$refs[name].resetFields();
-      this.formValidate.price2 = '';
-      this.getOrder()
-    },
-
-    //申请退单
-    applyReOrder() {
-      const _this = this;
-      _this.Axios.post('/Manage/Order/applyReOrder', _this.Qs.stringify({
-        idstr: _this.ReOrder.idstr,  //原单Id
-        total: _this.ReOrder.total,  //退款金额
-        remarks: _this.ReOrder.remarks,  //备注
-        freight: _this.ReOrder.freight,  //运费
-        prolist: JSON.stringify(_this.ReOrder.prolist),
-      })).then(res => {
-        if (res.data.code === 0) {
-          _this.$Message.success('已提交申请退单');
-          _this.getOrder(_this.formValidate.state > 8 ? 'yc' : '');
-          _this.statusNum();
-          _this.modal2 = false;
-        } else {
-          _this.$Message.warning(res.data.errorMsg)
-        }
-      })
-    },
-
-    //获取状态
-    getStatus() {
-      const _this = this;
-      _this.statusNum();
-      _this.Axios.get('/GetStateStr.ashx').then(res => {
-        _this.statusList = res.data.data;
-      })
-    },
-
-    //获取状态数量
-    statusNum() {
-      const _this = this;
-      _this.Axios.get('/GetOrderNum.ashx').then(resa => {
-        _this.orderNum = resa.data
-      });
-    },
-
-    //获取状态数量
-    getOrderNum() {
-      const _this = this;
-    },
-
-    //获取供应商
-    getSupplier() {
-      const _this = this;
-      _this.Axios.get('/GetSupList.ashx').then(res => {
-        _this.supplierList = res.data.data
-      })
-    },
-
-    //获取平台
-    getTerrace() {
-      const _this = this;
-      _this.Axios.get('/GetPlaList.ashx').then(res => {
-        _this.terraceList = res.data.data
-      })
-    },
-
-    //选择申请退货产品
-    operChange(i) {
-      const _this = this;
-      _this.ReOrder.prolist = [];
-      i.forEach(function (item, index) {
-        _this.ReOrder.prolist.push({
-          id: String(item.ID),
-          Price: item.Price,
-          num: String(item.number)
-        });
-      });
-      this.totalPrices();
-    },
-
-    //计算退款产品总价
-    totalPrices() {
-      const _this = this;
-      _this.ReOrder.total = 0;
-      let i = _this.ReOrder.prolist;
-      i.forEach(function (item, index) {
-        _this.ReOrder.total += item.Price * item.num
-      });
-    },
-    //导出订单
-    download(page, index) {
-      const _this = this;
-      let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
-      let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
-      window.open('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPageCg.ashx?typeid=' + typeid +
-        '&sortid=' + _this.sortid +
-        '&vid=' + 1 +
-        '&state=' + _this.formValidate.state +
-        '&supplierid=' + supplierid +
-        '&platformid=' + _this.formValidate.terraceId +
-        '&ordernumber=' + _this.formValidate.ordernumber +
-        '&proname=' + _this.formValidate.proname +
-        '&stockno=' + _this.formValidate.stockno +
-        '&consignee=' + _this.formValidate.consignee +
-        '&phone=' + _this.formValidate.phone +
-        '&price1=' + _this.formValidate.price1 +
-        '&price2=' + _this.formValidate.price2 +
-        '&ticketnumber=' + _this.formValidate.ticketnumber +
-        '&giftcode=' + _this.formValidate.giftcode +
-        '&begintime=' + _this.formValidate.time[0] +
-        '&endtime=' + _this.formValidate.time[1] +
-        '&begintime2=' + _this.formValidate.time1[0] +
-        '&endtime2=' + _this.formValidate.time1[1] +
-        '&address=' + _this.formValidate.ssq.join(' ') +
-        '&actcode=' + _this.formValidate.actcode +
-        '&page=' + page +
-        '&pagesize=' + 100
-      );
-      _this.$set(_this.tagArr[index], 'download', true);
-    },
-    getTime(i) {
-      this.formValidate.time = [i[0], i[1]];
-      this.start = 1;
-      this.total = 0;
-      this.getOrder()
-    },
-
-    getTime1(i) {
-      this.formValidate.time1 = [i[0], i[1]];
-      this.start = 1;
-      this.total = 0;
-      this.getOrder()
-    },
-
-    rowClassName(row, index) {
-      return row.IsAbnormal === 1 ? 'demo-table-info-row' : ''
-    },
-
-    sup() {
-      return this.supplier.userType === 'SUPPLIER' ? this.supplier.supplierId : this.formValidate.supplierid;
-    },
-
-    handleCheckAll() {
-      if (this.indeterminate) {
-        this.checkAll = false;
-      } else {
-        this.checkAll = !this.checkAll;
-      }
-      this.indeterminate = false;
-
-      if (this.checkAll) {
-        this.checkAllGroup = [];
-        for (let i = 0; i < this.data.length; i++) {
-          this.checkAllGroup.push(this.data[i].ID)
-        }
-      } else {
-        this.checkAllGroup = [];
-      }
-    },
-    checkAllGroupChange(data) {
-      if (data.length === this.data.length) {
-        this.indeterminate = false;
-        this.checkAll = true;
-      } else if (data.length > 0) {
-        this.indeterminate = true;
-        this.checkAll = false;
-      } else {
-        this.indeterminate = false;
-        this.checkAll = false;
-      }
-    },
-  },
-  created() {
-    if (this.$route.params.id === '-1' || this.$route.params.id === '2' || this.$route.params.id === '6') {
-      this.sortid = '2'
-    } else {
-      this.sortid = '1'
+      this.getSupplier();
+      this.getTerrace();
+      this.getStatus();
+      this.getSsq();
     }
-  },
-  mounted() {
-    this.getOrder();
-    this.getSupplier();
-    this.getTerrace();
-    this.getStatus();
-    this.getSsq();
   }
-}
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-.price-inp {
-  display: flex;
-}
-
-.price-inp > span {
-  margin: 0 10px;
-}
-
-.Page-wrap {
-  width: 100%;
-  text-align: center;
-  padding: 16px 0;
-}
-
-.row-wrap p {
-  float: left;
-  font-size: 12px;
-  width: calc(100% - 55px);
-  line-height: 24px;
-  padding-left: 16px;
-}
-
-.row-wrap-checkbox {
-  margin: auto;
-  position: absolute;
-  left: -30px;
-  bottom: 0;
-  top: 0;
-  width: 16px;
-  height: 32px;
-}
-
-.row-wrap {
-  position: relative;
-}
-
-.card-warp-col3 {
-  font-size: 12px;
-}
-
-.card-warp-col3 p {
-  line-height: 24px;
-}
-
-.card-warp-li {
-  flex-direction: column-reverse;
-  margin-right: 16px;
-}
-
-.card-warp-ul {
-  width: 100%;
-  display: flex;
-  border-bottom: 1px solid #dcdee2;
-  font-size: 12px;
-  line-height: 16px;
-  padding: 8px 48px 8px 16px;
-}
-
-.card-warp .ivu-alert {
-  font-weight: 700;
-  border: none;
-  background: #e8eaec;
-  margin-bottom: 0;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-}
-
-.ivu-table-wrapper {
-  overflow: inherit;
-}
-
-.tag-dow {
-  text-align: center;
-}
-
-.express-num {
-  width: 100%;
-}
+  .price-inp {
+    display: flex;
+  }
+  
+  .price-inp > span {
+    margin: 0 10px;
+  }
+  
+  .Page-wrap {
+    width: 100%;
+    text-align: center;
+    padding: 16px 0;
+  }
+  
+  .row-wrap p {
+    float: left;
+    font-size: 12px;
+    width: calc(100% - 55px);
+    line-height: 24px;
+    padding-left: 16px;
+  }
+  
+  .row-wrap-checkbox {
+    margin: auto;
+    position: absolute;
+    left: -30px;
+    bottom: 0;
+    top: 0;
+    width: 16px;
+    height: 32px;
+  }
+  
+  .row-wrap {
+    position: relative;
+  }
+  
+  .card-warp-col3 {
+    font-size: 12px;
+  }
+  
+  .card-warp-col3 p {
+    line-height: 24px;
+  }
+  
+  .card-warp-li {
+    flex-direction: column-reverse;
+    margin-right: 16px;
+  }
+  
+  .card-warp-ul {
+    width: 100%;
+    display: flex;
+    border-bottom: 1px solid #dcdee2;
+    font-size: 12px;
+    line-height: 16px;
+    padding: 8px 48px 8px 16px;
+  }
+  
+  .card-warp .ivu-alert {
+    font-weight: 700;
+    border: none;
+    background: #e8eaec;
+    margin-bottom: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+  }
+  
+  .ivu-table-wrapper {
+    overflow: inherit;
+  }
+  
+  .tag-dow {
+    text-align: center;
+  }
+  
+  .express-num {
+    width: 100%;
+  }
 </style>

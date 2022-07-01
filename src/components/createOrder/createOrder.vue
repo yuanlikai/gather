@@ -325,8 +325,8 @@
       //获取省市区
       getSsq() {
         const _this = this;
-        _this.Axios.get('/Manage/Region/region').then(res => {
-          _this.dataSite = res.data.RegionList;
+        _this.Axios.post('/GetRegional.ashx').then(res => {
+          _this.dataSite = res.data.data;
         })
       },
 

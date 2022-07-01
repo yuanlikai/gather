@@ -75,7 +75,7 @@
       // 获取快递
       getRole() {
         const _this = this;
-        _this.Axios.get('/Manage/Order/getExpressList').then(res => {
+        _this.Axios.get('/GetExpressList.ashx').then(res => {
           _this.cityList3 = res.data.data;
         })
       },
@@ -98,13 +98,13 @@
         }
         this.$refs[name].validate((valid) => {
           if (valid) {
-            _this.Axios.post('/Manage/Order/updateOrder', _this.Qs.stringify({
-              idstr: _this.formDynamic.idstr,
+            _this.Axios.post('/OperOrder.ashx', {
+              idstr: Number(_this.formDynamic.idstr),
               statusid: 2,
               Express: _this.formDynamic.Express.join('，'),
               ExpressNo: _this.formDynamic.ExpressNo.join('，'),
               Description: _this.formDynamic.Description
-            })).then(res => {
+            }).then(res => {
               if (res.data.error === 0) {
                 _this.$Message.success('发货成功');
                 _this.$emit('getOrder');

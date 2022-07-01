@@ -191,6 +191,7 @@
         const _this = this;
         _this.Axios.get('/getCurrentUser.ashx').then(res => {
           _this.supplier = res.data.data;
+          localStorage.setItem('supplierId',res.data.data.supplierId)
         })
       },
 
