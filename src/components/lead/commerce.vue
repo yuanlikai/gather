@@ -82,13 +82,13 @@
         </Row>
       </Form>
     </Card>
-
+  
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
         筛选查询
       </p>
       <p slot="extra">
-
+  
         <Poptip
           confirm
           placement="left"
@@ -117,7 +117,7 @@
           <p>待导入：{{selectList.length - importOrder.num1 - importOrder.num3}}单</p>
           <p>导入异常：<span style="color:#ed4014;font-weight: 700;">{{importOrder.num3}}</span>单</p>
         </div>
-
+        
       </div>
       <div slot="footer">
         <Button type="primary" size="large" long :disabled="importOrder.num1+importOrder.num3!=selectList.length" @click="importAlert=false;selectList=[];reset();GetOrderNum()">关闭</Button>
@@ -261,7 +261,7 @@
       }
     },
     methods: {
-
+  
       //导入ERP弹窗
       importC(){
         if(this.selectList.length<1){
@@ -281,7 +281,7 @@
       //导入ERP
       ImportToErp(id){
         const _this = this;
-        _this.Axios.post('/ImportToErp.ashx',{
+        _this.Axios.post('/Upload/SupplierAdmin/ScOrder/ImportToErp.ashx',{
           id:id,
           username:localStorage.getItem('user'),
         }).then(res => {
@@ -292,7 +292,7 @@
           }
         })
       },
-
+      
       //切换状态
       stateChange(i){
         if(i!=='0'&&this.columns1[0].type==='selection'){
@@ -308,7 +308,7 @@
         }
         this.reset()
       },
-
+      
       //全选取消
       allCancel(){
         const _this = this;
@@ -324,7 +324,7 @@
       selectCancel(selection,row){
         this.selectList.splice(this.selectList.indexOf(row.ID),1)
       },
-
+      
       //过滤已勾选数据
       selectChange(select) {
         let arr = this.selectList;
@@ -335,7 +335,7 @@
         }
         this.selectList = arr;
       },
-
+      
       //查询订单
       handleSubmit(name) {
         console.log(this.formValidate)
@@ -347,12 +347,12 @@
           }
         })
       },
-
+      
       //获取列表
       getList(){
         const _this = this;
         _this.loading = true;
-        _this.Axios.post('/GetDzOrderList.ashx',_this.formValidate).then(res => {
+        _this.Axios.post('/Upload/SupplierAdmin/ScOrder/GetOrderList.ashx',_this.formValidate).then(res => {
           console.log(res.data.data);
           _this.dataList = res.data.data;
           _this.total = res.data.total;
@@ -364,7 +364,7 @@
           }
         })
       },
-
+      
       //重置搜索条件
       handleReset(name) {
         this.$refs[name].resetFields();
@@ -373,37 +373,37 @@
         this.formValidate.price2 = '';
         this.reset()
       },
-
+      
       //获取平台
       getTerrace() {
         const _this = this;
-        _this.Axios.get('/GetPlaList.ashx').then(res => {
+        _this.Axios.get('/Manage/Platform/list').then(res => {
           _this.terraceList = res.data.data
         })
       },
-
+      
       //获取供应商
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/GetSupList.ashx').then(res => {
+        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
           _this.supplierList = res.data.data
         })
       },
-
+  
       //获取订单状态数量接口
       GetOrderNum() {
         const _this = this;
-        _this.Axios.get('/GetDzOrderNum.ashx').then(res => {
+        _this.Axios.get('/Upload/SupplierAdmin/ScOrder/GetOrderNum.ashx').then(res => {
           _this.orderNumList = res.data
         })
       },
-
+      
       reset(){
         this.formValidate.page = 1;
         this.total = 0;
         this.getList();
       },
-
+      
       sortChange(i){
         this.formValidate.sortid = '';
         if(i.key==="AddTime"&&i.order==="asc"){
@@ -421,19 +421,19 @@
         }
         this.reset()
       },
-
+  
       // 分页
       paging(i) {
         this.formValidate.page = i;
         this.getList();
       },
-
+  
       getTime(i) {
         console.log(i)
         this.formValidate.begintime = i[0];// – 下单开始时间
         this.formValidate.endtime = i[1];// – 下单结束时间
       },
-
+  
       getTime1(i) {
         console.log(i)
         this.formValidate.begintime2 = i[0];// – 发货时间开始时间
@@ -445,7 +445,7 @@
       this.getList();
       this.getTerrace();
       this.getSupplier()
-
+    
     }
   }
 </script>
@@ -472,5 +472,5 @@
     justify-content: space-between;
     font-size: 14px;
   }
-
+  
 </style>

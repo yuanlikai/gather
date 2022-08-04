@@ -271,16 +271,16 @@
                 <Poptip
                   confirm
                   title="是否确定审核该订单？"
-                  @on-ok="review(String(item.ID))">
+                  @on-ok="review(item.ID)">
                   <a>审核</a>
                 </Poptip>
               </p>
               <p v-if="item.State===1&&formValidate.state != 9">
                 <a @click="ship(item.ID)">发货</a>
               </p>
-              <!--<p v-if="item.State===2&&formValidate.state != 9">-->
-              <!--<a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>-->
-              <!--</p>-->
+              <p v-if="item.State===2&&formValidate.state != 9">
+                <a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>
+              </p>
               <p v-if="item.State===5&&formValidate.state != 9">
                 <Poptip
                   confirm
@@ -580,17 +580,17 @@
       //收货区域一级级联动改为二级联动
       getSsq() {
         const _this = this;
-        _this.Axios.post('/GetRegional.ashx').then(res => {
-          console.log(res.data.data)
-          for (let i = 0; i < res.data.data.length; i++) {
-            res.data.data[i].value = res.data.data[i].label;
-            for (let a = 0; a < res.data.data[i].children.length; a++) {
-              res.data.data[i].children[a].value = res.data.data[i].children[a].label;
-              delete res.data.data[i].children[a].children
+        _this.Axios.get('/Manage/Region/region').then(res => {
+          for (let i = 0; i < res.data.RegionList.length; i++) {
+            res.data.RegionList[i].value = res.data.RegionList[i].label;
+            for (let a = 0; a < res.data.RegionList[i].children.length; a++) {
+              res.data.RegionList[i].children[a].value = res.data.RegionList[i].children[a].label;
+              delete res.data.RegionList[i].children[a].children
             }
           }
-          _this.dataSite = res.data.data;
+          _this.dataSite = res.data.RegionList;
         })
+        
       },
       //点击图片放大弹窗
       showModal3(e) {
@@ -619,10 +619,12 @@
         const _this = this;
         _this.express1 = Express + ` 【${ExpressNo}】`;
         _this.express2 = Express + ` ${ExpressNo}`;
-        _this.Axios.post('/GetExpress.ashx', {
-          expressnumber: ExpressNo,
-          expressname: Express,
-          ordernumber: ErpOrderNumber,
+        _this.Axios.get('/Manage/Order/getExpress', {
+          params: {
+            expressnumber: ExpressNo,
+            expressname: Express,
+            ordernumber: ErpOrderNumber,
+          }
         }).then(res => {
           _this.modal1 = true;
           if (res.data.error === 0) {
@@ -699,9 +701,9 @@
       },
       //审核订单
       review(i) {
-        this.Axios.post('/BatchAudit.ashx', {
+        this.Axios.post('/Manage/Order/batchAudit', this.Qs.stringify({
           idstr: i
-        }).then(res => {
+        })).then(res => {
           if (res.data.error === 0) {
             this.$Message.success('审核成功');
             this.getOrder();
@@ -736,30 +738,32 @@
         const _this = this;
         _this.loading1 = true;
         _this.tagArr = [];
-        _this.Axios.post(_this.types !== 'yc' ? '/GetOrderList.ashx' : '/GetYcOrderList.ashx', {
-          typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
-          sortid: _this.sortid,
-          vid: 1,
-          ticketnumber: _this.formValidate.ticketnumber,
-          state: _this.formValidate.state,
-          supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
-          platformid: _this.formValidate.terraceId,
-          ordernumber: _this.formValidate.ordernumber,
-          proname: _this.formValidate.proname,
-          stockno: _this.formValidate.stockno,
-          consignee: _this.formValidate.consignee,
-          phone: _this.formValidate.phone,
-          giftcode: _this.formValidate.giftcode,
-          price1: _this.formValidate.price1,
-          price2: _this.formValidate.price2,
-          begintime: _this.formValidate.time[0],
-          endtime: _this.formValidate.time[1],
-          begintime2: _this.formValidate.time1[0],
-          endtime2: _this.formValidate.time1[1],
-          address: _this.formValidate.ssq.join(' '),
-          actcode: _this.formValidate.actcode,
-          page: _this.start,
-          pagesize: _this.pageSize,
+        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
+          params: {
+            typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
+            sortid: _this.sortid,
+            vid: 1,
+            ticketnumber: _this.formValidate.ticketnumber,
+            state: _this.formValidate.state,
+            supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
+            platformid: _this.formValidate.terraceId,
+            ordernumber: _this.formValidate.ordernumber,
+            proname: _this.formValidate.proname,
+            stockno: _this.formValidate.stockno,
+            consignee: _this.formValidate.consignee,
+            phone: _this.formValidate.phone,
+            giftcode: _this.formValidate.giftcode,
+            price1: _this.formValidate.price1,
+            price2: _this.formValidate.price2,
+            begintime: _this.formValidate.time[0],
+            endtime: _this.formValidate.time[1],
+            begintime2: _this.formValidate.time1[0],
+            endtime2: _this.formValidate.time1[1],
+            address: _this.formValidate.ssq.join(' '),
+            actcode: _this.formValidate.actcode,
+            page: _this.start,
+            pagesize: _this.pageSize,
+          }
         }).then(res => {
           _this.getOrderNum();
           _this.indeterminate = false;
@@ -799,8 +803,10 @@
       //获取详情
       getDetails(id) {
         const _this = this;
-        _this.Axios.post('/GetOrderDetailed.ashx', {
-          idstr: id
+        _this.Axios.get('/Manage/Order/detail', {
+          params: {
+            idstr: id
+          }
         }).then(res => {
           if (res.data.error === 0) {
             _this.OperBtn = res.data.data;
@@ -852,14 +858,14 @@
       getStatus() {
         const _this = this;
         _this.statusNum();
-        _this.Axios.get('/GetStateStr.ashx').then(res => {
+        _this.Axios.get('/Manage/Order/getStateStr').then(res => {
           _this.statusList = res.data.data;
         })
       },
       //获取状态数量
       statusNum() {
         const _this = this;
-        _this.Axios.get('/GetOrderNum.ashx').then(resa => {
+        _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
           _this.orderNum = resa.data
         });
       },
@@ -870,14 +876,14 @@
       //获取供应商
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/GetSupList.ashx').then(res => {
+        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
           _this.supplierList = res.data.data
         })
       },
       //获取平台
       getTerrace() {
         const _this = this;
-        _this.Axios.get('/GetPlaList.ashx').then(res => {
+        _this.Axios.get('/Manage/Platform/list').then(res => {
           _this.terraceList = res.data.data
         })
       },
@@ -907,8 +913,8 @@
       download(page, index) {
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
-        let supplierid = localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1');
-        window.open('/ExportOrderPage.ashx?typeid=' + typeid +
+        let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
+        window.open('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPage.ashx?typeid=' + typeid +
           '&sortid=' + _this.sortid +
           '&vid=' + 1 +
           '&state=' + _this.formValidate.state +
@@ -932,6 +938,29 @@
           '&page=' + page +
           '&pagesize=' + 100
         );
+        console.log('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPage.ashx?typeid=' + typeid +
+          '&sortid=' + _this.sortid +
+          '&vid=' + 1 +
+          '&state=' + _this.formValidate.state +
+          '&supplierid=' + supplierid +
+          '&platformid=' + _this.formValidate.terraceId +
+          '&ordernumber=' + _this.formValidate.ordernumber +
+          '&proname=' + _this.formValidate.proname +
+          '&stockno=' + _this.formValidate.stockno +
+          '&consignee=' + _this.formValidate.consignee +
+          '&phone=' + _this.formValidate.phone +
+          '&price1=' + _this.formValidate.price1 +
+          '&price2=' + _this.formValidate.price2 +
+          '&ticketnumber=' + _this.formValidate.ticketnumber +
+          '&giftcode=' + _this.formValidate.giftcode +
+          '&begintime=' + _this.formValidate.time[0] +
+          '&endtime=' + _this.formValidate.time[1] +
+          '&begintime2=' + _this.formValidate.time1[0] +
+          '&endtime2=' + _this.formValidate.time1[1] +
+          '&address=' + _this.formValidate.ssq.join(' ') +
+          '&actcode=' + _this.formValidate.actcode +
+          '&page=' + page +
+          '&pagesize=' + 100)
         _this.$set(_this.tagArr[index], 'download', true);
       },
       getTime(i) {

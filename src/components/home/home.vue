@@ -56,14 +56,14 @@
       //获取状态
       getStatus() {
         const _this = this;
-        _this.Axios.get('/GetStateStr.ashx').then(res => {
+        _this.Axios.get('/Manage/Order/getStateStr').then(res => {
           _this.statusList = res.data.data;
         })
       },
 
       //根据ID 跳转到订单页面
       order(Id) {
-        this.menu1 = '2';
+        this.menu1 = '3';
         let menuList = JSON.parse(localStorage.getItem('menuList'));
 
         // this.$emit('operateMuen', '3', '3-1-1');
@@ -76,8 +76,8 @@
 
 
         for(let i =0;i<menuList.length;i++){
-          if(menuList[i].numb==='2'){
-            this.$emit('operateMuen', '2', menuList[i].children[0].children[0].numb);
+          if(menuList[i].numb==='3'){
+            this.$emit('operateMuen', '3', menuList[i].children[0].children[0].numb);
             this.$router.push({
               name: menuList[i].children[0].children[0].name,
               params: {
@@ -92,7 +92,7 @@
       //获取状态数量
       getOrderNum() {
         const _this = this;
-        _this.Axios.get('/GetOrderNum.ashx').then(res => {
+        _this.Axios.get('/Manage/Order/getOrderNum').then(res => {
           _this.orderNum = res.data;
           setTimeout(()=>{
             _this.loading = false;

@@ -213,16 +213,16 @@
                 <Poptip
                   confirm
                   title="是否确定审核该订单？"
-                  @on-ok="review(String(item.ID))">
+                  @on-ok="review(item.ID)">
                   <a>审核</a>
                 </Poptip>
               </p>
               <p v-if="item.State===1&&formValidate.state != 9">
                 <a @click="ship(item.ID)">发货</a>
               </p>
-              <!--<p v-if="item.State===2&&formValidate.state != 9">-->
-                <!--<a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>-->
-              <!--</p>-->
+              <p v-if="item.State===2&&formValidate.state != 9">
+                <a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>
+              </p>
               <p v-if="item.State===5&&formValidate.state != 9">
                 <Poptip
                   confirm
@@ -461,9 +461,9 @@
 
       //审核订单
       review(i) {
-        this.Axios.post('/BatchAudit.ashx', {
+        this.Axios.post('/Manage/Order/batchAudit', this.Qs.stringify({
           idstr: i
-        }).then(res => {
+        })).then(res => {
           if (res.data.error === 0) {
             this.$Message.success('审核成功');
             this.getOrder();
@@ -500,14 +500,14 @@
       getOrder(i) {
         const _this = this;
         _this.loading1 = true;
-        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/GetYcOrderList.ashx', {
+        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             vid:0,
             sortid: _this.sortid,
             ticketnumber: _this.formValidate.ticketnumber,
             state: _this.formValidate.state,
-            supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
+            supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
             platformid: _this.formValidate.terraceId,
             ordernumber: _this.formValidate.ordernumber,
             proname: _this.formValidate.proname,
@@ -542,7 +542,7 @@
       //获取详情
       getDetails(id) {
         const _this = this;
-        _this.Axios.get('/GetOrderDetailed.ashx', {
+        _this.Axios.get('/Manage/Order/detail', {
           params: {
             idstr: id
           }
@@ -599,7 +599,7 @@
       getStatus() {
         const _this = this;
         _this.statusNum();
-        _this.Axios.get('/GetStateStr.ashx').then(res => {
+        _this.Axios.get('/Manage/Order/getStateStr').then(res => {
           _this.statusList = res.data.data;
         })
       },
@@ -607,7 +607,7 @@
       //获取状态数量
       statusNum() {
         const _this = this;
-        _this.Axios.get('/GetOrderNum.ashx').then(resa => {
+        _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
           _this.orderNum = resa.data
         });
       },
@@ -620,7 +620,7 @@
       //获取供应商
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/GetSupList.ashx').then(res => {
+        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
           _this.supplierList = res.data.data
         })
       },
@@ -628,7 +628,7 @@
       //获取平台
       getTerrace() {
         const _this = this;
-        _this.Axios.get('/GetPlaList.ashx').then(res => {
+        _this.Axios.get('/Manage/Platform/list').then(res => {
           _this.terraceList = res.data.data
         })
       },

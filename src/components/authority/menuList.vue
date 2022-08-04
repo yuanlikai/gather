@@ -45,7 +45,7 @@
     data() {
       return {
         modal_loading:false,
-        id: -1,
+        id: '',
         status: '添加',
         module: '',
         addAccount: false,
@@ -99,8 +99,7 @@
                       this.status = '添加';
                       this.handleReset('formValidate');
                       this.addAccount = true;
-                      this.id = -1;
-                      this.formValidate.parentId = params.row.id;
+                      this.id = params.row.id;
                       this.module = '《' + params.row.menuName + '》';
                     }
                   }
@@ -116,7 +115,6 @@
                       this.status = '修改';
                       this.addAccount = true;
                       this.id = params.row.id;
-                      this.formValidate.parentId = 0;
                       this.formValidate.menuUrl = '';
                       this.formValidate.numb = params.row.numb;
                       this.formValidate.menuName = params.row.menuName;
@@ -162,7 +160,6 @@
           menuName: '',       //角色名称
           menuUrl: '',       //角色名称
           numb: '',       //角色名称
-          parentId: 0,       //角色名称
         },
         ruleValidate: {
           menuName: [
@@ -184,10 +181,9 @@
         this.addAccount = true;
         this.id = i.id;
         this.formValidate.numb = i.numb;
-        this.formValidate.parentId = i.parentId;
+        this.formValidate.menuUrl = i.menuUrl;
         this.formValidate.menuName = i.menuName;
         this.module = '《' + i.menuName + '》';
-        console.log(this.formValidate)
       },
 
       // 添加菜单
@@ -196,22 +192,6 @@
         _this.$refs[name].validate((valid) => {
           if (valid) {
             _this.modal_loading = true;
-            _this.Axios.post('/EditMenu.ashx', {
-              id: Number(_this.id),
-              parentId: Number(_this.formValidate.parentId),  //上级id 如果为模块级 不需要传入
-              menuName: _this.formValidate.menuName,  //菜单名称
-              menuUrl: _this.formValidate.menuUrl,  //菜单路径
-              numb: _this.formValidate.numb,  //前端用
-            }).then(res => {
-              if (res.data.error === 0) {
-                _this.getMenuList();
-                _this.addAccount = false;
-              } else {
-                _this.$Message.error(res.data.errorMsg)
-              }
-              _this.modal_loading = false
-            })
-            return
             if (_this.status === '修改') {
               _this.Axios.post('/Manage/Menu/updateMenu', _this.Qs.stringify({
                 id: _this.id,  //上级id 如果为模块级 不需要传入
@@ -229,8 +209,20 @@
               })
 
             } else {
-              // {"id": 1, "parentId":0, "menuName": "首页", "numb":"1", "menuUrl":""}
-
+              _this.Axios.post('/Manage/Menu/addMenu', _this.Qs.stringify({
+                parentId: _this.id !== '' ? this.id : '',  //上级id 如果为模块级 不需要传入
+                menuName: _this.formValidate.menuName,  //菜单名称
+                menuUrl: _this.formValidate.menuUrl,  //菜单路径
+                numb: _this.formValidate.numb,  //前端用
+              })).then(res => {
+                if (res.data.code === 0) {
+                  _this.getMenuList();
+                  _this.addAccount = false;
+                } else {
+                  _this.$Message.error(res.data.message)
+                }
+                _this.modal_loading = false
+              })
             }
           } else {
             _this.$Message.error('有必填项未填写!');
@@ -240,7 +232,7 @@
 
       //添加菜单
       addMenu() {
-        this.id = -1;
+        this.id = '';
         this.status = '添加';
         this.handleReset('formValidate');
         this.formValidate.menuUrl = '';
@@ -254,8 +246,8 @@
       getMenuList() {
         const _this = this;
         _this.loading = true;
-        _this.Axios.post('/GetMenuList.ashx').then(res => {
-          if (res.data.error === 0) {
+        _this.Axios.get('/Manage/Menu/tree').then(res => {
+          if (res.data.code === 0) {
             _this.data = res.data.data.sort(function(a,b){
               return Number(a.numb)-Number(b.numb)
             });

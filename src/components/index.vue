@@ -55,12 +55,11 @@
         _this.$refs[name].validate((valid) => {
           if (valid) {
             _this.loading = true;
-            _this.Axios.post('/Login.ashx', {
+            _this.Axios.post('/form/login', _this.Qs.stringify({
               username: _this.formInline.user.replace(/ /g, ''),
               password: _this.formInline.password.replace(/ /g, '')
-            }).then(res => {
-              console.log(res.data)
-              if (res.data.error === 0) {
+            })).then(res => {
+              if (res.data.code === 0) {
                 localStorage.setItem('menuList', JSON.stringify(res.data.data.sort(function (a, b) {
                   return Number(a.numb) - Number(b.numb)
                 })));
@@ -70,7 +69,7 @@
                 _this.$router.push(res.data.data[0].children[0].children[0].to);
                 _this.loading = false;
               } else {
-                _this.$Message.error(res.data.errorMsg);
+                _this.$Message.error(res.data.message);
                 _this.loading = false;
               }
             });
@@ -81,17 +80,17 @@
       },
     },
     mounted() {
-
+    
     }
   }
 </script>
 
 <style lang="less" scoped>
-
+  
   .ivu-input {
     height: 36px;
   }
-
+  
   .version {
     width: 100%;
     text-align: right;

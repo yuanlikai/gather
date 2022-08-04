@@ -16,26 +16,6 @@ export default new Router({
       component: resolve => require(['@/components/index'], resolve)
     },
     {
-      path: '/tihuo/download',
-      name: 'download',
-      component: resolve => require(['@/components/tihuo/download'], resolve)
-    },
-    {
-      path: '/tihuo/index',
-      name: 'tihuo',
-      component: resolve => require(['@/components/tihuo/tihuo'], resolve)
-    },
-    {
-      path: '/tihuo/select',
-      name: 'select',
-      component: resolve => require(['@/components/tihuo/select'], resolve)
-    },
-    {
-      path: '/tihuo/edit',
-      name: 'edit',
-      component: resolve => require(['@/components/tihuo/edit'], resolve)
-    },
-    {
       path: '/Layout',
       name: 'Layout',
       component: resolve => require(['@/components/Layout'], resolve),

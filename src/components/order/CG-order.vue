@@ -19,14 +19,14 @@
                       type="button"
                       v-model="formValidate.state" @on-change="group('')">
             <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
-              {{ item.Name }} ({{ orderNum['num' + String(index + 1)] }})
+              {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
             </Radio>
           </RadioGroup>
           <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}"
                       type="button"
                       v-model="formValidate.state" @on-change="group('yc')">
-            <Radio style="padding:0 20px" label="9">异常订单 ({{ orderNum['num9'] }})</Radio>
-            <Radio style="padding:0 20px" label="10">超时发货 ({{ orderNum['num10'] }})</Radio>
+            <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
+            <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
           </RadioGroup>
         </div>
       </transition>
@@ -152,7 +152,7 @@
     </Card>
     <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
       <p slot="title" style="height: 24px;display: flex;align-items: center">
-        数据列表 <span style="font-weight: 400">【共 {{ total }} 条】</span>
+        数据列表 <span style="font-weight: 400">【共 {{total}} 条】</span>
         
         <Select style="width: 130px;margin-left: 10px;font-weight: 400;" size="small" v-model="sortid"
                 @on-change="start=1,total=0,getOrder()">
@@ -194,12 +194,12 @@
       <p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>
       <CheckboxGroup v-else v-model="checkAllGroup" @on-change="checkAllGroupChange">
         <div v-for="(item,index) in data" :key="item.index">
-          <Alert>{{ item.PlatformStr }} - 【{{ item.Supplier }}】 - {{ item.ErpOrderNumber }} - 平台订单</Alert>
+          <Alert>{{item.PlatformStr}} - 【{{item.Supplier}}】 - {{item.ErpOrderNumber}} - 平台订单</Alert>
           <ul class="card-warp-ul">
-            <li class="card-warp-li">{{ item.AddTime }}</li>
-            <li class="card-warp-li">订单编号：{{ item.OrderNumber }}</li>
-            <li class="card-warp-li">售价总金额：<span style="color: #ed4014;">{{ item.Total }}元</span></li>
-            <li class="card-warp-li">采购价总金额：<span style="color: #ed4014;">{{ item.CostTotal }}元</span></li>
+            <li class="card-warp-li">{{item.AddTime}}</li>
+            <li class="card-warp-li">订单编号：{{item.OrderNumber}}</li>
+            <li class="card-warp-li">售价总金额：<span style="color: #ed4014;">{{item.Total}}元</span></li>
+            <li class="card-warp-li">采购价总金额：<span style="color: #ed4014;">{{item.CostTotal}}元</span></li>
             <li class="card-warp-li">售后状态：无</li>
           </ul>
           <Row style="padding: 16px 16px 16px 50px;">
@@ -225,24 +225,23 @@
                          alt="">
                     <div style="float: left;width: calc(100% - 60px)">
                       <p>
-                        <span style="color: #2db7f5;">{{ itema.ProductName }} {{ itema.StockNo }}</span>
+                        <span style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</span>
                         <Icon type="md-close"/>
-                        <span>{{ itema.Num }}</span>
+                        <span>{{itema.Num}}</span>
                       </p>
                       <p>
                         售价：
-                        <span style="color: #ed4014;margin-right: 8px">{{ itema.Price }}元</span>
+                        <span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span>
                       </p>
                       <p>
                         采购价：
-                        <span style="color: #ed4014;margin-right: 8px">{{ itema.CostPrice }}元</span>
+                        <span style="color: #ed4014;margin-right: 8px">{{itema.CostPrice}}元</span>
                       </p>
                     </div>
                   </Col>
                 </div>
                 
-                <div style="float: left;margin-left: 66px">共 <span
-                  style="color: #000000;font-weight: 700">{{ item.ProList.length }}</span>
+                <div style="float: left;margin-left: 66px">共 <span style="color: #000000;font-weight: 700">{{item.ProList.length}}</span>
                   个产品
                   <span v-if="item.ProList.length>3">
                     <Button v-if="item.open" type="text" icon="ios-arrow-up" @click="openPro(index)">收起</Button>
@@ -252,41 +251,41 @@
               </Row>
             </Col>
             <Col span="5" class="card-warp-col3">
-              <p>应付：<span style="color: #ed4014;">{{ item.Total }}元</span></p>
-              <p>积分：{{ item.YlCoin }}</p>
-              <p>运费：{{ item.Freight }}</p>
+              <p>应付：<span style="color: #ed4014;">{{item.Total}}元</span></p>
+              <p>积分：{{item.YlCoin}}</p>
+              <p>运费：{{item.Freight}}</p>
             </Col>
             <Col span="5" class="card-warp-col3">
-              <p>预约发货：{{ item.GetTime }}</p>
-              <p>收货人：{{ item.Consignee }}</p>
-              <p>{{ item.Phone }}</p>
-              <p>{{ item.Address.split(' ')[0] }}</p>
+              <p>预约发货：{{item.GetTime}}</p>
+              <p>收货人：{{item.Consignee}}</p>
+              <p>{{item.Phone}}</p>
+              <p>{{item.Address.split(' ')[0]}}</p>
             </Col>
             <Col span="3" class="card-warp-col3">
               <p v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">发货日期：<span
-                v-if="item.SendTime">【{{ item.SendTime }}】</span>
+                v-if="item.SendTime">【{{item.SendTime}}】</span>
               </p>
-              <p v-if="item.StateStr==='已完成'">签收日期：<span v-if="item.CheckTime">【{{ item.CheckTime }}】</span>
+              <p v-if="item.StateStr==='已完成'">签收日期：<span v-if="item.CheckTime">【{{item.CheckTime}}】</span>
               </p>
               <p>
                 <a style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"
-                   v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">{{ item.Express }} 【{{ item.ExpressNo }}】
+                   v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">{{item.Express}} 【{{item.ExpressNo}}】
                 </a>
               </p>
               <p v-if="item.State===0">
                 <Poptip
                   confirm
                   title="是否确定审核该订单？"
-                  @on-ok="review(String(item.ID))">
+                  @on-ok="review(item.ID)">
                   <a>审核</a>
                 </Poptip>
               </p>
               <p v-if="item.State===1&&formValidate.state != 9">
                 <a @click="ship(item.ID)">发货</a>
               </p>
-              <!--<p v-if="item.State===2&&formValidate.state != 9">-->
-              <!--<a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>-->
-              <!--</p>-->
+              <p v-if="item.State===2&&formValidate.state != 9">
+                <a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>
+              </p>
               <p v-if="item.State===5&&formValidate.state != 9">
                 <Poptip
                   confirm
@@ -316,7 +315,7 @@
     <Modal v-model="modal2" width="660">
       <p slot="header">
         <Icon type="ios-information-circle"></Icon>
-        <span>确认申请订单《{{ OrderNumber }}》的退单？</span>
+        <span>确认申请订单《{{OrderNumber}}》的退单？</span>
       </p>
       <Table style="margin-bottom: 16px;" :show-header="true" :columns="columns1" :data="OperBtn"
              @on-selection-change="operChange"></Table>
@@ -327,7 +326,7 @@
                        :formatter="value => `¥${value}`"
                        :parser="value => value.replace('¥', '')"></InputNumber>
           <p style="float: right;">合计退款：<span
-            style="color: red;font-weight: 700;font-size: 18px;">¥{{ ReOrder.total }}</span>
+            style="color: red;font-weight: 700;font-size: 18px;">¥{{ReOrder.total}}</span>
           </p>
         </Col>
       </Row>
@@ -359,7 +358,7 @@
         <div v-for="(item,index) in tagArr" :key="index" @click="download(index+1,index)" data-v-1af71c2b=""
              class="tag-dow ivu-tag ivu-tag-default ivu-tag-checked"><!---->
           <span class="ivu-tag-text">
-          {{ item.num1 }}-{{ item.num2 }}条
+          {{item.num1}}-{{item.num2}}条
             <Icon type="md-checkmark" v-if="item.download===true"/>
           </span>
         </div>
@@ -377,7 +376,7 @@
       </p>
       <div style="max-height: 400px;overflow: auto">
         <div class="express-num">
-          <Alert style="float: left;">{{ express1 }}</Alert>
+          <Alert style="float: left;">{{express1}}</Alert>
           <Button style="float: left;margin-left: 16px" type="info" v-clipboard:copy="express2"
                   v-clipboard:success="onCopy">复制
           </Button>
@@ -385,12 +384,12 @@
         <div v-if="express.length>0" style="float: left;">
           <Timeline>
             <TimelineItem v-for="(item,index) in express" :key="index">
-              <p class="time">{{ item.time }}</p>
-              <p class="content">{{ item.context }}</p>
+              <p class="time">{{item.time}}</p>
+              <p class="content">{{item.context}}</p>
             </TimelineItem>
           </Timeline>
         </div>
-        <p v-else style="float: left; width: 100%">{{ expressMsg }}</p>
+        <p v-else style="float: left; width: 100%">{{expressMsg}}</p>
       </div>
       <div slot="footer">
         <Button type="primary" size="large" @click="modal1=false">关闭</Button>
@@ -427,7 +426,7 @@
           shortcuts: [
             {
               text: '今天发货',
-              value() {
+              value () {
                 const start = new Date();
                 const end = new Date();
                 start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 6);
@@ -436,7 +435,7 @@
             },
             {
               text: '明天发货',
-              value() {
+              value () {
                 const start = new Date();
                 start.setTime(start.getTime() + 3600 * 1000 * 24);
                 return [start, start];
@@ -559,7 +558,7 @@
           time1: ['', ''],
           price1: '',
           price2: '',
-          ssq: [],
+          ssq:[],
           actcode: ''
         },
         supplierList: [],
@@ -577,7 +576,7 @@
     },
     methods: {
       //收货区域
-      xzdq(value, selectedData) {
+      xzdq(value, selectedData){
         this.formValidate.ssq = value;
         this.start = 1;
         this.total = 0;
@@ -586,17 +585,17 @@
       //收货区域一级级联动改为二级联动
       getSsq() {
         const _this = this;
-        _this.Axios.post('/GetRegional.ashx').then(res => {
-          console.log(res.data.data)
-          for (let i = 0; i < res.data.data.length; i++) {
-            res.data.data[i].value = res.data.data[i].label;
-            for (let a = 0; a < res.data.data[i].children.length; a++) {
-              res.data.data[i].children[a].value = res.data.data[i].children[a].label;
-              delete res.data.data[i].children[a].children
+        _this.Axios.get('/Manage/Region/region').then(res => {
+          for(let i = 0;i<res.data.RegionList.length;i++){
+            res.data.RegionList[i].value = res.data.RegionList[i].label;
+            for(let a = 0;a<res.data.RegionList[i].children.length;a++){
+              res.data.RegionList[i].children[a].value = res.data.RegionList[i].children[a].label;
+              delete res.data.RegionList[i].children[a].children
             }
           }
-          _this.dataSite = res.data.data;
+          _this.dataSite = res.data.RegionList;
         })
+    
       },
       //点击图片放大弹窗
       showModal3(e) {
@@ -624,10 +623,12 @@
         const _this = this;
         _this.express1 = Express + ` 【${ExpressNo}】`;
         _this.express2 = Express + ` ${ExpressNo}`;
-        _this.Axios.post('/GetExpress.ashx', {
-          expressnumber: ExpressNo,
-          expressname: Express,
-          ordernumber: ErpOrderNumber,
+        _this.Axios.post('/Manage/Order/getExpress', {
+          params:{
+            expressnumber: ExpressNo,
+            expressname: Express,
+            ordernumber: ErpOrderNumber,
+          }
         }).then(res => {
           _this.modal1 = true;
           if (res.data.error === 0) {
@@ -702,9 +703,9 @@
       
       //审核订单
       review(i) {
-        this.Axios.post('/BatchAudit.ashx', {
+        this.Axios.post('/Manage/Order/batchAudit', this.Qs.stringify({
           idstr: i
-        }).then(res => {
+        })).then(res => {
           if (res.data.error === 0) {
             this.$Message.success('审核成功');
             this.getOrder();
@@ -742,30 +743,32 @@
         const _this = this;
         _this.loading1 = true;
         _this.tagArr = [];
-        _this.Axios.post(_this.types !== 'yc' ? '/GetOrderList.ashx' : '/GetYcOrderList.ashx', {
-          typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
-          sortid: _this.sortid,
-          vid: 1,
-          ticketnumber: _this.formValidate.ticketnumber,
-          state: _this.formValidate.state,
-          supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
-          platformid: _this.formValidate.terraceId,
-          ordernumber: _this.formValidate.ordernumber,
-          proname: _this.formValidate.proname,
-          stockno: _this.formValidate.stockno,
-          consignee: _this.formValidate.consignee,
-          phone: _this.formValidate.phone,
-          giftcode: _this.formValidate.giftcode,
-          price1: _this.formValidate.price1,
-          price2: _this.formValidate.price2,
-          begintime: _this.formValidate.time[0],
-          endtime: _this.formValidate.time[1],
-          begintime2: _this.formValidate.time1[0],
-          endtime2: _this.formValidate.time1[1],
-          address: _this.formValidate.ssq.join(' '),
-          actcode: _this.formValidate.actcode,
-          page: _this.start,
-          pagesize: _this.pageSize,
+        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
+          params: {
+            typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
+            sortid: _this.sortid,
+            vid: 1,
+            ticketnumber: _this.formValidate.ticketnumber,
+            state: _this.formValidate.state,
+            supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
+            platformid: _this.formValidate.terraceId,
+            ordernumber: _this.formValidate.ordernumber,
+            proname: _this.formValidate.proname,
+            stockno: _this.formValidate.stockno,
+            consignee: _this.formValidate.consignee,
+            phone: _this.formValidate.phone,
+            giftcode: _this.formValidate.giftcode,
+            price1: _this.formValidate.price1,
+            price2: _this.formValidate.price2,
+            begintime: _this.formValidate.time[0],
+            endtime: _this.formValidate.time[1],
+            begintime2: _this.formValidate.time1[0],
+            endtime2: _this.formValidate.time1[1],
+            address:_this.formValidate.ssq.join(' '),
+            actcode: _this.formValidate.actcode,
+            page: _this.start,
+            pagesize: _this.pageSize,
+          }
         }).then(res => {
           _this.getOrderNum();
           _this.indeterminate = false;
@@ -816,7 +819,7 @@
       //获取详情
       getDetails(id) {
         const _this = this;
-        _this.Axios.get('/GetOrderDetailed.ashx', {
+        _this.Axios.get('/Manage/Order/detail', {
           params: {
             idstr: id
           }
@@ -873,7 +876,7 @@
       getStatus() {
         const _this = this;
         _this.statusNum();
-        _this.Axios.get('/GetStateStr.ashx').then(res => {
+        _this.Axios.get('/Manage/Order/getStateStr').then(res => {
           _this.statusList = res.data.data;
         })
       },
@@ -881,7 +884,7 @@
       //获取状态数量
       statusNum() {
         const _this = this;
-        _this.Axios.get('/GetOrderNum.ashx').then(resa => {
+        _this.Axios.get('/Manage/Order/getOrderNum').then(resa => {
           _this.orderNum = resa.data
         });
       },
@@ -894,7 +897,7 @@
       //获取供应商
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/GetSupList.ashx').then(res => {
+        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
           _this.supplierList = res.data.data
         })
       },
@@ -902,7 +905,7 @@
       //获取平台
       getTerrace() {
         const _this = this;
-        _this.Axios.get('/GetPlaList.ashx').then(res => {
+        _this.Axios.get('/Manage/Platform/list').then(res => {
           _this.terraceList = res.data.data
         })
       },
@@ -934,8 +937,8 @@
       download(page, index) {
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
-        let supplierid = localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1');
-        window.open('/ExportOrderPage.ashx?typeid=' + typeid +
+        let supplierid = _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1';
+        window.open('https://jhoms.e6best.com/SupplierAdmin/ExportOrderPageCg.ashx?typeid=' + typeid +
           '&sortid=' + _this.sortid +
           '&vid=' + 1 +
           '&state=' + _this.formValidate.state +
@@ -1031,14 +1034,12 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-  .price-inp {
+  .price-inp{
     display: flex;
   }
-  
-  .price-inp > span {
+  .price-inp>span{
     margin: 0 10px;
   }
-  
   .Page-wrap {
     width: 100%;
     text-align: center;

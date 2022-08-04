@@ -650,7 +650,7 @@
       //获取供应商下拉
       selectList() {
         const _this = this;
-        _this.Axios.get('/GetSupList.ashx').then(res => {
+        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
           _this.supplierList = res.data.data
         })
       },

@@ -113,7 +113,7 @@
               <Input v-model="formValidate.giftcode" placeholder="请输入"/>
             </FormItem>
           </Col>
-
+          
           <Col span="24">
             <FormItem>
               <div style="width: 100%;text-align: right">
@@ -160,7 +160,7 @@
           </a>
           <Upload style="float: right" v-if="formValidate.state==='1'"></Upload>
         </ButtonGroup>
-
+      
       </p>
       <Table :row-class-name="rowClassName" @on-sort-change="sorts" :loading="loading1" :show-header="true"
              :columns="columns" :data="data"></Table>
@@ -427,7 +427,7 @@
                   on: {
                     'on-ok': () => {
                       const _this = this;
-                      _this.Axios.post('/OperOrder.ashx', _this.Qs.stringify({
+                      _this.Axios.post('/Manage/Order/updateOrder', _this.Qs.stringify({
                         idstr: params.row.ID,
                         statusid: 1,
                         Express: '',
@@ -542,7 +542,7 @@
       }
     },
     methods: {
-
+      
       //订单时间金额升序降序
       sorts(i) {
         switch (i.order) {
@@ -567,14 +567,14 @@
       getOrder(i) {
         const _this = this;
         _this.loading1 = true;
-        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/GetYcOrderList.ashx', {
+        _this.Axios.get(_this.types !== 'yc' ? '/Manage/Order/pageList' : '/Manage/Order/getYcOrderList', {
           params: {
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             vid: 1,
             sortid: _this.sortid,
             ticketnumber:_this.formValidate.ticketnumber,
             state: _this.formValidate.state,
-            supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
+            supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
             platformid: _this.formValidate.terraceId,
             ordernumber: _this.formValidate.ordernumber,
             proname: _this.formValidate.proname,
@@ -606,7 +606,7 @@
       //获取详情
       getDetails(id) {
         const _this = this;
-        _this.Axios.get('/GetOrderDetailed.ashx', {
+        _this.Axios.get('/Manage/Order/detail', {
           params: {
             idstr: id
           }
@@ -658,28 +658,28 @@
       //获取状态
       getStatus() {
         const _this = this;
-        _this.Axios.get('/GetStateStr.ashx').then(res => {
+        _this.Axios.get('/Manage/Order/getStateStr').then(res => {
           _this.statusList = res.data.data;
         })
       },
       //获取状态数量
       getOrderNum() {
         const _this = this;
-        _this.Axios.get('/GetOrderNum.ashx').then(res => {
+        _this.Axios.get('/Manage/Order/getOrderNum').then(res => {
           _this.orderNum = res.data
         });
       },
       //获取供应商
       getSupplier() {
         const _this = this;
-        _this.Axios.get('/GetSupList.ashx').then(res => {
+        _this.Axios.get('/Manage/Supplier/selectList').then(res => {
           _this.supplierList = res.data.data
         })
       },
       //获取平台
       getTerrace() {
         const _this = this;
-        _this.Axios.get('/GetPlaList.ashx').then(res => {
+        _this.Axios.get('/Manage/Platform/list').then(res => {
           _this.terraceList = res.data.data
         })
       },
@@ -711,10 +711,10 @@
         this.total = 0;
         this.getOrder()
       },
-
+      
       getTime1(i) {
         console.log(i)
-
+        
         this.formValidate.time1 = [i[0], i[1]];
         this.start = 1;
         this.total = 0;

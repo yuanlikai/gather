@@ -33,7 +33,7 @@
           下单时间：{{data.AddTime}}
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
-          发货时间：{{data.GetTime}}
+          发货时间：{{data.PlatformName==='怡乐优客'?'立即发货':data.GetTime}}
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           支付方式：{{data.PayTypeStr}}
@@ -274,10 +274,10 @@
       //订单转为异常
       abnormal() {
         const _this = this;
-        _this.Axios.post('/Manage/Order/operTransAbnormal', {
+        _this.Axios.post('/Manage/Order/operTransAbnormal', _this.Qs.stringify({
           orderid: _this.$route.query.idstr,
           abnormalstr: _this.formValidate.abnormalstr,  // 异常原因
-        }).then(res => {
+        })).then(res => {
           if (res.data.error === 0) {
             _this.model = false;
             _this.$Message.success('转为异常成功')
@@ -303,9 +303,11 @@
       //获取订单详情
       getDetails() {
         const _this = this;
-        _this.Axios.post('/GetOrderDetailed.ashx', {
-          idstr: Number(_this.$route.query.idstr),
-          vid: _this.$route.query.vid,
+        _this.Axios.get('/Manage/Order/detail', {
+          params: {
+            idstr: _this.$route.query.idstr,
+            vid: _this.$route.query.vid,
+          }
         }).then(res => {
           if (res.data.error === 0) {
             _this.OperBtn = res.data.data;

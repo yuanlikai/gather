@@ -83,8 +83,8 @@
         const _this = this;
         this.$refs[name].validate((valid) => {
           if (valid) {
-            _this.Axios.post('/ModifyOrderAddress.ashx', {
-              id: Number(_this.$route.query.idstr),  //订单id
+            _this.Axios.post('/Manage/Order/updateOrderAddress', _this.Qs.stringify({
+              id: _this.$route.query.idstr,  //订单id
               consignee: _this.formValidate.consignee,   // 收件人姓名
               phone: _this.formValidate.phone,   // 手机号
               province: _this.ssq[0].label,   // 省
@@ -92,7 +92,7 @@
               area: _this.ssq[2].label,   // 区
               address: _this.formValidate.address,   // 详细地址
               getdate: _this.formValidate.GetTime
-            }).then(res => {
+            })).then(res => {
               if(res.data.error===0){
                 _this.model=false;
                 _this.$emit('getOrder');
@@ -111,8 +111,8 @@
       },
       getSsq() {
         const _this = this;
-        _this.Axios.post('/GetRegional.ashx').then(res => {
-          _this.dataSite = res.data.data;
+        _this.Axios.get('/Manage/Region/region').then(res => {
+          _this.dataSite = res.data.RegionList;
         })
       }
     },
