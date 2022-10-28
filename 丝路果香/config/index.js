@@ -20,7 +20,7 @@ module.exports = {
       },
       '/': {
         // target: 'http://192.168.1.73:8088',
-        target: 'http://139.196.76.169:8091',
+        target: 'https://dlv.e6best.com',
         changeOrigin: true,
         pathRewrite: {
           '^/': ''
@@ -29,7 +29,7 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    host: '192.168.1.126', // can be overwritten by process.env.HOST 192.168.1.44
+    host: 'localhost', // can be overwritten by process.env.HOST 192.168.1.44
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
