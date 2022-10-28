@@ -1,5 +1,5 @@
 <style>
-  .ivu-table .demo-table-info-row td{
+  .ivu-table .demo-table-info-row td {
     color: red
   }
 </style>
@@ -33,7 +33,8 @@
                       clearable
                       filterable>
                 <!--<Option value="-1">全部</Option>-->
-                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}</Option>
+                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}
+                </Option>
               </Select>
             </FormItem>
           </Col>
@@ -122,6 +123,13 @@
         数据列表
       </p>
       <p slot="extra">
+        <Poptip
+          v-if="checkAllGroup.length>0&&formValidate.state==='0'"
+          confirm
+          title="是否确定批量审核订单？"
+          @on-ok="batchReview">
+          <Button type="text" icon="md-list-box" @click="">批量审核</Button>
+        </Poptip>
         <ButtonGroup>
           <a v-if="formValidate.state!=='0'" :href="'http://idlv.e6best.com/SupplierAdmin/ExportOrder.aspx?state='+formValidate.state+
           '&supplierid='+sup()+
@@ -151,9 +159,10 @@
           </a>
           <Upload style="float: right" v-if="formValidate.state==='1'"></Upload>
         </ButtonGroup>
-
+      
       </p>
-      <Table :row-class-name="rowClassName" @on-sort-change="sorts" :loading="loading1" :show-header="true"
+      <Table @on-selection-change="headSelect" :row-class-name="rowClassName" @on-sort-change="sorts"
+             :loading="loading1" :show-header="true"
              :columns="columns" :data="data"></Table>
       <div style="width: 100%;height: 8px;background: #ffffff;margin-top: -4px;z-index: 99;position: relative"></div>
       <div style="width: 100%;text-align: center;margin-top: 15px">
@@ -197,6 +206,7 @@
 <script>
   import express from './express'
   import Upload from './Upload'
+  
   export default {
     components: {
       express,
@@ -295,6 +305,11 @@
         ],
         OperBtn: [],
         columns: [
+          {
+            type: 'selection',
+            width: 60,
+            align: 'center'
+          },
           {
             type: 'index',
             width: 60,
@@ -510,7 +525,7 @@
         formValidate: {
           state: this.$route.params.id ? this.$route.params.id : '0',
           supplierid: '',
-          ticketnumber:'',
+          ticketnumber: '',
           terraceId: '-1',
           ordernumber: '',
           proname: '',
@@ -529,10 +544,38 @@
         orderNum: {},
         types: '',
         terraceList: [],
+        checkAllGroup: []
       }
     },
     methods: {
-
+      batchReview(){
+        for(let i = 0;i<this.checkAllGroup.length;i++){
+          const _this = this;
+          console.log(i+1)
+          console.log()
+          _this.Axios.post('/Manage/Order/updateOrder', _this.Qs.stringify({
+            idstr: this.checkAllGroup[i].ID,
+            statusid: 1,
+            Express: '',
+            ExpressNo: '',
+            Description: '',
+          })).then(res => {
+            if (res.data.error === 0) {
+              if(i+1===this.checkAllGroup.length){
+                _this.$Message.success('审核成功');
+                _this.getOrder();
+              }
+            } else {
+              _this.$Message.error(res.data.errorMsg);
+            }
+          })
+        }
+      },
+      
+      headSelect(selection) {
+        this.checkAllGroup = selection
+      },
+      
       //订单时间金额升序降序
       sorts(i) {
         switch (i.order) {
@@ -562,7 +605,7 @@
             typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
             vid: 1,
             sortid: _this.sortid,
-            ticketnumber:_this.formValidate.ticketnumber,
+            ticketnumber: _this.formValidate.ticketnumber,
             state: _this.formValidate.state,
             supplierid: _this.formValidate.supplierid ? _this.formValidate.supplierid : '-1',
             platformid: _this.formValidate.terraceId,
@@ -574,9 +617,9 @@
             price1: _this.formValidate.price1,
             price2: _this.formValidate.price2,
             begintime: _this.formValidate.time[0],
-            endtime: _this.formValidate.time[1].length>1?this.formValidate.time[1]+' 23:59:59':'',
+            endtime: _this.formValidate.time[1].length > 1 ? this.formValidate.time[1] + ' 23:59:59' : '',
             begintime2: _this.formValidate.time1[0],
-            endtime2: _this.formValidate.time1[1].length>1?this.formValidate.time1[1]+' 23:59:59':'',
+            endtime2: _this.formValidate.time1[1].length > 1 ? this.formValidate.time1[1] + ' 23:59:59' : '',
             page: _this.start,
             pagesize: '10',
           }
@@ -700,17 +743,17 @@
         this.total = 0;
         this.getOrder()
       },
-
+      
       getTime1(i) {
         console.log(i)
-
+        
         this.formValidate.time1 = [i[0], i[1]];
         this.start = 1;
         this.total = 0;
         this.getOrder()
       },
       rowClassName(row, index) {
-        return row.IsAbnormal === 1?'demo-table-info-row':''
+        return row.IsAbnormal === 1 ? 'demo-table-info-row' : ''
       },
       sup() {
         return this.supplier.userType === 'SUPPLIER' ? this.supplier.supplierId : this.formValidate.supplierid;
