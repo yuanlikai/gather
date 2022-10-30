@@ -29,7 +29,7 @@
       :multiple="true"
       :data="data"
       type="drag"
-      action="http://oms.e6best.com/UploadFile.aspx"
+      action="/ShangchuanWj.aspx"
       style="display: inline-block;width:58px;" v-show="!$route.query.examineId">
       <div style="width: 58px;height:58px;line-height: 58px;">
         <Icon type="ios-camera" size="20"></Icon>
@@ -119,19 +119,19 @@
       },
 
       //获取上传权限
-      policy() {
-        const _this = this;
-        _this.Axios.get('/aliyun/oss/policy').then(res => {
-          _this.dir = res.data.data.dir;
-          _this.data.callback = res.data.data.callback;
-          _this.data.policy = res.data.data.policy;
-          _this.data.signature = res.data.data.signature;
-          _this.data.key = res.data.data.dir + `/${uuid.v4()}`;
-          _this.data.ossaccessKeyId = res.data.data.accessKeyId;
-          _this.data.dir = res.data.data.dir;
-          console.log(_this.data)
-        })
-      }
+      // policy() {
+      //   const _this = this;
+      //   _this.Axios.get('/aliyun/oss/policy').then(res => {
+      //     _this.dir = res.data.data.dir;
+      //     _this.data.callback = res.data.data.callback;
+      //     _this.data.policy = res.data.data.policy;
+      //     _this.data.signature = res.data.data.signature;
+      //     _this.data.key = res.data.data.dir + `/${uuid.v4()}`;
+      //     _this.data.ossaccessKeyId = res.data.data.accessKeyId;
+      //     _this.data.dir = res.data.data.dir;
+      //     console.log(_this.data)
+      //   })
+      // }
 
     },
     mounted() {
@@ -139,9 +139,9 @@
       this.upload();
       // this.policy();
       const _this = this;
-      setInterval(function () {
-        _this.policy()
-      }, 180000)
+      // setInterval(function () {
+      //   _this.policy()
+      // }, 180000)
     }
   }
 </script>

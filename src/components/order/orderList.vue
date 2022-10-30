@@ -289,7 +289,7 @@
                   <a>确认退单</a>
                 </Poptip>
               </p>
-              <a>客服处理</a>
+              <a @click="openOperService(item)">客服处理</a>
               <p>
                 <router-link target="_blank" :to="{path:'/orderDetails',query:{
                           idstr: item.ID,
@@ -574,6 +574,10 @@
       }
     },
     methods: {
+      openOperService(item){
+        this.$refs.operService.info(item)
+      },
+      
       //收货区域
       xzdq(value, selectedData) {
         this.formValidate.ssq = value;
@@ -585,7 +589,6 @@
       getSsq() {
         const _this = this;
         _this.Axios.post('/GetRegional.ashx').then(res => {
-          console.log(res.data.data)
           for (let i = 0; i < res.data.data.length; i++) {
             res.data.data[i].value = res.data.data[i].label;
             for (let a = 0; a < res.data.data[i].children.length; a++) {

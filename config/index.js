@@ -27,8 +27,6 @@ module.exports = {
       },
       '/': {
         target: 'http://omstest.ylyunxiang.com',
-        // target: 'http://192.168.1.73:8088',
-        // target: 'https://ylm2.e6best.com',
         changeOrigin: true,
         pathRewrite: {
           '^/': ''
