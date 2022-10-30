@@ -289,6 +289,7 @@
                   <a>确认退单</a>
                 </Poptip>
               </p>
+              <a>客服处理</a>
               <p>
                 <router-link target="_blank" :to="{path:'/orderDetails',query:{
                           idstr: item.ID,
@@ -403,16 +404,19 @@
         <Button type="primary" size="large" @click="modal3=false">关闭</Button>
       </div>
     </Modal>
+    <operService ref="operService"></operService>
   </div>
 </template>
 <script>
+  import operService from '@/components/order/components/operService'
   import express from './express'
   import Upload from './Upload'
   
   export default {
     components: {
       express,
-      Upload
+      Upload,
+      operService
     },
     props: ['supplier'],
     data() {
@@ -539,7 +543,7 @@
         OperBtn: [],
         data: [],
         formValidate: {
-          state: this.$route.params.id ? this.$route.params.id : '0',
+          state: this.$route.params.id ? this.$route.params.id : '-1',
           supplierid: '',
           ticketnumber: '',
           terraceId: '-1',
