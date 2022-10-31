@@ -5,8 +5,8 @@
       title="客服处理">
       <div style="max-height: 600px;overflow: auto">
         <Button type="primary" style="margin-bottom: 20px" @click="add()">添加处理</Button>
-        <Timeline>
-          <TimelineItem v-for="(item,index) in item.ServiceList" :key="index">
+        <Timeline v-if="ServiceList.length>0">
+          <TimelineItem v-for="(item,index) in ServiceList" :key="index">
             <p class="time">{{item.AddTime}}</p>
             <p class="content">
               <span style="font-weight: 700">客户诉求：</span>
@@ -30,6 +30,7 @@
             </p>
           </TimelineItem>
         </Timeline>
+        <p v-else style="text-align: center">暂无处理信息</p>
       </div>
       <div slot="footer">
         <Button type="primary" @click="modal=false">关闭</Button>
@@ -78,9 +79,10 @@
     components: {upImg},
     data() {
       return {
-        img:'',
-        item:{},
-        visible:false,
+        ServiceList: [],
+        img: '',
+        item: {},
+        visible: false,
         modal: false,
         modal1: false,
         formValidate: {
@@ -123,12 +125,12 @@
             console.log(formValidate)
             this.Axios.post('/OperService.ashx', formValidate).then(res => {
               if (res.data.error === 0) {
-                this.modal1=false
-                this.modal=false
+                this.modal1 = false
                 this.$Notice.success({
                   name: 'alert',
                   title: '添加成功'
                 });
+                this.getServiceList(this.item.ID)
               } else {
                 this.$Message.error(res.data.errorMsg)
               }
@@ -138,11 +140,8 @@
         })
       },
       handleReset(name) {
-        console.log(1)
         this.$refs.upload.fileList = [];
-        console.log(2)
         this.$refs.service.handleRemove1();
-        console.log(3)
         this.$refs[name].resetFields();
       },
       handleSuccess(res, file) {
@@ -154,11 +153,23 @@
         this.handleReset('formValidate')
       },
       info(item) {
-        console.log(item)
         this.item = item
+        this.ServiceList = []
         this.modal = true
+        this.getServiceList(this.item.ID)
       },
-      showImg(img){
+      getServiceList(id) {
+        this.Axios.post('/GetServiceList.ashx', {
+          OrderId: id
+        }).then(res => {
+          if (res.data.error === 0) {
+            this.ServiceList = res.data.data
+          } else {
+            this.$Message.error(res.data.errorMsg)
+          }
+        })
+      },
+      showImg(img) {
         this.img = img
         this.visible = true
       }
@@ -170,10 +181,11 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-  .time{
+  .time {
     font-weight: 700;
   }
-  .content{
+  
+  .content {
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;

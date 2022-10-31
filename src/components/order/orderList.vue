@@ -543,7 +543,7 @@
         OperBtn: [],
         data: [],
         formValidate: {
-          state: this.$route.params.id ? this.$route.params.id : '-1',
+          state: this.$route.params.id ? this.$route.params.id : '0',
           supplierid: '',
           ticketnumber: '',
           terraceId: '-1',
