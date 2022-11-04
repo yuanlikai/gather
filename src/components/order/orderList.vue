@@ -414,9 +414,9 @@
       Upload,
       operService
     },
-    props: ['supplier'],
     data() {
       return {
+        supplier:{},
         options1: {
           shortcuts: [
             {
@@ -1171,6 +1171,7 @@
       }
     },
     mounted() {
+      this.supplier = JSON.parse(localStorage.getItem('supplier'))
       this.getOrder();
       this.getSupplier();
       this.getTerrace();

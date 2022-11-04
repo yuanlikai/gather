@@ -80,14 +80,20 @@
               password: _this.formInline.password.replace(/ /g, '')
             }).then(res => {
               if (res.data.error === 0) {
-                localStorage.setItem('menuList', JSON.stringify(res.data.data.sort(function (a, b) {
-                  return Number(a.numb) - Number(b.numb)
-                })));
-                localStorage.setItem('menu1', res.data.data[0].numb);
-                localStorage.setItem('menu', res.data.data[0].children[0].children[0].numb);
-                localStorage.setItem('user', _this.formInline.user.replace(/ /g, ''));
-                _this.$router.push(res.data.data[0].children[0].children[0].to);
-                _this.loading = false;
+                _this.Axios.get('/getCurrentUser.ashx').then(user => {
+                  localStorage.setItem('supplier', JSON.stringify(user.data.data))
+                  if(user.data.data.userType!=='SUPER'){
+                    localStorage.setItem('supplierId', user.data.data.supplierId)
+                  }
+                  localStorage.setItem('menuList', JSON.stringify(res.data.data.sort(function (a, b) {
+                    return Number(a.numb) - Number(b.numb)
+                  })));
+                  localStorage.setItem('menu1', res.data.data[0].numb);
+                  localStorage.setItem('menu', res.data.data[0].children[0].children[0].numb);
+                  localStorage.setItem('user', _this.formInline.user.replace(/ /g, ''));
+                  _this.$router.push(res.data.data[0].children[0].children[0].to);
+                  _this.loading = false;
+                })
               } else {
                 _this.$Message.error(res.data.errorMsg);
               }
@@ -100,6 +106,9 @@
       },
     },
     mounted() {
+      localStorage.removeItem('supplierId')
+      console.log(localStorage.getItem('supplierId')
+      )
     }
   }
 </script>

@@ -225,7 +225,7 @@
     mounted() {
       this.menuList = JSON.parse(localStorage.getItem('menuList'));
       this.isMenu = true;
-      this.getCurrentUser();
+      // this.getCurrentUser();
       this.$router.afterEach(route => {
         this.$Loading.finish();
       });

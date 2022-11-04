@@ -7,11 +7,11 @@
       <Row v-show="status">
         <Col :md="{span:18,offset:3}" :lg="{span:10,offset:6}">
           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="95">
-            <FormItem label="企业名称" prop="supplierName">
+            <FormItem label="地址" prop="supplierName">
               <Input :disabled="$route.query.id" :maxlength="40" v-model="formValidate.supplierName"
                      placeholder="请输入"></Input>
             </FormItem>
-            <FormItem label="简称" prop="abbrSupplierName">
+            <FormItem label="名称" prop="abbrSupplierName">
               <Input :disabled="$route.query.id" :maxlength="10" v-model="formValidate.abbrSupplierName"
                      placeholder="请输入"></Input>
             </FormItem>
@@ -81,11 +81,11 @@ export default {
           if (res.data.code === 0) {
             callback();
           } else {
-            callback(new Error('企业名称重复'))
+            callback(new Error('地址重复'))
           }
         });
       } else {
-        callback(new Error('请输入企业名称'))
+        callback(new Error('请输入地址'))
       }
     };
     const validate2 = (rule, value, callback) => {
@@ -100,11 +100,11 @@ export default {
           if (res.data.code === 0) {
             callback();
           } else {
-            callback(new Error('企业简称重复'))
+            callback(new Error('名称重复'))
           }
         });
       } else {
-        callback(new Error('请输入企业简称'))
+        callback(new Error('请输入名称'))
       }
     };
     const validate3 = (rule, value, callback) => {

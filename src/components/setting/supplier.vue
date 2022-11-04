@@ -5,23 +5,23 @@
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
-        筛选查询
+        查询
       </p>
       <Form ref="formValidate" :model="formValidate" :label-width="80">
         <Row :gutter="30">
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="企业名：" prop="supplierNameLike">
-              <Input v-model="formValidate.supplierNameLike" placeholder="请输入"/>
+            <FormItem label="编号：" prop="supplierNoLike">
+              <Input v-model="formValidate.supplierNoLike" placeholder="请输入"/>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="简称：" prop="abbrSupplierNameLike">
+            <FormItem label="名称：" prop="abbrSupplierNameLike">
               <Input v-model="formValidate.abbrSupplierNameLike" placeholder="请输入"/>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
-            <FormItem label="代号：" prop="supplierNoLike">
-              <Input v-model="formValidate.supplierNoLike" placeholder="请输入"/>
+            <FormItem label="地址：" prop="supplierNameLike">
+              <Input v-model="formValidate.supplierNameLike" placeholder="请输入"/>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="8">
@@ -35,8 +35,8 @@
           </Col>
           <Col :xs="24" :md="24" :lg="8" style="">
             <FormItem>
-              <Button type="primary" style="margin-right: 6px" @click="resetPage();getList()">查询</Button>
-              <Button style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
+              <Button icon="ios-search-outline" type="primary" style="margin-right: 6px" @click="resetPage();getList()">查询</Button>
+              <Button icon="md-refresh" style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
             </FormItem>
           </Col>
         </Row>
@@ -44,7 +44,7 @@
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
-        数据列表
+        发货仓列表
       </p>
       <router-link target="_blank" :to="{
         path:'/addSupplier',
@@ -80,88 +80,6 @@ export default {
         brandCountAsc: 'normal'
       },
       columns: [
-        {
-          type: 'index',
-          width: 60,
-          align: 'center'
-        },
-        {
-          title: '企业名',
-          tooltip: true,
-          align: "center",
-          key: 'supplierName',
-        },
-        {
-          title: '简称',
-          tooltip: true,
-          align: "center",
-          key: 'abbrSupplierName',
-        },
-        {
-          title: '字母编号',
-          tooltip: true,
-          key: 'supplierNo',
-          align: "center",
-        },
-        {
-          title: '商品数',
-          align: "center",
-          key: 'productCount',
-          sortable: "custom"
-        },
-        {
-          title: '关联平台',
-          tooltip: true,
-          key: 'abbrPlatformNames',
-          align: "center",
-        },
-        {
-          title: '关联品牌',
-          tooltip: true,
-          key: 'brandCount',
-          align: "center",
-          sortable: "custom"
-        },
-        {
-          title: '状态',
-          tooltip: true,
-          key: 'locked',
-          align: "center",
-          render: (h, params) => {
-            return h('i-switch', {
-                props: {
-                  value: params.row.locked===0?true:false,
-                  size: 'small'
-                },
-                on: {
-                  'on-change': (i) => {
-                    this.Axios.post('/UpdateSupLock.ashx', {
-                      id: Number(params.row.id),   //品牌id
-                      locked: !params.row.locked?1:0,   //是否显示 true为显示 false为隐藏
-                    }).then(res => {
-                      console.log(res.data)
-                      if (res.data.error === 0) {
-                        this.getList()
-                      } else {
-                        this.$Message.warning(res.data.errorMsg)
-                      }
-                    });
-                  }
-                }
-              },
-
-              //   [
-              //   h('span', {
-              //     slot: "open"
-              //   }, '是'),
-              //   h('span', {
-              //     slot: "close"
-              //   }, '否')
-              // ]
-
-            )
-          }
-        },
         {
           title: '操作',
           tooltip: true,
@@ -225,7 +143,55 @@ export default {
               ]),
             ])
           }
-        }
+        },
+        {
+          title: '编号',
+          tooltip: true,
+          key: 'supplierNo',
+          align: "center",
+        },
+        {
+          title: '名称',
+          tooltip: true,
+          align: "center",
+          key: 'abbrSupplierName',
+        },
+        {
+          title: '地址',
+          tooltip: true,
+          align: "center",
+          key: 'supplierName',
+        },
+        {
+          title: '状态',
+          tooltip: true,
+          key: 'locked',
+          align: "center",
+          render: (h, params) => {
+            return h('i-switch', {
+                props: {
+                  value: params.row.locked===0?true:false,
+                  size: 'small'
+                },
+                on: {
+                  'on-change': (i) => {
+                    this.Axios.post('/UpdateSupLock.ashx', {
+                      id: Number(params.row.id),   //品牌id
+                      locked: !params.row.locked?1:0,   //是否显示 true为显示 false为隐藏
+                    }).then(res => {
+                      console.log(res.data)
+                      if (res.data.error === 0) {
+                        this.getList()
+                      } else {
+                        this.$Message.warning(res.data.errorMsg)
+                      }
+                    });
+                  }
+                }
+              },
+            )
+          }
+        },
       ],
       data: [],
       total: 0,
