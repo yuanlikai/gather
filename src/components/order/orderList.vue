@@ -10,75 +10,76 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">客服模式</div>
+      <div class="ivu-page-header-title">订单列表</div>
     </Card>
-    <div style="min-height: 32px;">
-      <transition name="fade">
-        <div v-show="orderNum.error===0">
-          <RadioGroup :style="{marginLeft: '20px',}"
-                      type="button"
-                      v-model="formValidate.state" @on-change="group('')">
-            <Radio style="padding:0 20px" v-for="(item,index) in statusList" :key="index" :label="item.Id">
-              {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
-            </Radio>
-          </RadioGroup>
-          <RadioGroup :style="{margin: '0 20px 0 20px', background: '#fff',height:'auto'}"
-                      type="button"
-                      v-model="formValidate.state" @on-change="group('yc')">
-            <Radio style="padding:0 20px" label="9">异常订单 ({{orderNum['num9']}})</Radio>
-            <Radio style="padding:0 20px" label="10">超时发货 ({{orderNum['num10']}})</Radio>
-          </RadioGroup>
-        </div>
-      </transition>
-    </div>
+    <!--<div style="min-height: 32px;">-->
+    <!--</div>-->
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <p slot="title">
-        筛选查询
+        查询
       </p>
       <Form ref="formValidate" :model="formValidate" :label-width="80">
         <Row :gutter="30">
-          <Col :xs="24" :md="12" :lg="6" v-if="supplier.userType!=='SUPPLIER'">
-            <FormItem label="来源平台：" prop="terraceId">
-              <Select :disabled="supplier.userType==='SUPPLIER'"
-                      v-model="formValidate.terraceId"
-                      @on-change="start=1,total=0,getOrder()">
-                <Option value="-1">全部</Option>
-                <Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}
-                </Option>
-              </Select>
+          <Col span="24">
+            <FormItem label="订单状态：">
+            <transition name="fade">
+              <div v-show="orderNum.error===0">
+                <RadioGroup v-model="formValidate.state" @on-change="group('')">
+                  <Radio style="padding:0 20px 0 0" v-for="(item,index) in statusList" :key="index" :label="item.Id">
+                    {{ item.Name }} ({{orderNum['num'+String(index+1)]}})
+                  </Radio>
+                </RadioGroup>
+                <RadioGroup v-model="formValidate.state" @on-change="group('yc')">
+                  <Radio label="9">异常订单 ({{orderNum['num9']}})</Radio>
+                </RadioGroup>
+              </div>
+            </transition>
             </FormItem>
           </Col>
-          <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="供应商：" prop="supplierid">
-              <Select :disabled="supplier.userType==='SUPPLIER'"
-                      v-model="supplier.userType==='SUPPLIER'?supplier.supplierId:formValidate.supplierid"
-                      @on-change="start=1,total=0,getOrder()"
-                      clearable
-                      filterable>
-                <!--<Option value="-1">全部</Option>-->
-                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}
-                </Option>
-              </Select>
-            </FormItem>
-          </Col>
-        </Row>
-        <Row :gutter="30">
           <Col :xs="24" :md="12" :lg="6">
             <FormItem label="订单编号：" prop="ordernumber">
               <Input v-model="formValidate.ordernumber" placeholder="请输入"/>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="订单金额：" prop="price1">
-              <div class="price-inp">
-                <Input v-model="formValidate.price1"
-                       @on-keyup="formValidate.price1=formValidate.price1.replace(/[^\d]/g,'');"
-                       placeholder="请输入"/>
-                <span>-</span>
-                <Input v-model="formValidate.price2"
-                       @on-keyup="formValidate.price2=formValidate.price2.replace(/[^\d]/g,'');"
-                       placeholder="请输入"/>
-              </div>
+            <FormItem label="收货人：" prop="consignee">
+              <Input v-model="formValidate.consignee" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="手机号：" prop="phone">
+              <Input :maxlength="11" @on-keyup="formValidate.phone=formValidate.phone.replace(/[^\d]/g,'')"
+                     v-model="formValidate.phone" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="收货地址" prop="ssq">
+              <Input v-model="formValidate.ssq" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+        </Row>
+        <Row :gutter="30">
+          <!--<Col :xs="24" :md="12" :lg="6" v-if="supplier.userType!=='SUPPLIER'">-->
+          <!--<FormItem label="来源平台：" prop="terraceId">-->
+          <!--<Select :disabled="supplier.userType==='SUPPLIER'"-->
+          <!--v-model="formValidate.terraceId"-->
+          <!--@on-change="start=1,total=0,getOrder()">-->
+          <!--<Option value="-1">全部</Option>-->
+          <!--<Option v-for="(item,index) in terraceList" :value="item.id" :key="index">{{ item.platformName }}-->
+          <!--</Option>-->
+          <!--</Select>-->
+          <!--</FormItem>-->
+          <!--</Col>-->
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="发货仓：" prop="supplierid">
+              <Select :disabled="supplier.userType==='SUPPLIER'"
+                      v-model="supplier.userType==='SUPPLIER'?supplier.supplierId:formValidate.supplierid"
+                      @on-change="start=1,total=0,getOrder()"
+                      clearable>
+                <!--<Option value="-1">全部</Option>-->
+                <Option v-for="(item,index) in supplierList" :value="item.id" :key="index">{{ item.supplierName }}
+                </Option>
+              </Select>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
@@ -98,8 +99,10 @@
                           placement="bottom-start" placeholder="请选择" :editable="false"></DatePicker>
             </FormItem>
           </Col>
+        </Row>
+        <Row :gutter="30">
           <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="产品货号：" prop="stockno">
+            <FormItem label="产品编号：" prop="stockno">
               <Input v-model="formValidate.stockno" placeholder="请输入"/>
             </FormItem>
           </Col>
@@ -108,9 +111,16 @@
               <Input v-model="formValidate.proname" placeholder="请输入"/>
             </FormItem>
           </Col>
+        </Row>
+        <Row :gutter="30">
           <Col :xs="24" :md="12" :lg="6">
             <FormItem label="券号：" prop="ticketnumber">
               <Input v-model="formValidate.ticketnumber" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="套餐编号：" prop="actcode">
+              <Input v-model="formValidate.actcode" placeholder="请输入"/>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
@@ -119,41 +129,21 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="收货人：" prop="consignee">
-              <Input v-model="formValidate.consignee" placeholder="请输入"/>
-            </FormItem>
-          </Col>
-          <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="手机号：" prop="phone">
-              <Input :maxlength="11" @on-keyup="formValidate.phone=formValidate.phone.replace(/[^\d]/g,'')"
-                     v-model="formValidate.phone" placeholder="请输入"/>
-            </FormItem>
-          </Col>
-          <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="收货区域" prop="ssq">
-              <Cascader @on-change="xzdq" :data="dataSite" v-model="formValidate.ssq"></Cascader>
-            </FormItem>
-          </Col>
-          <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="套餐编号：" prop="actcode">
-              <Input v-model="formValidate.actcode" placeholder="请输入"/>
-            </FormItem>
-          </Col>
-          <Col span="24">
-            <FormItem>
-              <div style="width: 100%;text-align: right">
-                <Button type="primary" style="margin-right: 6px" @click="handleSubmit('formValidate')">查询</Button>
-                <Button style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
-              </div>
-            </FormItem>
+            <div style="width: 100%;text-align: right">
+              <Button icon="ios-search-outline" type="primary" style="margin-right: 6px"
+                      @click="handleSubmit('formValidate')">查询
+              </Button>
+              <Button icon="md-refresh" style="margin-right: 6px" @click="handleReset('formValidate')">重置</Button>
+            </div>
           </Col>
         </Row>
       </Form>
     </Card>
+    
+    
     <Card class="card-warp" :style="{margin: '0 20px 20px 20px', background: '#fff',height:'auto',padding:'0'}">
       <p slot="title" style="height: 24px;display: flex;align-items: center">
-        数据列表 <span style="font-weight: 400">【共 {{total}} 条】</span>
-        
+        订单列表
         <Select style="width: 130px;margin-left: 10px;font-weight: 400;" size="small" v-model="sortid"
                 @on-change="start=1,total=0,getOrder()">
           <Option value="1">按下单时间正序</Option>
@@ -163,11 +153,11 @@
       <p slot="extra">
         <transition name="fade">
           <span v-show="formValidate.state==='0'">
-            <Checkbox
-              :indeterminate="indeterminate"
-              :value="checkAll"
-              @click.prevent.native="handleCheckAll">全选本页
-            </Checkbox>
+            <!--<Checkbox-->
+            <!--:indeterminate="indeterminate"-->
+            <!--:value="checkAll"-->
+            <!--@click.prevent.native="handleCheckAll">全选本页-->
+            <!--</Checkbox>-->
             <Poptip
               v-if="checkAllGroup.length>0"
               confirm
@@ -190,118 +180,121 @@
         <Upload style="float: right"></Upload>
         </span>
       </p>
-      <Spin fix v-if="loading1"></Spin>
-      <p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>
-      <CheckboxGroup v-else v-model="checkAllGroup" @on-change="checkAllGroupChange">
-        <div v-for="(item,index) in data" :key="item.index">
-          <Alert>{{item.PlatformStr}} - 【{{item.Supplier}}】 - {{item.ErpOrderNumber}} - 平台订单</Alert>
-          <ul class="card-warp-ul">
-            <li class="card-warp-li">{{item.AddTime}}</li>
-            <li class="card-warp-li">订单编号：{{item.OrderNumber}}</li>
-            <li class="card-warp-li">售价总金额：<span style="color: #ed4014;">{{item.Total}}元</span></li>
-            <li class="card-warp-li">售后状态：无</li>
-          </ul>
-          <Row style="padding: 16px 16px 16px 50px;">
-            <Col span="11">
-              <Row class="row-wrap">
-                <Checkbox v-show="formValidate.state==='0'" :label="item.ID" class="row-wrap-checkbox">&nbsp;</Checkbox>
-                <div v-for="(itema,indexa) in item.ProList" :key="itema.index">
-                  <Col span="24" v-if="item.open?true:indexa<3" style="margin-bottom: 16px">
-                    <div v-if="itema.ProductImg" style="float: left;">
-                      <Poptip placement="right" trigger="hover">
-                        <img style="float:left;width: 50px;cursor: pointer;"
-                             :src="alterPicture(itema.ProductImg)"
-                             alt="" @click="showModal3(itema.ProductImg)">
-                        <div slot="content">
-                          <img style="float:left;width: 250px"
-                               :src="alterPicture(itema.ProductImg)"
-                               alt="">
-                        </div>
-                      </Poptip>
-                    </div>
-                    <img v-else style="float:left;"
-                         src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/618/wutu.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF"
-                         alt="">
-                    <div style="float: left;width: calc(100% - 60px)">
-                      <p>
-                        <span style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</span>
-                        <Icon type="md-close"/>
-                        <span>{{itema.Num}}</span>
-                      </p>
-                      <p>
-                        售价：
-                        <span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span>
-                      </p>
-                    </div>
-                  </Col>
-                </div>
-                
-                <div style="float: left;margin-left: 66px">共 <span style="color: #000000;font-weight: 700">{{item.ProList.length}}</span>
-                  个产品
-                  <span v-if="item.ProList.length>3">
-                    <Button v-if="item.open" type="text" icon="ios-arrow-up" @click="openPro(index)">收起</Button>
-                    <Button v-else type="text" icon="ios-arrow-down" @click="openPro(index)">展开</Button>
-                  </span>
-                </div>
-              </Row>
-            </Col>
-            <Col span="5" class="card-warp-col3">
-              <p>应付：<span style="color: #ed4014;">{{item.Total}}元</span></p>
-              <p>积分：{{item.YlCoin}}</p>
-              <p>运费：{{item.Freight}}</p>
-            </Col>
-            <Col span="5" class="card-warp-col3">
-              <p>预约发货：{{item.GetTime}}</p>
-              <p>收货人：{{item.Consignee}}</p>
-              <p>{{item.Phone}}</p>
-              <p>{{item.Address.split(' ')[0]}}</p>
-            </Col>
-            <Col span="3" class="card-warp-col3">
-              <p v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">发货日期：<span
-                v-if="item.SendTime">【{{item.SendTime}}】</span>
-              </p>
-              <p v-if="item.StateStr==='已完成'">签收日期：<span v-if="item.CheckTime">【{{item.CheckTime}}】</span>
-              </p>
-              <p>
-                <a style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"
-                   v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">{{item.Express}} 【{{item.ExpressNo}}】
-                </a>
-              </p>
-              <p v-if="item.State===0">
-                <Poptip
-                  confirm
-                  title="是否确定审核该订单？"
-                  @on-ok="review(String(item.ID))">
-                  <a>审核</a>
-                </Poptip>
-              </p>
-              <p v-if="item.State===1&&formValidate.state != 9">
-                <a @click="ship(item.ID)">发货</a>
-              </p>
-              <!--<p v-if="item.State===2&&formValidate.state != 9">-->
-              <!--<a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>-->
+      <Table :loading="loading1" @on-selection-change="checkAllGroupChange" :show-header="true"
+             :columns="columns"
+             :data="data"></Table>
+      <!--<p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>-->
+      <!--<CheckboxGroup v-else v-model="checkAllGroup" @on-change="checkAllGroupChange">-->
+        <!--<div v-for="(item,index) in data" :key="item.index">-->
+          <!--<Alert>{{item.PlatformStr}} - 【{{item.Supplier}}】 - {{item.ErpOrderNumber}} - 平台订单</Alert>-->
+          <!--<ul class="card-warp-ul">-->
+            <!--<li class="card-warp-li">{{item.AddTime}}</li>-->
+            <!--<li class="card-warp-li">订单编号：{{item.OrderNumber}}</li>-->
+            <!--<li class="card-warp-li">售价总金额：<span style="color: #ed4014;">{{item.Total}}元</span></li>-->
+            <!--<li class="card-warp-li">售后状态：无</li>-->
+          <!--</ul>-->
+          <!--<Row style="padding: 16px 16px 16px 50px;">-->
+            <!--<Col span="11">-->
+              <!--<Row class="row-wrap">-->
+                <!--<Checkbox v-show="formValidate.state==='0'" :label="item.ID" class="row-wrap-checkbox">&nbsp;</Checkbox>-->
+                <!--<div v-for="(itema,indexa) in item.ProList" :key="itema.index">-->
+                  <!--<Col span="24" v-if="item.open?true:indexa<3" style="margin-bottom: 16px">-->
+                    <!--<div v-if="itema.ProductImg" style="float: left;">-->
+                      <!--<Poptip placement="right" trigger="hover">-->
+                        <!--<img style="float:left;width: 50px;cursor: pointer;"-->
+                             <!--:src="alterPicture(itema.ProductImg)"-->
+                             <!--alt="" @click="showModal3(itema.ProductImg)">-->
+                        <!--<div slot="content">-->
+                          <!--<img style="float:left;width: 250px"-->
+                               <!--:src="alterPicture(itema.ProductImg)"-->
+                               <!--alt="">-->
+                        <!--</div>-->
+                      <!--</Poptip>-->
+                    <!--</div>-->
+                    <!--<img v-else style="float:left;"-->
+                         <!--src="https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/618/wutu.png?x-oss-process=image/resize,m_pad,h_50,w_50,color_FFFFFF"-->
+                         <!--alt="">-->
+                    <!--<div style="float: left;width: calc(100% - 60px)">-->
+                      <!--<p>-->
+                        <!--<span style="color: #2db7f5;">{{itema.ProductName}} {{itema.StockNo}}</span>-->
+                        <!--<Icon type="md-close"/>-->
+                        <!--<span>{{itema.Num}}</span>-->
+                      <!--</p>-->
+                      <!--<p>-->
+                        <!--售价：-->
+                        <!--<span style="color: #ed4014;margin-right: 8px">{{itema.Price}}元</span>-->
+                      <!--</p>-->
+                    <!--</div>-->
+                  <!--</Col>-->
+                <!--</div>-->
+                <!---->
+                <!--<div style="float: left;margin-left: 66px">共 <span style="color: #000000;font-weight: 700">{{item.ProList.length}}</span>-->
+                  <!--个产品-->
+                  <!--<span v-if="item.ProList.length>3">-->
+      <!--<Button v-if="item.open" type="text" icon="ios-arrow-up" @click="openPro(index)">收起</Button>-->
+      <!--<Button v-else type="text" icon="ios-arrow-down" @click="openPro(index)">展开</Button>-->
+      <!--</span>-->
+                <!--</div>-->
+              <!--</Row>-->
+            <!--</Col>-->
+            <!--<Col span="5" class="card-warp-col3">-->
+              <!--<p>应付：<span style="color: #ed4014;">{{item.Total}}元</span></p>-->
+              <!--<p>积分：{{item.YlCoin}}</p>-->
+              <!--<p>运费：{{item.Freight}}</p>-->
+            <!--</Col>-->
+            <!--<Col span="5" class="card-warp-col3">-->
+              <!--<p>预约发货：{{item.GetTime}}</p>-->
+              <!--<p>收货人：{{item.Consignee}}</p>-->
+              <!--<p>{{item.Phone}}</p>-->
+              <!--<p>{{item.Address.split(' ')[0]}}</p>-->
+            <!--</Col>-->
+            <!--<Col span="3" class="card-warp-col3">-->
+              <!--<p v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">发货日期：<span-->
+                <!--v-if="item.SendTime">【{{item.SendTime}}】</span>-->
               <!--</p>-->
-              <p v-if="item.State===5&&formValidate.state != 9">
-                <Poptip
-                  confirm
-                  title="是否确认该退单申请？"
-                  @on-ok="affirm(item.ID)">
-                  <a>确认退单</a>
-                </Poptip>
-              </p>
-              <a @click="openOperService(item)">客服处理</a>
-              <p>
-                <router-link target="_blank" :to="{path:'/orderDetails',query:{
-                          idstr: item.ID,
-                          abnormal: formValidate.state === 9 ? true : false,
-                          vid:1,
-            }}">订单详情
-                </router-link>
-              </p>
-            </Col>
-          </Row>
-        </div>
-      </CheckboxGroup>
+              <!--<p v-if="item.StateStr==='已完成'">签收日期：<span v-if="item.CheckTime">【{{item.CheckTime}}】</span>-->
+              <!--</p>-->
+              <!--<p>-->
+                <!--<a style="cursor: pointer" @click="searchExpress(item.Express,item.ExpressNo,item.OrderNumber)"-->
+                   <!--v-if="item.StateStr==='已发货'||item.StateStr==='已完成'">{{item.Express}} 【{{item.ExpressNo}}】-->
+                <!--</a>-->
+              <!--</p>-->
+              <!--<p v-if="item.State===0">-->
+                <!--<Poptip-->
+                  <!--confirm-->
+                  <!--title="是否确定审核该订单？"-->
+                  <!--@on-ok="review(String(item.ID))">-->
+                  <!--<a>审核</a>-->
+                <!--</Poptip>-->
+              <!--</p>-->
+              <!--<p v-if="item.State===1&&formValidate.state != 9">-->
+                <!--<a @click="ship(item.ID)">发货</a>-->
+              <!--</p>-->
+              <!--&lt;!&ndash;<p v-if="item.State===2&&formValidate.state != 9">&ndash;&gt;-->
+              <!--&lt;!&ndash;<a @click="chargeback(item.ID,item.OrderNumber)">申请退单</a>&ndash;&gt;-->
+              <!--&lt;!&ndash;</p>&ndash;&gt;-->
+              <!--<p v-if="item.State===5&&formValidate.state != 9">-->
+                <!--<Poptip-->
+                  <!--confirm-->
+                  <!--title="是否确认该退单申请？"-->
+                  <!--@on-ok="affirm(item.ID)">-->
+                  <!--<a>确认退单</a>-->
+                <!--</Poptip>-->
+              <!--</p>-->
+              <!--<a @click="openOperService(item)">客服处理</a>-->
+              <!--<p>-->
+                <!--<router-link target="_blank" :to="{path:'/orderDetails',query:{-->
+      <!--idstr: item.ID,-->
+      <!--abnormal: formValidate.state === 9 ? true : false,-->
+      <!--vid:1,-->
+      <!--}}">订单详情-->
+                <!--</router-link>-->
+              <!--</p>-->
+            <!--</Col>-->
+          <!--</Row>-->
+        <!--</div>-->
+      <!--</CheckboxGroup>-->
+      
       <div v-show="!data.length<1" class="Page-wrap">
         <Page @on-change="paging" placement="top" :total="total" @on-page-size-change="showSizer" :page-size="10"
               show-elevator show-total show-sizer/>
@@ -405,15 +398,18 @@
       </div>
     </Modal>
     <operService ref="operService"></operService>
+    <Product ref="product" @showModal3="showModal3"></Product>
   </div>
 </template>
 <script>
   import operService from '@/components/order/components/operService'
+  import Product from '@/components/order/components/product'
   import express from './express'
   import Upload from './Upload'
   
   export default {
     components: {
+      Product,
       express,
       Upload,
       operService
@@ -542,6 +538,189 @@
         ],
         OperBtn: [],
         data: [],
+        columns: [
+          {
+            type: 'selection',
+            width: 50,
+            fixed:'left',
+            align: 'center'
+          },
+          {
+            title: '订单编号',
+            tooltip: true,
+            fixed:'left',
+            key: 'OrderNumber',
+            minWidth: 140,
+            render: (h, params) => {
+              return h('a', {
+                on: {
+                  'click': () => {
+                    let href = this.$router.resolve({
+                      path: '/orderDetails',
+                      query: {
+                        idstr: params.row.ID,
+                        abnormal: this.formValidate.state === 9,
+                      }
+                    });
+                    window.open(href.href, '_blank')
+                  }
+                }
+              }, params.row.OrderNumber)
+            }
+          },
+          {
+            title: '产品信息',
+            tooltip: true,
+            fixed:'left',
+            key: 'OrderNumber',
+            minWidth: 220,
+            render: (h, params) => {
+              console.log()
+              return h('span', {
+                style: {
+                  display: 'flex',
+                  alignItems: 'center'
+                }
+              }, [
+                h('img', {
+                  attrs: {
+                    src: params.row.ProList[0].ProductImg
+                  },
+                  style: {
+                    height: '30px',
+                    width: '30px',
+                    borderRadius: '3px',
+                    cursor: 'pointer',
+                    marginRight: '6px'
+                  },
+                  on: {
+                    'click': () => {
+                      this.showModal3(params.row.ProList[0].ProductImg)
+                    }
+                  }
+                }),
+                h('p', `${params.row.ProList[0].ProductName} * ${params.row.ProList[0].Num}`),
+                h('a', {
+                  style: {
+                    marginLeft: '6px'
+                  },
+                  on: {
+                    'click': () => {
+                      this.$refs.product.info(params.row)
+                    }
+                  }
+                }, params.row.ProList.length > 1 ? '更多' : '')
+              ])
+            }
+          },
+          {
+            title: '收货人',
+            tooltip: true,
+            key: 'Consignee',
+            minWidth: 110,
+          },
+          {
+            title: '收货人手机',
+            tooltip: true,
+            key: 'Phone',
+            minWidth: 110,
+          },
+          {
+            title: '收货人地址',
+            tooltip: true,
+            key: 'Address',
+            minWidth: 180,
+          },
+          {
+            title: '发货仓',
+            tooltip: true,
+            key: 'Supplier',
+            minWidth: 120,
+          },
+          {
+            title: '发货日期',
+            tooltip: true,
+            key: 'GetTime',
+            minWidth: 140,
+          },
+          {
+            title: '快递信息',
+            tooltip: true,
+            key: 'Express',
+            minWidth: 180,
+            render: (h, params) => {
+              return h('div', [
+                h('a', {
+                  on: {
+                    'click': () => {
+                      this.searchExpress(params.row.Express, params.row.ExpressNo, params.row.OrderNumber)
+                    }
+                  }
+                }, `${params.row.Express} ${params.row.ExpressNo}`),
+              ])
+            }
+          },
+          {
+            title: '套餐名称',
+            tooltip: true,
+            key: 'ActName',
+            minWidth: 160,
+          },
+          {
+            title: '套餐编号',
+            tooltip: true,
+            key: 'ActCode',
+            minWidth: 90,
+          },
+          {
+            title: '礼包名称',
+            tooltip: true,
+            key: 'GiftName',
+            minWidth: 130,
+          },
+          {
+            title: '下单时间',
+            tooltip: true,
+            key: 'AddTime',
+            minWidth: 160,
+          },
+          {
+            title: '操作',
+            tooltip: true,
+            fixed:'right',
+            key: 'ProductName',
+            width: 130,
+            align: "center",
+            render: (h, params) => {
+              return h('div', [
+                h('div', [
+                  h('a', {
+                    on: {
+                      click: () => {
+                        this.openOperService(params.row)
+                      }
+                    }
+                  }, '客服处理'),
+                  h('Divider', {
+                    style:{
+                      display: params.row.State===1&&this.formValidate.state != 9?'':'none',
+                    },
+                    props: {
+                      type: 'vertical'
+                    }
+                  }),
+                  h('a', {
+                    on: {
+                      click: () => {
+                        this.ship(params.row.ID)
+                      }
+                    }
+                  }, params.row.State===1&&this.formValidate.state != 9?'发货':''),
+                ]),
+              ])
+            }
+          }
+        ],
         formValidate: {
           state: this.$route.params.id ? this.$route.params.id : '0',
           supplierid: '',
@@ -557,7 +736,7 @@
           time1: ['', ''],
           price1: '',
           price2: '',
-          ssq: [],
+          ssq: '',
           actcode: ''
         },
         supplierList: [],
@@ -574,7 +753,7 @@
       }
     },
     methods: {
-      openOperService(item){
+      openOperService(item) {
         this.$refs.operService.info(item)
       },
       
@@ -741,6 +920,7 @@
       //获取订单列表
       getOrder(i) {
         const _this = this;
+        console.log(_this.formValidate.supplierid,localStorage.getItem('supplierId'))
         _this.loading1 = true;
         _this.tagArr = [];
         _this.Axios.post(_this.types !== 'yc' ? '/GetOrderList.ashx' : '/GetYcOrderList.ashx', {
@@ -749,7 +929,7 @@
           vid: 1,
           ticketnumber: _this.formValidate.ticketnumber,
           state: _this.formValidate.state,
-          supplierid: localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
+          supplierid: localStorage.getItem('supplierId') ? localStorage.getItem('supplierId') : (_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1'),
           platformid: _this.formValidate.terraceId,
           ordernumber: _this.formValidate.ordernumber,
           proname: _this.formValidate.proname,
@@ -763,7 +943,7 @@
           endtime: _this.formValidate.time[1],
           begintime2: _this.formValidate.time1[0],
           endtime2: _this.formValidate.time1[1],
-          address: _this.formValidate.ssq.join(' '),
+          address: _this.formValidate.ssq,
           actcode: _this.formValidate.actcode,
           page: _this.start,
           pagesize: _this.pageSize,
@@ -914,7 +1094,7 @@
       download(page, index) {
         const _this = this;
         let typeid = _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '';
-        let supplierid = localStorage.getItem('supplierId')?localStorage.getItem('supplierId'):(_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1');
+        let supplierid = localStorage.getItem('supplierId') ? localStorage.getItem('supplierId') : (_this.formValidate.supplierid ? _this.formValidate.supplierid : '-1');
         window.open('/ExportOrderPage.ashx?typeid=' + typeid +
           '&sortid=' + _this.sortid +
           '&vid=' + 1 +
@@ -976,16 +1156,11 @@
         }
       },
       checkAllGroupChange(data) {
-        if (data.length === this.data.length) {
-          this.indeterminate = false;
-          this.checkAll = true;
-        } else if (data.length > 0) {
-          this.indeterminate = true;
-          this.checkAll = false;
-        } else {
-          this.indeterminate = false;
-          this.checkAll = false;
+        let checkAllGroup = [];
+        for (let i = 0; i < data.length; i++) {
+          checkAllGroup.push(data[i].ID)
         }
+        this.checkAllGroup = checkAllGroup;
       },
     },
     created() {

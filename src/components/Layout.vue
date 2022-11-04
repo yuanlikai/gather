@@ -66,7 +66,6 @@
           <div v-for="(item,index) in menuList" :key="index" v-show="item.numb===menu1">
             <MenuGroup v-for="(itema,indexa) in item.children" :key="indexa" :title="itema.name">
               <MenuItem v-for="(itemb,indexb) in itema.children" :key="indexb" :to="itemb.to" :name="itemb.numb">
-                <Icon type="ios-analytics"/>
                 {{itemb.name}}
               </MenuItem>
             </MenuGroup>
@@ -91,9 +90,6 @@
       </p>
       <div style="text-align:center">
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-          <FormItem label="原密码" prop="oldPassword">
-            <Input :maxlength="25" type="password" v-model="formValidate.oldPassword" placeholder="请输入"></Input>
-          </FormItem>
           <FormItem label="新密码" prop="newPassword">
             <Input :maxlength="25" type="password" v-model="formValidate.newPassword" placeholder="请输入"></Input>
           </FormItem>
@@ -120,13 +116,9 @@
         menu1: localStorage.getItem('menu1'),
         isCollapsed: false,
         formValidate: {
-          oldPassword: '',
           newPassword: '',
         },
         ruleValidate: {
-          oldPassword: [
-            {required: true, message: '请输入', trigger: 'blur'}
-          ],
           newPassword: [
             {required: true, message: '请输入', trigger: 'blur'}
           ],
@@ -152,15 +144,14 @@
         const _this = this;
         this.$refs[name].validate((valid) => {
           if (valid) {
-            _this.Axios.post('/Manage/UserInfo/updatePassword', _this.Qs.stringify({
-              oldPassword: _this.formValidate.oldPassword,   //原密码
-              newPassword: _this.formValidate.newPassword,   //新密码
-            })).then(res => {
-              if (res.data.code === 0) {
+            _this.Axios.post('/UpdatePsd.ashx', {
+              password: _this.formValidate.newPassword,   //新密码
+            }).then(res => {
+              if (res.data.error === 0) {
                 _this.$router.push('/');
                 this.$Message.success('修改密码成功，请重新登录！');
               } else {
-                this.$Message.warning(res.data.message);
+                this.$Message.warning(res.data.errorMsg);
               }
               console.log(res.data)
             })
