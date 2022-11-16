@@ -4,26 +4,23 @@
       <Icon type="ios-information-circle"></Icon>
       <span>请填写发货信息</span>
     </p>
-    <Form ref="formDynamic" :model="formDynamic" :label-width="84" style="width: 300px">
+    <Form ref="formDynamic" :model="formDynamic" :label-width="100" style="width: 300px">
       <FormItem
         v-for="(item, index) in formDynamic.items"
         :key="index"
-        :label="`快递信息(${index+1})`"
+        :label="`快递信息 (${index+1})`"
         :prop="'items.' + index + '.Express'"
         :rules="{ validator: validatePass,required: true, index: index, trigger: 'change'}">
         <Row>
           <Col span="18">
-            <Select v-model="item.Express" placeholder="请输入快递公司">
+            <Select v-model="item.Express" :disabled="item.disabled" placeholder="请输入快递公司">
               <Option v-for="(item,index) in cityList3" :value="item.Name" :key="index">{{ item.Name }}</Option>
             </Select>
-
-            <!--<Input :maxlength="20" type="text" v-model="item.Express" placeholder="请输入快递公司"></Input>-->
-
-
-            <Input :maxlength="20" type="text" v-model="item.ExpressNo" placeholder="请输入物流单号"></Input>
+            <Input :maxlength="20" type="text" :disabled="item.disabled" v-model="item.ExpressNo"
+                   placeholder="请输入物流单号"></Input>
           </Col>
           <Col span="4" offset="1">
-            <Button @click="handleRemove(index)" size="small">删除</Button>
+            <Button @click="handleRemove(index)" :disabled="item.disabled" size="small">删除</Button>
           </Col>
         </Row>
       </FormItem>
@@ -34,11 +31,11 @@
           </Col>
         </Row>
       </FormItem>
-
+      
       <FormItem label="备注信息" prop="Description">
         <Input type="textarea" v-model="formDynamic.Description" placeholder="请输入"></Input>
       </FormItem>
-
+    
     </Form>
     <div slot="footer">
       <Button type="primary" @click="handleSubmit('formDynamic')">{{$route.query.idstr?'修改':'发货'}}</Button>
@@ -48,7 +45,7 @@
 <script>
   export default {
     data() {
-
+      
       return {
         model: false,
         formDynamic: {
@@ -58,7 +55,7 @@
               ExpressNo: ''
             }
           ],
-          idstr:'',
+          idstr: '',
           Express: [],
           ExpressNo: [],
           Description: '',
@@ -79,20 +76,20 @@
           _this.cityList3 = res.data.data;
         })
       },
-
-      validatePass (rule, value, callback) {
+      
+      validatePass(rule, value, callback) {
         const item = this.formDynamic.items[rule.index]
-        if(item.Express&&item.ExpressNo){
+        if (item.Express && item.ExpressNo) {
           callback();
-        }else {
-          callback(new Error(`物流信息(${rule.index+1})不能为空`));
+        } else {
+          callback(new Error(`物流信息(${rule.index + 1})不能为空`));
         }
       },
       handleSubmit(name) {
         const _this = this;
-        this.formDynamic.Express=[];
-        this.formDynamic.ExpressNo=[];
-        for(let i in _this.formDynamic.items){
+        this.formDynamic.Express = [];
+        this.formDynamic.ExpressNo = [];
+        for (let i in _this.formDynamic.items) {
           this.formDynamic.Express.push(_this.formDynamic.items[i].Express);
           this.formDynamic.ExpressNo.push(_this.formDynamic.items[i].ExpressNo);
         }
@@ -122,18 +119,19 @@
       handleAdd() {
         this.formDynamic.items.push({
           Express: '',
+          disabled: false,
           ExpressNo: ''
         });
       },
       handleRemove(index) {
-        if(this.formDynamic.items.length>1){
-          this.formDynamic.items.splice(index,1)
-        }else {
+        if (this.formDynamic.items.length > 1) {
+          this.formDynamic.items.splice(index, 1)
+        } else {
           this.$Message.warning('至少填写一个物流信息！')
         }
       }
     },
-    mounted(){
+    mounted() {
       this.getRole()
     }
   }

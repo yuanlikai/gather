@@ -217,34 +217,34 @@
             minWidth: 88,
             align: "center",
           },
-          {
-            title: '售价单价',
-            tooltip: true,
-            key: 'Price',
-            minWidth: 88,
-            align: "center",
-          },
-          {
-            title: '采购单价',
-            tooltip: true,
-            key: 'CostPrice',
-            minWidth: 88,
-            align: "center",
-          },
-          {
-            title: '供货单价',
-            tooltip: true,
-            key: 'CostPrice',
-            minWidth: 88,
-            align: "center",
-          },
-          {
-            title: '售价小计',
-            tooltip: true,
-            key: 'SumPrice',
-            minWidth: 88,
-            align: "center",
-          },
+          // {
+          //   title: '售价单价',
+          //   tooltip: true,
+          //   key: 'Price',
+          //   minWidth: 88,
+          //   align: "center",
+          // },
+          // {
+          //   title: '采购单价',
+          //   tooltip: true,
+          //   key: 'CostPrice',
+          //   minWidth: 88,
+          //   align: "center",
+          // },
+          // {
+          //   title: '供货单价',
+          //   tooltip: true,
+          //   key: 'CostPrice',
+          //   minWidth: 88,
+          //   align: "center",
+          // },
+          // {
+          //   title: '售价小计',
+          //   tooltip: true,
+          //   key: 'SumPrice',
+          //   minWidth: 88,
+          //   align: "center",
+          // },
         ],
         data: [],
         OperBtn: [],
@@ -295,7 +295,8 @@
         for (let i = 0; i < _this.data.Express.split('，').length; i++) {
           _this.$refs.express.formDynamic.items[i] = {
             Express: _this.data.Express.split('，')[i],
-            ExpressNo: _this.data.ExpressNo.split('，')[i]
+            ExpressNo: _this.data.ExpressNo.split('，')[i],
+            disabled: _this.data.Express.length>0
           }
         }
       },

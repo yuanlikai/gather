@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <Card style="border:none;margin: 16px 0;">
-      <div class="ivu-page-header-title">{{ $route.query.id ? '修改' : '添加' }}供应商</div>
+      <div class="ivu-page-header-title">{{ $route.query.id ? '修改' : '添加' }}发货仓</div>
     </Card>
     <Card :style="{margin: '16px 20px', background: '#fff',height:'auto'}">
       <Row v-show="status">
@@ -150,10 +150,10 @@ export default {
       },
       ruleValidate: {
         supplierName: [
-          {message: '请输入企业名称', required: true, trigger: 'blur'}
+          {message: '请输入地址', required: true, trigger: 'blur'}
         ],
         abbrSupplierName: [
-          {message: '请输入简称', required: true, trigger: 'blur'}
+          {message: '请输入名称', required: true, trigger: 'blur'}
         ],
         supplierNo: [
           {message: '请输入字母编号', required: true, trigger: 'blur'}

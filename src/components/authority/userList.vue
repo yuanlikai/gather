@@ -47,16 +47,16 @@ margin-right: 16px">
           <Poptip
             confirm
             title="确定删除该用户？"
-            @on-ok="delHandle(item.username,item.id)">
+            @on-ok="delHandle(item)">
             <Button size="small" type="primary">删除用户</Button>
           </Poptip>
-          <Divider type="vertical"/>
-          <Poptip
-            confirm
-            title="确定重置该用户密码？"
-            @on-ok="resetPass(item.username)">
-            <Button size="small" type="primary">重置密码</Button>
-          </Poptip>
+          <!--<Divider type="vertical"/>-->
+          <!--<Poptip-->
+            <!--confirm-->
+            <!--title="确定重置该用户密码？"-->
+            <!--@on-ok="resetPass(item.username)">-->
+            <!--<Button size="small" type="primary">重置密码</Button>-->
+          <!--</Poptip>-->
         </Col>
       </Row>
       <div style="width: 100%;text-align: center;margin-top: 15px">
@@ -239,17 +239,18 @@ margin-right: 16px">
       // },
 
       //删除用户
-      delHandle(username, id) {
+      delHandle(item) {
         const _this = this;
-        _this.Axios.post('/Manage/UserInfo/deleteUsers', _this.Qs.stringify({
-          usernames: [username], // 用户账号数组
-          ids: [id],//用户id数组
-        }, {indices: false})).then(res => {
-          if (res.data.code === 0) {
+        console.log(item.id)
+        _this.Axios.post('/DelAdminUser.ashx', {
+          id: Number(item.id),
+        }).then(res => {
+          console.log(res.data)
+          if (res.data.error === 0) {
             _this.getUser();
             _this.$Message.success('删除成功')
           } else {
-            _this.$Message.error(res.data.message)
+            _this.$Message.error(res.data.errorMsg)
           }
         })
       },

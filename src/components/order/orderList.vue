@@ -1114,7 +1114,7 @@
           '&endtime=' + _this.formValidate.time[1] +
           '&begintime2=' + _this.formValidate.time1[0] +
           '&endtime2=' + _this.formValidate.time1[1] +
-          '&address=' + _this.formValidate.ssq.join(' ') +
+          '&address=' + _this.formValidate.ssq +
           '&actcode=' + _this.formValidate.actcode +
           '&page=' + page +
           '&pagesize=' + 100
