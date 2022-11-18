@@ -61,6 +61,11 @@ export default new Router({
           component: resolve => require(['@/components/order/orderList'], resolve),
         },
         {
+          path: '/downLoad',
+          name: '导出任务',
+          component: resolve => require(['@/components/downLoad/index'], resolve),
+        },
+        {
           path: '/CG-order',
           name: '采购模式',
           component: resolve => require(['@/components/order/CG-order'], resolve),

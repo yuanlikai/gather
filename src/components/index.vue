@@ -40,7 +40,7 @@
               </FormItem>
             </Form>
             <p class="else">
-              登录其他系统：<Button size="small" target="_blank" to="http://tihuotest.ylyunxiang.com/sysadmin/">提货券管理系统</Button>
+              登录其他系统：<Button size="small" target="_blank" to="http://tihuo.ylyunxiang.com/sysadmin/">提货券管理系统</Button>
             </p>
           </div>
         </div>
@@ -106,9 +106,7 @@
       },
     },
     mounted() {
-      localStorage.removeItem('supplierId')
-      console.log(localStorage.getItem('supplierId')
-      )
+      // localStorage.removeItem('supplierId')
     }
   }
 </script>
