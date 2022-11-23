@@ -97,6 +97,15 @@
               <Input v-model="formValidate.proname" placeholder="请输入"/>
             </FormItem>
           </Col>
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="VIP客户：" prop="IsVip">
+              <Select v-model="formValidate.IsVip">
+                <Option value="-1">全部</Option>
+                <Option value="1">是</Option>
+                <Option value="0">否</Option>
+              </Select>
+            </FormItem>
+          </Col>
         </Row>
         <Row :gutter="30">
           <Col :xs="24" :md="12" :lg="6">
@@ -154,7 +163,7 @@
             <Button v-else type="text" icon="md-list-box" @click="$Message.warning('请选择要审核的订单')">批量审核</Button>
           </span>
         </transition>
-        <ButtonGroup v-if="formValidate.state>0">
+        <ButtonGroup v-if="data.length>0">
           <Button type="text" icon="md-cloud-download" @click="dcdd">导出订单</Button>
         </ButtonGroup>
         <span v-if="formValidate.state==='1'">
@@ -166,7 +175,7 @@
         <Upload style="float: right"></Upload>
         </span>
       </p>
-      <Table :loading="loading1" @on-selection-change="checkAllGroupChange" :show-header="true"
+      <Table :loading="loading1" @on-selection-change="checkAllGroupChange" :show-header="true" :disabled-hover="true"
              :columns="columns"
              :data="data"></Table>
       <!--<p v-if="data.length<1" style="text-align: center;width: 100%;padding:30px 0 30px 0">暂无数据</p>-->
@@ -287,37 +296,37 @@
       </div>
     </Card>
     <express ref="express" @statusNum="statusNum" @getOrder="getOrder(formValidate.state>8?'yc':'')"></express>
-    <Modal v-model="modal2" width="660">
-      <p slot="header">
-        <Icon type="ios-information-circle"></Icon>
-        <span>确认申请订单《{{OrderNumber}}》的退单？</span>
-      </p>
-      <Table style="margin-bottom: 16px;" :show-header="true" :columns="columns1" :data="OperBtn"
-             @on-selection-change="operChange"></Table>
-      <Row>
-        <Col span="24">
-          退运费：
-          <InputNumber size="small" :max="ReOrder.freight" :min="0" v-model="ReOrder.freight"
-                       :formatter="value => `¥${value}`"
-                       :parser="value => value.replace('¥', '')"></InputNumber>
-          <p style="float: right;">合计退款：<span
-            style="color: red;font-weight: 700;font-size: 18px;">¥{{ReOrder.total}}</span>
-          </p>
-        </Col>
-      </Row>
-      <Row style="margin-top: 16px;">
-        <Col span="24">
-          <Form :label-width="48">
-            <FormItem label="备注：">
-              <Input v-model="ReOrder.remarks" type="textarea" :rows="2" placeholder="请输入退单备注..."/>
-            </FormItem>
-          </Form>
-        </Col>
-      </Row>
-      <div slot="footer">
-        <Button type="error" size="large" long @click="applyReOrder">申请退单</Button>
-      </div>
-    </Modal>
+    <!--<Modal v-model="modal2" width="660">-->
+    <!--<p slot="header">-->
+    <!--<Icon type="ios-information-circle"></Icon>-->
+    <!--<span>确认申请订单《{{OrderNumber}}》的退单？</span>-->
+    <!--</p>-->
+    <!--<Table style="margin-bottom: 16px;" :show-header="true" :columns="columns1" :data="OperBtn"-->
+    <!--@on-selection-change="operChange"></Table>-->
+    <!--<Row>-->
+    <!--<Col span="24">-->
+    <!--退运费：-->
+    <!--<InputNumber size="small" :max="ReOrder.freight" :min="0" v-model="ReOrder.freight"-->
+    <!--:formatter="value => `¥${value}`"-->
+    <!--:parser="value => value.replace('¥', '')"></InputNumber>-->
+    <!--<p style="float: right;">合计退款：<span-->
+    <!--style="color: red;font-weight: 700;font-size: 18px;">¥{{ReOrder.total}}</span>-->
+    <!--</p>-->
+    <!--</Col>-->
+    <!--</Row>-->
+    <!--<Row style="margin-top: 16px;">-->
+    <!--<Col span="24">-->
+    <!--<Form :label-width="48">-->
+    <!--<FormItem label="备注：">-->
+    <!--<Input v-model="ReOrder.remarks" type="textarea" :rows="2" placeholder="请输入退单备注..."/>-->
+    <!--</FormItem>-->
+    <!--</Form>-->
+    <!--</Col>-->
+    <!--</Row>-->
+    <!--<div slot="footer">-->
+    <!--<Button type="error" size="large" long @click="applyReOrder">申请退单</Button>-->
+    <!--</div>-->
+    <!--</Modal>-->
     <BackTop :height="30" :bottom="30">
       <div class="ivu-back-top-inner">
         <i class="ivu-icon ivu-icon-ios-arrow-up"></i>
@@ -533,12 +542,10 @@
           },
           {
             title: '订单编号',
-            tooltip: true,
             fixed: 'left',
             key: 'OrderNumber',
             minWidth: 160,
             render: (h, params) => {
-              console.log(params)
               return h('a', {
                 style: {
                   display: 'flex',
@@ -562,7 +569,7 @@
                     src: 'https://ylcgenterprise.oss-cn-shanghai.aliyuncs.com/ylyunxiang/VIP.png',
                   },
                   style: {
-                    display:params.row.IsVip===1?'':'none',
+                    display: params.row.IsVip === 1 ? '' : 'none',
                     width: '12px',
                     marginRight: '6px',
                     height: '12px'
@@ -574,12 +581,10 @@
           },
           {
             title: '产品信息',
-            tooltip: true,
             fixed: 'left',
             key: 'OrderNumber',
-            minWidth: 220,
+            minWidth: 230,
             render: (h, params) => {
-              console.log()
               return h('span', {
                 style: {
                   display: 'flex',
@@ -623,37 +628,31 @@
           },
           {
             title: '收货人',
-            tooltip: true,
             key: 'Consignee',
             minWidth: 110,
           },
           {
             title: '收货人手机',
-            tooltip: true,
             key: 'Phone',
             minWidth: 110,
           },
           {
             title: '收货人地址',
-            tooltip: true,
             key: 'Address',
-            minWidth: 200,
+            minWidth: 230,
           },
           {
             title: '发货仓',
-            tooltip: true,
             key: 'Supplier',
             minWidth: 120,
           },
           {
             title: '发货日期',
-            tooltip: true,
             key: 'GetTime',
             minWidth: 140,
           },
           {
             title: '快递信息',
-            tooltip: true,
             key: 'Express',
             minWidth: 180,
             render: (h, params) => {
@@ -670,36 +669,80 @@
           },
           {
             title: '套餐名称',
-            tooltip: true,
             key: 'ActName',
-            minWidth: 180,
+            minWidth: 200,
           },
           {
             title: '套餐编号',
-            tooltip: true,
             key: 'ActCode',
             minWidth: 90,
           },
           {
             title: '礼包名称',
-            tooltip: true,
             key: 'GiftName',
             minWidth: 160,
           },
           {
             title: '下单时间',
-            tooltip: true,
             key: 'AddTime',
             minWidth: 160,
           },
           {
             title: '操作',
-            tooltip: true,
             fixed: 'right',
             key: 'ProductName',
-            width: 130,
+            width: 110,
             align: "center",
             render: (h, params) => {
+              return h('div', [
+                h('Dropdown',{
+                  props:{
+                    trigger:'click'
+                  },
+                  on:{
+                    'on-click':(name)=>{
+                      if(name==='1'){
+                        this.ship(params.row.ID)
+                      }else if(name==='2'){
+                        this.cancelOrder(params.row)
+                      }else if(name==='3'){
+                        this.openOperService(params.row)
+                      }
+                    }
+                  }
+                },[
+                  h('a','全部操作'),
+                  h('Icon',{
+                    props:{
+                      type:'ios-arrow-down',
+                      color:'#2d8cf0'
+                    }
+                  }),
+                  h('DropdownMenu', {
+                    slot:'list'
+                  },[
+                    h('DropdownItem',{
+                      props:{
+                        name:'1'
+                      },
+                      style:{
+                        display:params.row.State === 1 && this.formValidate.state != 9?'':'none'
+                      }
+                    },'发货'),
+                    h('DropdownItem',{
+                      props:{
+                        name:'2'
+                      }
+                    },'取消订单'),
+                    h('DropdownItem',{
+                      props:{
+                        name:'3'
+                      },
+                    },'客服处理'),
+                  ]),
+                ])
+              ])
+              return;
               return h('div', [
                 h('div', [
                   h('a', {
@@ -730,6 +773,7 @@
           }
         ],
         formValidate: {
+          IsVip: '-1',
           state: '0',
           supplierid: '',
           ticketnumber: '',
@@ -761,6 +805,23 @@
       }
     },
     methods: {
+      cancelOrder(row){
+        this.$Modal.confirm({
+          title: '提示',
+          content: `确认要取消《${row.OrderNumber}》订单吗？`,
+          onOk: () => {
+            this.Axios.post('/CancelOrder.ashx',{
+              id: row.ID
+            }).then(res=>{
+              if (res.data.code === 0) {
+                this.$Message.success(`取消《${row.OrderNumber}》订单成功！`)
+              } else {
+                this.$Message.error(res.data.errorMsg)
+              }
+            })
+          },
+        });
+      },
       openOperService(item) {
         this.$refs.operService.info(item)
       },
@@ -934,6 +995,7 @@
           typeid: _this.types === 'yc' ? (_this.formValidate.state === '9' ? '1' : '2') : '',
           sortid: _this.sortid,
           vid: 1,
+          IsVip: _this.formValidate.IsVip,
           ticketnumber: _this.formValidate.ticketnumber,
           state: _this.formValidate.state,
           supplierid: _this.formValidate.supplierid,
@@ -974,19 +1036,19 @@
         const _this = this;
         _this.modal = true;
         this.tagArr = [];
-        let tagArr = parseInt(_this.total / 100);
+        let tagArr = parseInt(_this.total / 10000);
         let num = 0;
         for (let i = 0; i < tagArr; i++) {
           _this.tagArr.push({
             num1: num + 1,
-            num2: num + 100
+            num2: num + 10000
           });
-          num += 100
+          num += 10000
         }
-        if (_this.total % 100 !== 0) {
+        if (_this.total % 10000 !== 0) {
           _this.tagArr.push({
             num1: num + 1,
-            num2: num + _this.total % 100
+            num2: num + _this.total % 10000
           });
         }
       },
@@ -1109,6 +1171,7 @@
         window.open('/ExportOrderPage.ashx?typeid=' + typeid +
           '&sortid=' + _this.sortid +
           '&vid=' + 1 +
+          '&IsVip=' + _this.formValidate.IsVip +
           '&state=' + _this.formValidate.state +
           '&supplierid=' + supplierid +
           '&platformid=' + _this.formValidate.terraceId +
@@ -1128,7 +1191,7 @@
           '&address=' + _this.formValidate.ssq +
           '&actcode=' + _this.formValidate.actcode +
           '&page=' + page +
-          '&pagesize=' + 100
+          '&pagesize=' + 10000
         );
         _this.$set(_this.tagArr[index], 'download', true);
       },
