@@ -41,6 +41,9 @@
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           供应商：{{data.Supplier}}
         </Col>
+        <Col class="colClass" :xs="24" :md="12" :lg="8">
+          卡号：{{data.QuanText}}
+        </Col>
       </Row>
       <Divider/>
       <Row :gutter="30">

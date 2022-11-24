@@ -109,7 +109,7 @@
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="券号：" prop="ticketnumber">
+            <FormItem label="卡号：" prop="ticketnumber">
               <Input v-model="formValidate.ticketnumber" placeholder="请输入"/>
             </FormItem>
           </Col>

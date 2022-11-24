@@ -109,7 +109,7 @@
         </Row>
         <Row :gutter="30">
           <Col :xs="24" :md="12" :lg="6">
-            <FormItem label="券号：" prop="ticketnumber">
+            <FormItem label="卡号：" prop="ticketnumber">
               <Input v-model="formValidate.ticketnumber" placeholder="请输入"/>
             </FormItem>
           </Col>
@@ -143,6 +143,8 @@
                 @on-change="start=1,total=0,getOrder()">
           <Option value="1">按下单时间正序</Option>
           <Option value="2">按下单时间倒序</Option>
+          <Option value="3">按发货时间正序</Option>
+          <Option value="4">按发货时间倒序</Option>
         </Select>
       </p>
       <p slot="extra">
@@ -627,6 +629,11 @@
             }
           },
           {
+            title: '卡号',
+            key: 'QuanText',
+            minWidth: 130,
+          },
+          {
             title: '收货人',
             key: 'Consignee',
             minWidth: 110,
@@ -694,81 +701,184 @@
             width: 110,
             align: "center",
             render: (h, params) => {
+              
               return h('div', [
-                h('Dropdown',{
-                  props:{
-                    trigger:'click'
+                h('Poptip', {
+                  props: {
+                    transfer:true,
+                    placement: 'left',
                   },
-                  on:{
-                    'on-click':(name)=>{
-                      if(name==='1'){
-                        this.ship(params.row.ID)
-                      }else if(name==='2'){
-                        this.cancelOrder(params.row)
-                      }else if(name==='3'){
-                        this.openOperService(params.row)
-                      }
+                  on: {
+                    'on-ok': () => {
+                      this.Axios.post('/Manager/UnbindCoupon.ashx', this.Qs.stringify({
+                        token: localStorage.getItem('token'),  //登录凭证
+                        id: params.row.Id
+                      })).then(res => {
+                        if (res.data.error === 0) {
+                          this.getData();
+                          this.$Message.success('解绑成功')
+                        } else {
+                          this.$Message.warning(res.data.errorMsg)
+                        }
+                      })
                     }
                   }
-                },[
-                  h('a','全部操作'),
-                  h('Icon',{
-                    props:{
-                      type:'ios-arrow-down',
-                      color:'#2d8cf0'
+                }, [
+                  h('a', '全部操作'),
+                  h('Icon', {
+                    props: {
+                      type: 'ios-arrow-down',
+                      color: '#2d8cf0'
                     }
                   }),
-                  h('DropdownMenu', {
-                    slot:'list'
-                  },[
-                    h('DropdownItem',{
-                      props:{
-                        name:'1'
-                      },
+                  // class="api" slot="content"
+                  h('div', {
+                    slot: 'content'
+                  }, [
+                    h('Button', {
                       style:{
-                        display:params.row.State === 1 && this.formValidate.state != 9?'':'none'
+                        display: params.row.State === 1 && this.formValidate.state != 9 ? 'block' : 'none',
+                        width:'100%'
+                      },
+                      on: {
+                        'click': () => {
+                          this.ship(params.row.ID)
+                        }
+                      },
+                      props:{
+                        type:'text'
                       }
                     },'发货'),
-                    h('DropdownItem',{
+                    h('Button', {
+                      style:{
+                        display: params.row.State !== 6 && this.formValidate.state != 9 ? 'block' : 'none',
+                        width:'100%'
+                      },
+                      on: {
+                        'click': () => {
+                          this.cancelOrder(params.row)
+                        }
+                      },
                       props:{
-                        name:'2'
+                        type:'text'
                       }
                     },'取消订单'),
-                    h('DropdownItem',{
-                      props:{
-                        name:'3'
+                    h('Button', {
+                      style:{
+                        display: params.row.State === 6 && this.formValidate.state != 9 ? 'block' : 'none',
+                        width:'100%'
                       },
+                      on: {
+                        'click': () => {
+                          this.undoCancel(params.row)
+                        }
+                      },
+                      props:{
+                        type:'text'
+                      }
+                    },'撤销取消'),
+                    h('Button', {
+                      style:{
+                        width:'100%'
+                      },
+                      on: {
+                        'click': () => {
+                          this.openOperService(params.row)
+                        }
+                      },
+                      props:{
+                        type:'text'
+                      }
                     },'客服处理'),
-                  ]),
-                ])
-              ])
-              return;
-              return h('div', [
-                h('div', [
-                  h('a', {
-                    on: {
-                      click: () => {
-                        this.openOperService(params.row)
-                      }
-                    }
-                  }, '客服处理'),
-                  h('Divider', {
-                    style: {
-                      display: params.row.State === 1 && this.formValidate.state != 9 ? '' : 'none',
-                    },
-                    props: {
-                      type: 'vertical'
-                    }
-                  }),
-                  h('a', {
-                    on: {
-                      click: () => {
-                        this.ship(params.row.ID)
-                      }
-                    }
-                  }, params.row.State === 1 && this.formValidate.state != 9 ? '发货' : ''),
+                  ])
                 ]),
+                // h('Dropdown', {
+                //   props: {
+                //     trigger: 'click'
+                //   },
+                //   on: {
+                //     'on-click': (name) => {
+                //       if (name === '1') {
+                //         this.ship(params.row.ID)
+                //       } else if (name === '2') {
+                //         this.cancelOrder(params.row)
+                //       } else if (name === '3') {
+                //         this.undoCancel(params.row)
+                //       } else if (name === '4') {
+                //         this.openOperService(params.row)
+                //       }
+                //     }
+                //   }
+                // }, [
+                //   h('a', '全部操作'),
+                //   h('Icon', {
+                //     props: {
+                //       type: 'ios-arrow-down',
+                //       color: '#2d8cf0'
+                //     }
+                //   }),
+                //   h('DropdownMenu', {
+                //     slot: 'list'
+                //   }, [
+                //     h('DropdownItem', {
+                //       props: {
+                //         name: '1'
+                //       },
+                //       style: {
+                //         display: params.row.State === 1 && this.formValidate.state != 9 ? '' : 'none'
+                //       }
+                //     }, '发货'),
+                //     h('DropdownItem', {
+                //       props: {
+                //         name: '2'
+                //       },
+                //       style: {
+                //         display: params.row.State !== 6 && this.formValidate.state != 9 ? '' : 'none'
+                //       }
+                //     }, '取消订单'),
+                //     h('DropdownItem', {
+                //       props: {
+                //         name: '3'
+                //       },
+                //       style: {
+                //         display: params.row.State === 6 && this.formValidate.state != 9 ? '' : 'none'
+                //       }
+                //     }, '撤销取消'),
+                //     h('DropdownItem', {
+                //       props: {
+                //         name: '4'
+                //       },
+                //     }, '客服处理'),
+                //   ]),
+                // ])
               ])
+              // return;
+              // return h('div', [
+              //   h('div', [
+              //     h('a', {
+              //       on: {
+              //         click: () => {
+              //           this.openOperService(params.row)
+              //         }
+              //       }
+              //     }, '客服处理'),
+              //     h('Divider', {
+              //       style: {
+              //         display: params.row.State === 1 && this.formValidate.state != 9 ? '' : 'none',
+              //       },
+              //       props: {
+              //         type: 'vertical'
+              //       }
+              //     }),
+              //     h('a', {
+              //       on: {
+              //         click: () => {
+              //           this.ship(params.row.ID)
+              //         }
+              //       }
+              //     }, params.row.State === 1 && this.formValidate.state != 9 ? '发货' : ''),
+              //   ]),
+              // ])
             }
           }
         ],
@@ -805,16 +915,37 @@
       }
     },
     methods: {
-      cancelOrder(row){
+      cancelOrder(row) {
         this.$Modal.confirm({
           title: '提示',
           content: `确认要取消《${row.OrderNumber}》订单吗？`,
           onOk: () => {
-            this.Axios.post('/CancelOrder.ashx',{
+            this.Axios.post('/CancelOrder.ashx', {
               id: row.ID
-            }).then(res=>{
-              if (res.data.code === 0) {
+            }).then(res => {
+              if (res.data.error === 0) {
+                this.statusNum();
+                this.getOrder();
                 this.$Message.success(`取消《${row.OrderNumber}》订单成功！`)
+              } else {
+                this.$Message.error(res.data.errorMsg)
+              }
+            })
+          },
+        });
+      },
+      undoCancel(row) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: `确认要撤销取消《${row.OrderNumber}》订单吗？`,
+          onOk: () => {
+            this.Axios.post('/UndoCancel.ashx', {
+              id: row.ID
+            }).then(res => {
+              if (res.data.error === 0) {
+                this.statusNum();
+                this.getOrder();
+                this.$Message.success(`撤销取消《${row.OrderNumber}》订单成功！`)
               } else {
                 this.$Message.error(res.data.errorMsg)
               }
