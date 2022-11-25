@@ -176,12 +176,6 @@
         if (i === '1') {
           _this.modal = true;
         } else if (i === '2') {
-          _this.Axios.post('/logout').then(function () {
-          }).catch(err => {
-            localStorage.removeItem('menu');
-            localStorage.removeItem('menu1');
-            localStorage.removeItem('menuList');
-          });
           _this.$router.push('/');
         }
       },

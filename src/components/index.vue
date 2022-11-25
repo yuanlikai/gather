@@ -81,7 +81,11 @@
       },
     },
     mounted() {
-    
+      this.Axios.post('/logout').then().catch(err => {
+        localStorage.removeItem('menu');
+        localStorage.removeItem('menu1');
+        localStorage.removeItem('menuList');
+      });
     }
   }
 </script>
