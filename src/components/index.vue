@@ -80,6 +80,8 @@
               password: _this.formInline.password.replace(/ /g, '')
             }).then(res => {
               if (res.data.error === 0) {
+                console.log(res.data.data)
+                localStorage.setItem('router',JSON.stringify(res.data.data))
                 _this.Axios.get('/getCurrentUser.ashx').then(user => {
                   localStorage.setItem('supplier', JSON.stringify(user.data.data))
                   if(user.data.data.userType!=='SUPER'){
@@ -106,7 +108,9 @@
       },
     },
     mounted() {
-      // localStorage.removeItem('supplierId')
+      if(localStorage.getItem('router')){
+        localStorage.removeItem('router')
+      }
     }
   }
 </script>

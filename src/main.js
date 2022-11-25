@@ -42,6 +42,16 @@ axios.interceptors.request.use(function (config) {
   return config;
 });
 
+router.beforeEach((to, from, next) => {
+  console.log(to.meta)
+  if (!to.meta.show && String(localStorage.getItem('router')).indexOf(to.path.slice(1)) === -1) {
+    next({
+      path: '/'
+    })
+  } else {
+    next()
+  }
+})
 
 // 添加响应拦截器
 axios.interceptors.response.use(function (response) {
