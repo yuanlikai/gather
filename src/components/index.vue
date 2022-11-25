@@ -81,11 +81,9 @@
       },
     },
     mounted() {
-      this.Axios.post('/logout').then().catch(err => {
-        localStorage.removeItem('menu');
-        localStorage.removeItem('menu1');
-        localStorage.removeItem('menuList');
-      });
+      if(localStorage.getItem('router')){
+        localStorage.removeItem('router');
+      }
     }
   }
 </script>
