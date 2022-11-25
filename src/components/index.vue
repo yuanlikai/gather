@@ -60,6 +60,7 @@
               password: _this.formInline.password.replace(/ /g, '')
             })).then(res => {
               if (res.data.code === 0) {
+                localStorage.setItem('router',JSON.stringify(res.data.data))
                 localStorage.setItem('menuList', JSON.stringify(res.data.data.sort(function (a, b) {
                   return Number(a.numb) - Number(b.numb)
                 })));

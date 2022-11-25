@@ -3,28 +3,25 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import 'babel-polyfill'//兼容
-
+import 'babel-polyfill' //兼容
 import yl from 'ylcookie'
+import qs from 'qs'
+import axios from 'axios'
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';
+import VueClipboard from 'vue-clipboard2'
 
 Vue.prototype.Yl = yl;
 
-import qs from 'qs'
-
 Vue.prototype.Qs = qs;
-
-import axios from 'axios'
 
 Vue.prototype.Axios = axios;
 
-import iView from 'iview';
-import 'iview/dist/styles/iview.css';
 Vue.use(iView);
 
-import VueClipboard  from 'vue-clipboard2'
-Vue.use( VueClipboard )
+Vue.use(VueClipboard)
 
-Vue.prototype.riqi=function(sj){
+Vue.prototype.riqi = function (sj) {
   var d = new Date(sj * 1);    //根据时间戳生成的时间对象
   var date = (d.getFullYear()) + "-" +
     (d.getMonth() + 1) + "-" +
@@ -37,10 +34,21 @@ Vue.prototype.riqi=function(sj){
 
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
-  config.headers.route=vm.$route.path;
+  config.headers.route = vm.$route.path;
   // 在发送请求之前做些什么
   return config;
 });
+
+router.beforeEach((to, from, next) => {
+  console.log(to.meta)
+  if (!to.meta.show && localStorage.getItem('router').indexOf(to.path.slice(1)) === -1) {
+    next({
+      path: '/'
+    })
+  } else {
+    next()
+  }
+})
 
 
 // 添加响应拦截器
@@ -61,13 +69,13 @@ axios.interceptors.response.use(function (response) {
     router.push('/');
     vm.$Notice.close('alert');
     vm.$Notice.warning({
-      name:'alert',
+      name: 'alert',
       title: '登录信息已过期，请重新登录！'
     });
-  }else if(error.response.status === 403) {
+  } else if (error.response.status === 403) {
     vm.$Notice.close('alert');
     vm.$Notice.warning({
-      name:'alert',
+      name: 'alert',
       title: '您的权限不足！'
     });
   }

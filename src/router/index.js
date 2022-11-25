@@ -59,6 +59,9 @@ export default new Router({
           path: '/orderDetails',
           name: '订单详情',
           component: resolve => require(['@/components/order/orderDetails'], resolve),
+          meta: {
+            show:true
+          }
         },
         {
           path: '/menuList',
@@ -158,21 +161,33 @@ export default new Router({
         {
           path: '/relevance',
           name: '关联设置',
+          meta: {
+            show:true
+          },
           component: resolve => require(['@/components/setting/relevance'], resolve),
         },
         {
           path: '/addSupplier',
           name: '新建供应商',
+          meta: {
+            show:true
+          },
           component: resolve => require(['@/components/setting/addSupplier'], resolve),
         },
         {
           path: '/terraceClassify',
           name: '分类映射',
           component: resolve => require(['@/components/setting/terraceClassify'], resolve),
+          meta: {
+            show:true
+          },
         },
         {
           path: '/addTerrace',
           name: '添加平台',
+          meta: {
+            show:true
+          },
           component: resolve => require(['@/components/setting/addTerrace'], resolve),
         },
         {

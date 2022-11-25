@@ -27,7 +27,8 @@ module.exports = {
       },
       '/': {
         // target: 'http://192.168.1.73:8088',
-        target: 'https://ylm.e6best.com',
+        // target: 'https://ylm.e6best.com',
+        target: 'https://ylm2.e6best.com',
         changeOrigin: true,
         pathRewrite: {
           '^/': ''
