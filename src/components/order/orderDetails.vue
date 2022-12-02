@@ -15,7 +15,7 @@
       <Spin fix v-if="loading"></Spin>
       <Row :gutter="30">
         <Col span="24">
-          <p class="colClass" style="font-weight: 500;">基本信息</p>
+          <p class="colClass" style="font-weight: bold;">基本信息</p>
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           OMS单号：{{data.ErpOrderNumber}}
@@ -48,7 +48,7 @@
       <Divider/>
       <Row :gutter="30">
         <Col span="24">
-          <p class="colClass" style="font-weight: 500;">收货人及物流信息</p>
+          <p class="colClass" style="font-weight: bold;">收货人及物流信息</p>
         </Col>
         <Col class="colClass" :xs="24" :md="12" :lg="8">
           快递公司：{{data.Express}}
@@ -76,7 +76,7 @@
       <Divider/>
       <Row :gutter="30">
         <Col span="24">
-          <p class="colClass" style="font-weight: 500;">商品信息</p>
+          <p class="colClass" style="font-weight: bold;">商品信息</p>
         </Col>
         <Col span="24">
           <Table :show-header="true" :columns="columns" :data="OperBtn"></Table>
@@ -107,7 +107,7 @@
       <Divider/>
       <Row :gutter="30">
         <Col span="24">
-          <p class="colClass" style="font-weight: 500;">备注信息</p>
+          <p class="colClass" style="font-weight: bold;">备注信息</p>
         </Col>
         <Col class="colClass" span="24">
           用户留言：{{data.Remarks}}
@@ -120,6 +120,14 @@
         <!--</Col>-->
       </Row>
       <Divider/>
+      <Row :gutter="30">
+        <Col span="24">
+          <p class="colClass" style="font-weight: bold;">操作日志</p>
+        </Col>
+        <Col span="24">
+          <Table :show-header="true" :columns="columns1" :data="logdata"></Table>
+        </Col>
+      </Row>
     </Content>
     <express ref="express" @getOrder="getDetails"></express>
     <Modal v-model="model" width="360">
@@ -166,36 +174,27 @@
           ],
         },
         loading: true,
+        logdata:[],
         columns1: [
           {
-            title: '操作者',
+            type: 'index',
+            width: 60,
+            align: 'center'
+          },
+          {
+            title: '操作人',
             tooltip: true,
-            minWidth: 88,
-            align: "center",
+            key: 'UserName',
+            width: 140,
           },
           {
             title: '操作时间',
-            tooltip: true,
-            minWidth: 88,
-            align: "center",
+            key: 'AddTime',
+            width: 200,
           },
           {
-            title: '操作状态',
-            tooltip: true,
-            minWidth: 88,
-            align: "center",
-          },
-          {
-            title: '操作后状态',
-            tooltip: true,
-            minWidth: 88,
-            align: "center",
-          },
-          {
-            title: '备注',
-            tooltip: true,
-            minWidth: 88,
-            align: "center",
+            title: '操作内容',
+            key: 'Remarks',
           }
         ],
         columns: [
@@ -314,6 +313,7 @@
           if (res.data.error === 0) {
             _this.OperBtn = res.data.data;
             _this.data = res.data;
+            _this.logdata = res.data.logdata
           } else {
             _this.$Message.error(res.data.errorMsg)
           }

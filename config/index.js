@@ -26,7 +26,7 @@ module.exports = {
         }
       },
       '/': {
-        target: 'http://oms.ylyunxiang.com',
+        target: 'http://omstest.ylyunxiang.com',
         changeOrigin: true,
         pathRewrite: {
           '^/': ''
