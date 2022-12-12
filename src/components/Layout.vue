@@ -1,28 +1,58 @@
 <style>
-  body .ivu-menu-light {
+  .layout .ivu-menu-light {
     background: none;
   }
-  
-  body .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu {
+
+  .layout .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu {
     color: hsla(0, 0%, 100%, .7);
   }
-  
-  body .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item-active, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item:hover, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu-active, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu:hover {
+
+  .layout .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item-active, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item:hover, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu-active, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu:hover {
     color: #ffffff;
     border-bottom: 3px solid #2d8cf0;
     border-bottom-color: #4fe3c1;
   }
   
-  body .layout-header-bar {
+  .layout .layout-header-bar {
     color: #ffffff;
     background: #2173dc;
     background: -webkit-gradient(linear, left top, right top, from(#1d42ab), color-stop(#2173dc), to(#1e93ff));
     background: linear-gradient(
       90deg, #1d42ab, #2173dc, #1e93ff);
   }
+  .layout .horizontal {
+    color: #ffffff;
+  }
+
+  .layout1 .layout-header-bar {
+    color: #515a6e;
+  }
+  .layout1 .ivu-menu-light {
+    background: none;
+  }
+  .layout1 .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu {
+    color: #515a6e;
+  }
+  .layout1 .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item-active, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item:hover, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu-active, .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu:hover {
+    color: #2d8cf0;
+    border-bottom: 3px solid #2d8cf0;
+    border-bottom-color: #2d8cf0;
+  }
+
+  .layout1 .layout-header-bar {
+    background: #ffffff;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .layout1 .horizontal {
+    color: #515a6e;
+  }
 </style>
 <template>
-  <div class="layout">
+  <div :class="{
+  layout:true,
+  layout1:color2
+  }">
     <Header :style="{padding: 10,position:'fixed',width:'100%',zIndex:'999',display:'flex'}" class="layout-header-bar">
       <Icon @click.native="collapsedSider" :class="rotateIcon"
             :style="{margin: '0 24px','line-height':'64px',cursor:'pointer',float:'left'}"
@@ -34,7 +64,7 @@
           {{item.name}}
         </MenuItem>
       </Menu>
-      <Menu mode="horizontal" type="light" active-name="1" style="margin-left: auto;margin-right: 20px;color: #ffffff">
+      <Menu mode="horizontal" type="light" active-name="1" style="margin-left: auto;margin-right: 20px;">
         <div class="layout-logo"></div>
         <div class="layout-nav">
           <span style="font-size: 12px;font-weight: 600;">{{supplier.supplierName}}</span>
@@ -105,6 +135,7 @@
   export default {
     data() {
       return {
+        color2:false,
         modal: false,
         user: localStorage.getItem('user'),
         isMenu: false,
@@ -223,6 +254,11 @@
       }
     },
     mounted() {
+      if(window.location.origin==='http://oms2.ylyunxiang.com'){
+        this.color2 = true
+      }else {
+        this.color2 = false
+      }
       this.menuList = JSON.parse(localStorage.getItem('menuList'));
       this.isMenu = true;
       // this.getCurrentUser();
