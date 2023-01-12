@@ -64,7 +64,7 @@
           {{item.name}}
         </MenuItem>
       </Menu>
-      <Menu mode="horizontal" type="light" active-name="1" style="margin-left: auto;margin-right: 20px;">
+      <Menu class="horizontal" mode="horizontal" type="light" active-name="1" style="margin-left: auto;margin-right: 20px;">
         <div class="layout-logo"></div>
         <div class="layout-nav">
           <span style="font-size: 12px;font-weight: 600;">{{supplier.supplierName}}</span>

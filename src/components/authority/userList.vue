@@ -282,7 +282,7 @@ margin-right: 16px">
 
       // 用户分页
       paging(i) {
-        this.start = i - 1;
+        this.start = i;
         this.getUser();
       },
 

@@ -106,13 +106,13 @@
               </Select>
             </FormItem>
           </Col>
-        </Row>
-        <Row :gutter="30">
           <Col :xs="24" :md="12" :lg="6">
             <FormItem label="卡号：" prop="ticketnumber">
               <Input v-model="formValidate.ticketnumber" placeholder="请输入"/>
             </FormItem>
           </Col>
+        </Row>
+        <Row :gutter="30">
           <Col :xs="24" :md="12" :lg="6">
             <FormItem label="套餐编号：" prop="actcode">
               <Input v-model="formValidate.actcode" placeholder="请输入"/>
@@ -121,6 +121,11 @@
           <Col :xs="24" :md="12" :lg="6">
             <FormItem label="礼包编号：" prop="giftcode">
               <Input v-model="formValidate.giftcode" placeholder="请输入"/>
+            </FormItem>
+          </Col>
+          <Col :xs="24" :md="12" :lg="6">
+            <FormItem label="礼包名称：" prop="giftname">
+              <Input v-model="formValidate.giftname" placeholder="请输入"/>
             </FormItem>
           </Col>
           <Col :xs="24" :md="12" :lg="6">
@@ -894,6 +899,7 @@
           consignee: '',
           phone: '',
           giftcode: '',
+          giftname: '',
           time: ['', ''],
           time1: ['', ''],
           price1: '',
@@ -1137,6 +1143,7 @@
           consignee: _this.formValidate.consignee,
           phone: _this.formValidate.phone,
           giftcode: _this.formValidate.giftcode,
+          giftname: _this.formValidate.giftname,
           price1: _this.formValidate.price1,
           price2: _this.formValidate.price2,
           begintime: _this.formValidate.time[0],
@@ -1315,6 +1322,7 @@
           '&price2=' + _this.formValidate.price2 +
           '&ticketnumber=' + _this.formValidate.ticketnumber +
           '&giftcode=' + _this.formValidate.giftcode +
+          '&giftname=' + _this.formValidate.giftname +
           '&begintime=' + _this.formValidate.time[0] +
           '&endtime=' + _this.formValidate.time[1] +
           '&begintime2=' + _this.formValidate.time1[0] +

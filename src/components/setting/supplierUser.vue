@@ -76,7 +76,7 @@ margin-right: 16px">
         <!--</Col>-->
       <!--</Row>-->
       <div style="width: 100%;text-align: center;margin-top: 15px">
-        <Page @on-change="paging" :total="total" :page-size="5" show-elevator show-total/>
+        <Page @on-change="paging" :total="total" :page-size="10" show-elevator show-total/>
       </div>
     </Card>
     <Modal v-model="addAccount" width="300">
@@ -374,7 +374,7 @@ margin-right: 16px">
       
       // 用户分页
       paging(i) {
-        this.start = i - 1;
+        this.start = i;
         this.getUser();
       },
       

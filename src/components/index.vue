@@ -40,7 +40,7 @@
               </FormItem>
             </Form>
             <p class="else">
-              登录其他系统：<Button size="small" target="_blank" to="http://tihuo.ylyunxiang.com/sysadmin/">提货券管理系统</Button>
+              登录其他系统：<Button size="small" target="_blank" :to="to">提货券管理系统</Button>
             </p>
           </div>
         </div>
@@ -53,6 +53,7 @@
   export default {
     data() {
       return {
+        to:'http://tihuo.ylyunxiang.com/sysadmin/',
         loading: false,
         formInline: {
           user: '',
@@ -108,6 +109,9 @@
       },
     },
     mounted() {
+      if(window.location.origin==='http://oms2.ylyunxiang.com'){
+        this.to = 'http://tihuo2.ylyunxiang.com/sysadmin/'
+      }
       if(localStorage.getItem('router')){
         localStorage.removeItem('router')
       }
